@@ -1,3 +1,4 @@
+import React from "react";
 import { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 
