@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 
+import { execSync } from "child_process";
+
 console.log("🔨 Starting build process...");
 console.log("Node version:", process.version);
-console.log("NPM version:", require("child_process").execSync("npm -v", { encoding: "utf8" }).trim());
-
-const { execSync } = require("child_process");
 
 try {
   console.log("\n📦 Installing dependencies...");
