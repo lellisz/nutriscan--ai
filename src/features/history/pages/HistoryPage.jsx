@@ -35,33 +35,73 @@ function HistItem({ item }) {
   const total = item.macros.p + item.macros.c + item.macros.g || 1;
 
   return (
-    <div className="ns-hist-item ns-shimmer">
-      <div className="ns-hist-thumb">{item.emoji}</div>
+    <div
+      className="ns-hist-item ns-shimmer"
+      style={{
+        display: 'flex', alignItems: 'center', gap: 14,
+        padding: '14px 20px',
+        background: '#1c1c1e',
+        WebkitTapHighlightColor: 'transparent',
+        cursor: 'pointer',
+        transition: 'opacity 0.15s cubic-bezier(0.4,0,0.2,1)',
+      }}
+    >
+      {/* Thumb */}
+      <div
+        className="ns-hist-thumb"
+        style={{
+          width: 48, height: 48, borderRadius: 10,
+          background: 'rgba(255,255,255,0.07)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 24, flexShrink: 0,
+        }}
+      >
+        {item.emoji}
+      </div>
+
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div className="ns-hist-name">{item.name}</div>
-        <div className="ns-hist-meta">
-          <span className="ns-hist-time">{item.time}</span>
-          <span className="ns-hist-sep" />
-          <span className="ns-hist-cat">{item.category}</span>
+        <div
+          className="ns-hist-name"
+          style={{
+            fontSize: 15, fontWeight: 600, color: '#ffffff',
+            letterSpacing: '-0.02em', lineHeight: 1.2, marginBottom: 3,
+            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+          }}
+        >
+          {item.name}
         </div>
-        {/* Proportional macro bars */}
-        <div style={{ display: 'flex', gap: 2, height: 3, marginTop: 6, borderRadius: 2, overflow: 'hidden' }}>
-          <div style={{ width: `${(item.macros.p / total) * 100}%`, background: 'var(--ns-macro-prot)', borderRadius: 2 }} />
-          <div style={{ width: `${(item.macros.c / total) * 100}%`, background: 'var(--ns-macro-carb)', borderRadius: 2 }} />
-          <div style={{ width: `${(item.macros.g / total) * 100}%`, background: 'var(--ns-macro-fat)', borderRadius: 2 }} />
+        <div className="ns-hist-meta" style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+          <span className="ns-hist-time" style={{ fontSize: 12, color: '#8e8e93', letterSpacing: '-0.01em' }}>{item.time}</span>
+          <div style={{ width: 2, height: 2, borderRadius: '50%', background: '#48484a' }} />
+          <span className="ns-hist-cat" style={{ fontSize: 12, color: '#636366', letterSpacing: '-0.01em' }}>{item.category}</span>
         </div>
-        <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
-          <span style={{ fontSize: 10, color: 'var(--ns-t-5)', letterSpacing: '-0.01em' }}>P {item.macros.p}g</span>
-          <span style={{ fontSize: 10, color: 'var(--ns-t-5)', letterSpacing: '-0.01em' }}>C {item.macros.c}g</span>
-          <span style={{ fontSize: 10, color: 'var(--ns-t-5)', letterSpacing: '-0.01em' }}>G {item.macros.g}g</span>
+        {/* Barras de macro proporcionais */}
+        <div style={{ display: 'flex', gap: 1.5, height: 3, borderRadius: 2, overflow: 'hidden' }}>
+          <div style={{ width: `${(item.macros.p / total) * 100}%`, background: '#FF6B35', borderRadius: 2 }} />
+          <div style={{ width: `${(item.macros.c / total) * 100}%`, background: '#FFD60A', borderRadius: 2 }} />
+          <div style={{ width: `${(item.macros.g / total) * 100}%`, background: '#BF5AF2', borderRadius: 2 }} />
+        </div>
+        <div style={{ display: 'flex', gap: 10, marginTop: 5 }}>
+          <span style={{ fontSize: 10, color: '#FF6B35', letterSpacing: '-0.01em', fontWeight: 500 }}>P {item.macros.p}g</span>
+          <span style={{ fontSize: 10, color: '#FFD60A', letterSpacing: '-0.01em', fontWeight: 500 }}>C {item.macros.c}g</span>
+          <span style={{ fontSize: 10, color: '#BF5AF2', letterSpacing: '-0.01em', fontWeight: 500 }}>G {item.macros.g}g</span>
         </div>
       </div>
+
       <div style={{ flexShrink: 0, textAlign: 'right' }}>
-        <div className="ns-hist-kcal">{item.calories}</div>
-        <div style={{ fontSize: 9, color: 'var(--ns-t-5)', marginTop: 1 }}>kcal</div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 3, justifyContent: 'flex-end', marginTop: 4 }}>
-          <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#32d74b' }} />
-          <span style={{ fontSize: 9, color: 'var(--ns-t-4)', letterSpacing: '-0.01em' }}>{item.confidence}%</span>
+        <div
+          className="ns-hist-kcal"
+          style={{
+            fontSize: 18, fontWeight: 700, color: '#30D158',
+            letterSpacing: '-0.04em', lineHeight: 1,
+          }}
+        >
+          {item.calories}
+        </div>
+        <div style={{ fontSize: 10, color: '#636366', marginTop: 2, letterSpacing: '-0.01em' }}>kcal</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 3, justifyContent: 'flex-end', marginTop: 5 }}>
+          <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#30D158', boxShadow: '0 0 4px rgba(48,209,88,0.5)' }} />
+          <span style={{ fontSize: 10, color: '#48484a', letterSpacing: '-0.01em' }}>{item.confidence}%</span>
         </div>
       </div>
     </div>
@@ -79,34 +119,67 @@ export default function HistoryPage() {
   const totalMeals    = MEALS.length;
 
   return (
-    <div className="ns-page">
+    <div className="ns-page" style={{ background: '#000000' }}>
       <StatusBar />
 
-      <div className="ns-page-header" style={{ paddingBottom: 10 }}>
-        <div className="ns-eyebrow">Registro</div>
-        <div className="ns-page-title" style={{ marginBottom: 14 }}>Histórico</div>
+      <div className="ns-page-header" style={{ paddingBottom: 10, padding: '0 20px 10px' }}>
+        <div style={{ fontSize: 13, color: '#636366', letterSpacing: '-0.01em', marginBottom: 2, fontWeight: 500 }}>Registro</div>
+        <div style={{
+          fontSize: 36, fontWeight: 800, color: '#ffffff',
+          letterSpacing: '-0.05em', lineHeight: 1.02, marginBottom: 18,
+        }}>
+          Histórico
+        </div>
 
         {/* Stats row */}
-        <div style={{ display: 'flex', gap: 6, marginBottom: 14 }}>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
           {[
-            [todayKcal, 'kcal hoje'],
-            [yesterdayKcal.toLocaleString('pt-BR'), 'kcal ontem'],
-            [totalMeals, 'refeições'],
-          ].map(([v, l]) => (
-            <div key={l} className="ns-card-sm ns-shimmer" style={{ flex: 1, padding: '10px 12px' }}>
-              <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--ns-t-primary)', letterSpacing: '-0.04em', lineHeight: 1 }}>{v}</div>
-              <div style={{ fontSize: 9, color: 'var(--ns-t-5)', marginTop: 3, letterSpacing: '-0.01em' }}>{l}</div>
+            { v: todayKcal, l: 'kcal hoje', color: '#30D158' },
+            { v: yesterdayKcal.toLocaleString('pt-BR'), l: 'kcal ontem', color: '#FF9F0A' },
+            { v: totalMeals, l: 'refeições', color: '#0A84FF' },
+          ].map(({ v, l, color }) => (
+            <div
+              key={l}
+              className="ns-card-sm ns-shimmer"
+              style={{
+                flex: 1, padding: '12px 12px',
+                background: '#111111',
+                border: '0.5px solid rgba(255,255,255,0.07)', borderRadius: 14,
+              }}
+            >
+              <div style={{
+                fontSize: 20, fontWeight: 800, color,
+                letterSpacing: '-0.04em', lineHeight: 1,
+              }}>
+                {v}
+              </div>
+              <div style={{ fontSize: 10, color: '#636366', marginTop: 4, letterSpacing: '-0.01em' }}>{l}</div>
             </div>
           ))}
         </div>
 
         {/* Segmented control */}
-        <div className="ns-segment">
+        <div
+          className="ns-segment"
+          style={{
+            display: 'flex', gap: 0,
+            background: '#1c1c1e', borderRadius: 12, padding: 3,
+          }}
+        >
           {FILTERS.map(f => (
             <div
               key={f}
               className={`ns-segment-item${filter === f ? ' ns-segment-item--active' : ''}`}
               onClick={() => setFilter(f)}
+              style={{
+                flex: 1, textAlign: 'center',
+                padding: '7px 0', borderRadius: 10,
+                fontSize: 13, fontWeight: 600, letterSpacing: '-0.02em',
+                cursor: 'pointer', transition: 'all 0.2s cubic-bezier(0.4,0,0.2,1)',
+                WebkitTapHighlightColor: 'transparent',
+                background: filter === f ? '#2c2c2e' : 'transparent',
+                color: filter === f ? '#ffffff' : '#636366',
+              }}
             >
               {f}
             </div>
@@ -115,20 +188,59 @@ export default function HistoryPage() {
       </div>
 
       {/* Today */}
-      <div className="ns-section-header" style={{ marginTop: 6 }}>
-        <span className="ns-section-title">Hoje</span>
-        <span className="ns-section-meta">{todayKcal} kcal</span>
+      <div style={{
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        padding: '14px 20px 8px',
+      }}>
+        <span style={{
+          fontSize: 13, fontWeight: 600, color: '#8e8e93',
+          letterSpacing: '0.02em', textTransform: 'uppercase',
+        }}>
+          Hoje
+        </span>
+        <span style={{ fontSize: 13, color: '#30D158', fontWeight: 600, letterSpacing: '-0.02em' }}>
+          {todayKcal} kcal
+        </span>
       </div>
-      {today.map(m => <HistItem key={m.id} item={m} />)}
+      {/* Lista hoje com separadores */}
+      <div style={{ background: '#1c1c1e', borderRadius: 16, overflow: 'hidden', margin: '0 16px' }}>
+        {today.map((m, i) => (
+          <div key={m.id}>
+            <HistItem item={m} />
+            {i < today.length - 1 && (
+              <div style={{ height: '0.5px', background: 'rgba(255,255,255,0.05)', margin: '0 20px' }} />
+            )}
+          </div>
+        ))}
+      </div>
 
       {/* Yesterday */}
-      <div className="ns-section-header" style={{ marginTop: 10 }}>
-        <span className="ns-section-title">Ontem</span>
-        <span className="ns-section-meta">{yesterdayKcal} kcal</span>
+      <div style={{
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        padding: '18px 20px 8px',
+      }}>
+        <span style={{
+          fontSize: 13, fontWeight: 600, color: '#8e8e93',
+          letterSpacing: '0.02em', textTransform: 'uppercase',
+        }}>
+          Ontem
+        </span>
+        <span style={{ fontSize: 13, color: '#FF9F0A', fontWeight: 600, letterSpacing: '-0.02em' }}>
+          {yesterdayKcal} kcal
+        </span>
       </div>
-      {yesterday.map(m => <HistItem key={m.id} item={m} />)}
+      <div style={{ background: '#1c1c1e', borderRadius: 16, overflow: 'hidden', margin: '0 16px' }}>
+        {yesterday.map((m, i) => (
+          <div key={m.id}>
+            <HistItem item={m} />
+            {i < yesterday.length - 1 && (
+              <div style={{ height: '0.5px', background: 'rgba(255,255,255,0.05)', margin: '0 20px' }} />
+            )}
+          </div>
+        ))}
+      </div>
 
-      <div style={{ height: 8 }} />
+      <div style={{ height: 24 }} />
     </div>
   );
 }

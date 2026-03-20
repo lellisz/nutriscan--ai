@@ -33,9 +33,9 @@ function compressImage(dataUrl, maxSize = 800, quality = 0.82) {
 }
 
 const CONF_COLOR = {
-  alta:  "#34C759",
-  media: "#FF9500",
-  baixa: "#FF3B30",
+  alta:  "#30D158",
+  media: "#FF9F0A",
+  baixa: "#FF453A",
 };
 const CONF_LABEL = {
   alta:  "Alta precisão",
@@ -126,57 +126,88 @@ export default function ScanPage() {
   /* ── UPLOAD ─────────────────────────────────────────── */
   if (!loading && !result) {
     return (
-      <div style={{ minHeight: "100vh", paddingBottom: 90, background: "var(--ns-bg)" }}>
+      <div style={{ minHeight: "100vh", paddingBottom: 90, background: "#000000" }}>
         <input
           type="file" accept="image/*" capture="environment"
           onChange={handleImageSelect} style={{ display: "none" }} id="image-input"
         />
-        <label htmlFor="image-input" style={{ display: "block", cursor: "pointer" }}>
+        <label
+          htmlFor="image-input"
+          style={{ display: "block", cursor: "pointer", WebkitTapHighlightColor: "transparent" }}
+        >
           <div style={{
             height: "calc(100vh - 90px)",
             display: "flex", flexDirection: "column",
             alignItems: "center", justifyContent: "center",
             padding: "0 32px",
           }}>
-            {/* Ícone */}
+            {/* Zona de upload */}
             <div style={{
-              width: 96, height: 96, borderRadius: 28,
-              background: "var(--ns-bg-1)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              marginBottom: 28,
+              width: "100%", maxWidth: 300,
+              background: "#111111",
+              border: "1.5px dashed rgba(48,209,88,0.30)",
+              borderRadius: 24,
+              padding: "44px 24px",
+              display: "flex", flexDirection: "column",
+              alignItems: "center", justifyContent: "center",
+              marginBottom: 32,
             }}>
-              <svg width="42" height="38" viewBox="0 0 42 38" fill="none">
-                <path d="M15 4L12 9H4C2 9 0 11 0 13V34C0 36 2 38 4 38H38C40 38 42 36 42 34V13C42 11 40 9 38 9H30L27 4H15Z" fill="var(--ns-bg-3)" />
-                <circle cx="21" cy="23" r="8" fill="var(--ns-bg)" />
-                <circle cx="21" cy="23" r="5.5" fill="var(--ns-t-2)" />
-              </svg>
+              {/* Ícone de câmera estilizado */}
+              <div style={{
+                width: 80, height: 80, borderRadius: 22,
+                background: "rgba(48,209,88,0.10)",
+                border: "0.5px solid rgba(48,209,88,0.20)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                marginBottom: 22,
+              }}>
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none">
+                  <path d="M8 7h8M12 3l3 4H9l3-4z" stroke="#30D158" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                  <rect x="2" y="7" width="20" height="14" rx="3" stroke="#30D158" strokeWidth="1.6"/>
+                  <circle cx="12" cy="14" r="3.5" stroke="#30D158" strokeWidth="1.6"/>
+                </svg>
+              </div>
+
+              <div style={{
+                fontSize: 28, marginBottom: 8,
+              }}>
+                🍎 🥗 🍗
+              </div>
+
+              <p style={{
+                fontSize: 13, color: "#636366", textAlign: "center",
+                lineHeight: 1.55, maxWidth: 200, letterSpacing: "-0.02em",
+              }}>
+                Toque para fotografar ou escolher da galeria
+              </p>
             </div>
 
             <h1 style={{
-              fontSize: 28, fontWeight: 700, letterSpacing: -0.6,
-              color: "var(--ns-t-primary)", marginBottom: 10, textAlign: "center",
+              fontSize: 30, fontWeight: 800, letterSpacing: "-0.05em",
+              color: "#ffffff", marginBottom: 10, textAlign: "center", lineHeight: 1.1,
             }}>
               Fotografe seu prato
             </h1>
             <p style={{
-              fontSize: 15, color: "var(--ns-t-3)", textAlign: "center",
-              lineHeight: 1.55, maxWidth: 260,
+              fontSize: 15, color: "#8e8e93", textAlign: "center",
+              lineHeight: 1.55, maxWidth: 260, letterSpacing: "-0.02em",
             }}>
               A IA identifica o alimento e calcula os macros automaticamente
             </p>
 
             {/* CTA */}
             <div style={{
-              marginTop: 44,
-              background: "var(--ns-t-primary)",
-              borderRadius: 16, padding: "15px 48px",
+              marginTop: 36,
+              background: "#30D158",
+              borderRadius: 14, padding: "0 48px",
+              height: 52, display: "flex", alignItems: "center", justifyContent: "center",
+              boxShadow: "0 4px 20px rgba(48,209,88,0.30)",
             }}>
-              <span style={{ fontSize: 16, fontWeight: 700, color: "#000" }}>
+              <span style={{ fontSize: 16, fontWeight: 700, color: "#000", letterSpacing: "-0.03em" }}>
                 Escanear alimento
               </span>
             </div>
 
-            <p style={{ marginTop: 14, fontSize: 12, color: "var(--ns-t-5)" }}>
+            <p style={{ marginTop: 14, fontSize: 12, color: "#48484a", letterSpacing: "-0.01em" }}>
               JPG, PNG · até 10MB
             </p>
           </div>
@@ -190,20 +221,37 @@ export default function ScanPage() {
     return (
       <div style={{
         minHeight: "100vh", paddingBottom: 90,
-        background: "var(--ns-bg)",
+        background: "#000000",
         display: "flex", flexDirection: "column",
       }}>
         {/* Imagem com overlay de análise */}
         {preview && (
-          <div style={{ position: "relative", width: "100%", height: 300, overflow: "hidden", flexShrink: 0 }}>
+          <div style={{ position: "relative", width: "100%", height: 320, overflow: "hidden", flexShrink: 0 }}>
             <img src={preview} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-            <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.55)" }} />
-            {/* Linha de scan */}
+            <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.65)" }} />
+            {/* Linha de scan verde */}
             <div style={{
-              position: "absolute", left: 0, right: 0, height: 1.5,
-              background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.8) 50%, transparent 100%)",
+              position: "absolute", left: 0, right: 0, height: 2,
+              background: "linear-gradient(90deg, transparent 0%, #30D158 50%, transparent 100%)",
+              boxShadow: "0 0 12px rgba(48,209,88,0.7)",
               animation: "ns-scan-line 1.8s ease-in-out infinite",
             }} />
+            {/* Cantos do viewfinder */}
+            {[
+              { top: 24, left: 24 },
+              { top: 24, right: 24 },
+              { bottom: 24, left: 24 },
+              { bottom: 24, right: 24 },
+            ].map((pos, i) => (
+              <div key={i} style={{
+                position: "absolute", ...pos,
+                width: 20, height: 20,
+                borderTop: i < 2 ? "2px solid #30D158" : "none",
+                borderBottom: i >= 2 ? "2px solid #30D158" : "none",
+                borderLeft: (i === 0 || i === 2) ? "2px solid #30D158" : "none",
+                borderRight: (i === 1 || i === 3) ? "2px solid #30D158" : "none",
+              }} />
+            ))}
           </div>
         )}
 
@@ -211,20 +259,37 @@ export default function ScanPage() {
           flex: 1, display: "flex", flexDirection: "column",
           alignItems: "center", justifyContent: "center", padding: 32,
         }}>
-          {/* Spinner */}
+          {/* Spinner verde */}
           <div style={{
-            width: 44, height: 44,
-            border: "2px solid var(--ns-bg-3)",
-            borderTop: "2px solid var(--ns-t-primary)",
+            width: 52, height: 52,
+            border: "2px solid rgba(255,255,255,0.08)",
+            borderTop: "2.5px solid #30D158",
             borderRadius: "50%",
             animation: "ns-rotate 0.75s linear infinite",
-            marginBottom: 22,
+            marginBottom: 24,
+            boxShadow: "0 0 16px rgba(48,209,88,0.2)",
           }} />
-          <div style={{ fontSize: 20, fontWeight: 700, color: "var(--ns-t-primary)", marginBottom: 6 }}>
+          <div style={{
+            fontSize: 22, fontWeight: 800, color: "#ffffff", marginBottom: 8,
+            letterSpacing: "-0.04em",
+          }}>
             {retryCount > 0 ? `Tentativa ${retryCount}/${maxRetries}...` : "Analisando..."}
           </div>
-          <div style={{ fontSize: 14, color: "var(--ns-t-4)" }}>
-            Identificando nutrientes
+          <div style={{ fontSize: 14, color: "#636366", letterSpacing: "-0.02em" }}>
+            Identificando nutrientes com IA
+          </div>
+
+          {/* Shimmer pills */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 32, width: "100%", maxWidth: 200 }}>
+            {[80, 60, 70].map((w, i) => (
+              <div key={i} style={{
+                height: 8, borderRadius: 4,
+                background: "rgba(255,255,255,0.06)",
+                width: `${w}%`,
+                alignSelf: "center",
+                animation: `ns-pulse ${1.2 + i * 0.2}s ease-in-out infinite`,
+              }} />
+            ))}
           </div>
         </div>
       </div>
@@ -233,29 +298,29 @@ export default function ScanPage() {
 
   /* ── RESULTADO ───────────────────────────────────────── */
   const totalMacros = (result.protein || 0) + (result.carbs || 0) + (result.fat || 0) || 1;
-  const confColor   = CONF_COLOR[result.confidence] || "#aeaeb2";
+  const confColor   = CONF_COLOR[result.confidence] || "#636366";
 
   return (
-    <div style={{ background: "var(--ns-bg)", paddingBottom: 90, animation: "ns-fade-up 0.25s ease" }}>
+    <div style={{ background: "#000000", paddingBottom: 90, animation: "ns-fade-up 0.25s ease" }}>
 
       {/* Hero — imagem + nome */}
       {preview && (
-        <div style={{ position: "relative", width: "100%", height: 280, overflow: "hidden" }}>
+        <div style={{ position: "relative", width: "100%", height: 300, overflow: "hidden" }}>
           <img src={preview} alt={result.food_name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           <div style={{
             position: "absolute", inset: 0,
-            background: "linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.1) 55%, transparent 100%)",
+            background: "linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.15) 55%, transparent 100%)",
           }} />
 
-          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "18px 18px 22px" }}>
+          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "20px 20px 26px" }}>
             <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 12 }}>
               <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", marginBottom: 5, fontWeight: 500 }}>
+                <div style={{ fontSize: 12, color: "rgba(255,255,255,0.45)", marginBottom: 6, fontWeight: 500, letterSpacing: "-0.01em" }}>
                   {result.portion}
                 </div>
                 <h2 style={{
-                  fontSize: 22, fontWeight: 800, color: "#fff",
-                  letterSpacing: -0.4, margin: 0, lineHeight: 1.2,
+                  fontSize: 28, fontWeight: 800, color: "#fff",
+                  letterSpacing: "-0.05em", margin: 0, lineHeight: 1.1,
                 }}>
                   {result.emoji} {result.food_name}
                 </h2>
@@ -263,11 +328,11 @@ export default function ScanPage() {
 
               {/* Badge de confiança */}
               <div style={{
-                background: `${confColor}22`,
-                border: `1px solid ${confColor}55`,
-                borderRadius: 8, padding: "5px 10px", flexShrink: 0,
+                background: `${confColor}1a`,
+                border: `0.5px solid ${confColor}44`,
+                borderRadius: 10, padding: "6px 12px", flexShrink: 0,
               }}>
-                <span style={{ fontSize: 10, fontWeight: 700, color: confColor }}>
+                <span style={{ fontSize: 11, fontWeight: 700, color: confColor, letterSpacing: "-0.01em" }}>
                   {CONF_LABEL[result.confidence]}
                 </span>
               </div>
@@ -278,40 +343,63 @@ export default function ScanPage() {
 
       <div style={{ padding: "16px 16px 0" }}>
 
-        {/* Calorias — destaque */}
-        <div className="ns-card ns-shimmer" style={{ padding: "22px 20px", marginBottom: 10, textAlign: "center" }}>
-          <div style={{ fontSize: 10, fontWeight: 600, color: "var(--ns-t-4)", letterSpacing: 0.8, marginBottom: 8 }}>
+        {/* Calorias — destaque hero */}
+        <div
+          className="ns-card ns-shimmer"
+          style={{
+            padding: "24px 20px", marginBottom: 10, textAlign: "center",
+            background: "#111111",
+            border: "0.5px solid rgba(255,255,255,0.08)", borderRadius: 20,
+          }}
+        >
+          <div style={{ fontSize: 11, fontWeight: 600, color: "#636366", letterSpacing: "0.06em", marginBottom: 8 }}>
             CALORIAS TOTAIS
           </div>
           <div style={{
-            fontSize: 64, fontWeight: 800, color: "var(--ns-t-primary)",
-            letterSpacing: -3, lineHeight: 1,
+            fontSize: 72, fontWeight: 800, color: "#FF9F0A",
+            letterSpacing: "-0.06em", lineHeight: 1,
+            textShadow: "0 0 30px rgba(255,159,10,0.25)",
           }}>
             {result.calories}
           </div>
-          <div style={{ fontSize: 13, color: "var(--ns-t-4)", marginTop: 6 }}>kcal</div>
+          <div style={{ fontSize: 14, color: "#636366", marginTop: 6, letterSpacing: "-0.02em" }}>kcal</div>
         </div>
 
-        {/* Macros com barras */}
-        <div className="ns-card" style={{ padding: "18px 18px", marginBottom: 10 }}>
-          <div className="ns-label" style={{ marginBottom: 16 }}>Macronutrientes</div>
+        {/* Grid 2x2 de macros */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
           {[
-            { label: "Proteína",     val: result.protein, color: "var(--ns-macro-prot)" },
-            { label: "Carboidratos", val: result.carbs,   color: "var(--ns-macro-carb)" },
-            { label: "Gordura",      val: result.fat,     color: "var(--ns-macro-fat)"  },
-          ].map((m, i, arr) => {
+            { label: "Proteína",     val: result.protein, unit: "g", color: "#FF6B35" },
+            { label: "Carboidratos", val: result.carbs,   unit: "g", color: "#FFD60A" },
+            { label: "Gordura",      val: result.fat,     unit: "g", color: "#BF5AF2" },
+            { label: "Fibra",        val: result.fiber,   unit: "g", color: "#30D158" },
+          ].map((m) => {
             const pct = Math.round((m.val / totalMacros) * 100);
             return (
-              <div key={m.label} style={{ marginBottom: i < arr.length - 1 ? 14 : 0 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
-                  <span style={{ fontSize: 13, color: "var(--ns-t-3)" }}>{m.label}</span>
-                  <span style={{ fontSize: 15, fontWeight: 700, color: m.color }}>{m.val}g</span>
+              <div
+                key={m.label}
+                style={{
+                  background: "#111111",
+                  border: "0.5px solid rgba(255,255,255,0.08)",
+                  borderRadius: 16, padding: "16px 14px",
+                }}
+              >
+                <div style={{ fontSize: 11, color: "#636366", letterSpacing: "-0.01em", marginBottom: 6, fontWeight: 500 }}>{m.label}</div>
+                <div style={{
+                  fontSize: 32, fontWeight: 800, color: m.color,
+                  letterSpacing: "-0.05em", lineHeight: 1,
+                }}>
+                  {m.val}
+                  <span style={{ fontSize: 14, fontWeight: 500, color: "#48484a" }}>{m.unit}</span>
                 </div>
-                <div style={{ height: 3, background: "var(--ns-bg-2)", borderRadius: 3, overflow: "hidden" }}>
+                <div style={{
+                  height: 3, borderRadius: 3, background: "rgba(255,255,255,0.07)",
+                  overflow: "hidden", marginTop: 10,
+                }}>
                   <div style={{
                     height: "100%", width: `${pct}%`,
-                    background: m.color, borderRadius: 3,
-                    transition: "width 0.7s cubic-bezier(.4,0,.2,1)",
+                    background: `linear-gradient(90deg, ${m.color}88, ${m.color})`,
+                    borderRadius: 3,
+                    transition: "width 0.8s cubic-bezier(0.4,0,0.2,1)",
                   }} />
                 </div>
               </div>
@@ -320,48 +408,65 @@ export default function ScanPage() {
         </div>
 
         {/* Micronutrientes */}
-        <div className="ns-card" style={{ padding: "18px", marginBottom: 10 }}>
-          <div className="ns-label" style={{ marginBottom: 16 }}>Micronutrientes</div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 0 }}>
+        <div
+          className="ns-card"
+          style={{
+            padding: "18px", marginBottom: 10,
+            background: "#111111",
+            border: "0.5px solid rgba(255,255,255,0.08)", borderRadius: 16,
+          }}
+        >
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#ffffff", letterSpacing: "-0.03em", marginBottom: 14 }}>Micronutrientes</div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
             {[
-              { label: "Fibra",   val: result.fiber,  unit: "g"  },
               { label: "Açúcar",  val: result.sugar,  unit: "g"  },
               { label: "Sódio",   val: result.sodium, unit: "mg" },
             ].map((n, i) => (
-              <div key={n.label} style={{
-                textAlign: "center",
-                borderRight: i < 2 ? "0.5px solid var(--ns-sep)" : "none",
-              }}>
-                <div style={{ fontSize: 20, fontWeight: 700, color: "var(--ns-t-1)" }}>
+              <div
+                key={n.label}
+                style={{
+                  textAlign: "center",
+                  borderRight: i === 0 ? "0.5px solid rgba(255,255,255,0.06)" : "none",
+                  padding: "0 8px",
+                }}
+              >
+                <div style={{ fontSize: 24, fontWeight: 800, color: "#ebebf0", letterSpacing: "-0.04em" }}>
                   {n.val}
-                  <span style={{ fontSize: 11, fontWeight: 500, color: "var(--ns-t-4)" }}>{n.unit}</span>
+                  <span style={{ fontSize: 12, fontWeight: 500, color: "#636366" }}>{n.unit}</span>
                 </div>
-                <div style={{ fontSize: 10, color: "var(--ns-t-4)", marginTop: 3 }}>{n.label}</div>
+                <div style={{ fontSize: 11, color: "#636366", marginTop: 3, letterSpacing: "-0.01em" }}>{n.label}</div>
               </div>
             ))}
           </div>
         </div>
 
         {/* Scores */}
-        <div className="ns-card" style={{ padding: "18px", marginBottom: 10 }}>
+        <div
+          className="ns-card"
+          style={{
+            padding: "18px", marginBottom: 10,
+            background: "#111111",
+            border: "0.5px solid rgba(255,255,255,0.08)", borderRadius: 16,
+          }}
+        >
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 0 }}>
             {[
-              { label: "Índice Glicêmico", val: result.glycemic_index },
-              { label: "Saciedade",        val: `${result.satiety_score}/10` },
-              { label: "Cutting",          val: `${result.cutting_score}/10` },
+              { label: "Glicêmico", val: result.glycemic_index, color: "#FF9F0A" },
+              { label: "Saciedade", val: `${result.satiety_score}/10`, color: "#30D158" },
+              { label: "Cutting",   val: `${result.cutting_score}/10`, color: "#0A84FF" },
             ].map((s, i) => (
               <div key={s.label} style={{
                 textAlign: "center",
-                borderRight: i < 2 ? "0.5px solid var(--ns-sep)" : "none",
+                borderRight: i < 2 ? "0.5px solid rgba(255,255,255,0.06)" : "none",
                 padding: "0 4px",
               }}>
                 <div style={{
-                  fontSize: 18, fontWeight: 700, color: "var(--ns-t-1)",
-                  textTransform: "capitalize",
+                  fontSize: 20, fontWeight: 800, color: s.color,
+                  letterSpacing: "-0.04em",
                 }}>
                   {s.val}
                 </div>
-                <div style={{ fontSize: 10, color: "var(--ns-t-4)", marginTop: 3, lineHeight: 1.3 }}>
+                <div style={{ fontSize: 10, color: "#636366", marginTop: 3, lineHeight: 1.3, letterSpacing: "-0.01em" }}>
                   {s.label}
                 </div>
               </div>
@@ -371,24 +476,32 @@ export default function ScanPage() {
 
         {/* Benefícios */}
         {result.benefits?.length > 0 && (
-          <div className="ns-card" style={{ padding: "18px", marginBottom: 10 }}>
-            <div className="ns-label" style={{ marginBottom: 14 }}>Benefícios</div>
+          <div
+            className="ns-card"
+            style={{
+              padding: "18px", marginBottom: 10,
+              background: "#111111",
+              border: "0.5px solid rgba(255,255,255,0.08)", borderRadius: 16,
+            }}
+          >
+            <div style={{ fontSize: 13, fontWeight: 700, color: "#ffffff", letterSpacing: "-0.03em", marginBottom: 14 }}>Benefícios</div>
             {result.benefits.map((b, i) => (
               <div key={i} style={{
                 display: "flex", gap: 10, alignItems: "flex-start",
                 marginBottom: i < result.benefits.length - 1 ? 12 : 0,
               }}>
                 <div style={{
-                  width: 18, height: 18, borderRadius: "50%",
-                  background: "var(--ns-bg-2)",
+                  width: 20, height: 20, borderRadius: "50%",
+                  background: "rgba(48,209,88,0.12)",
+                  border: "0.5px solid rgba(48,209,88,0.2)",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   flexShrink: 0, marginTop: 1,
                 }}>
                   <svg width="8" height="7" viewBox="0 0 8 7" fill="none">
-                    <path d="M1 3.5L3 5.5L7 1.5" stroke="var(--ns-t-2)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M1 3.5L3 5.5L7 1.5" stroke="#30D158" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </div>
-                <span style={{ fontSize: 13, color: "var(--ns-t-2)", lineHeight: 1.45 }}>{b}</span>
+                <span style={{ fontSize: 13, color: "#ebebf0", lineHeight: 1.5, letterSpacing: "-0.01em" }}>{b}</span>
               </div>
             ))}
           </div>
@@ -396,10 +509,17 @@ export default function ScanPage() {
 
         {/* Atenção */}
         {result.watch_out && (
-          <div className="ns-card" style={{ padding: "14px 18px", marginBottom: 10 }}>
+          <div
+            className="ns-card"
+            style={{
+              padding: "14px 18px", marginBottom: 10,
+              background: "rgba(255,69,58,0.06)",
+              border: "0.5px solid rgba(255,69,58,0.20)", borderRadius: 16,
+            }}
+          >
             <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-              <span style={{ fontSize: 15, flexShrink: 0, marginTop: 1 }}>⚠️</span>
-              <span style={{ fontSize: 13, color: "var(--ns-t-3)", lineHeight: 1.45 }}>
+              <span style={{ fontSize: 16, flexShrink: 0, marginTop: 1 }}>⚠️</span>
+              <span style={{ fontSize: 13, color: "#ebebf0", lineHeight: 1.5, letterSpacing: "-0.01em" }}>
                 {result.watch_out}
               </span>
             </div>
@@ -408,14 +528,21 @@ export default function ScanPage() {
 
         {/* Dica da IA */}
         {result.ai_tip && (
-          <div className="ns-card" style={{ padding: "16px 18px", marginBottom: 20 }}>
+          <div
+            className="ns-card"
+            style={{
+              padding: "16px 18px", marginBottom: 20,
+              background: "rgba(10,132,255,0.06)",
+              border: "0.5px solid rgba(10,132,255,0.18)", borderRadius: 16,
+            }}
+          >
             <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-              <span style={{ fontSize: 15, flexShrink: 0, marginTop: 2 }}>💡</span>
+              <span style={{ fontSize: 16, flexShrink: 0, marginTop: 1 }}>💡</span>
               <div>
-                <div style={{ fontSize: 10, fontWeight: 600, color: "var(--ns-t-4)", letterSpacing: 0.6, marginBottom: 5 }}>
-                  DICA
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#0A84FF", letterSpacing: "0.04em", marginBottom: 5 }}>
+                  DICA DA IA
                 </div>
-                <span style={{ fontSize: 13, color: "var(--ns-t-2)", lineHeight: 1.5 }}>
+                <span style={{ fontSize: 13, color: "#ebebf0", lineHeight: 1.55, letterSpacing: "-0.01em" }}>
                   {result.ai_tip}
                 </span>
               </div>
@@ -429,20 +556,27 @@ export default function ScanPage() {
             <button
               onClick={() => setShowCorrection(true)}
               style={{
-                flex: 1, padding: "15px", borderRadius: 14,
-                background: "var(--ns-bg-1)", border: "none", cursor: "pointer",
-                fontSize: 14, fontWeight: 600, color: "var(--ns-t-2)",
+                flex: 1, height: 52, borderRadius: 14,
+                background: "#1c1c1e",
+                border: "0.5px solid rgba(255,255,255,0.10)",
+                cursor: "pointer",
+                fontSize: 15, fontWeight: 600, color: "#ebebf0",
+                letterSpacing: "-0.02em",
+                WebkitTapHighlightColor: "transparent",
               }}
             >
-              ✏️ Corrigir
+              Corrigir
             </button>
           )}
           <button
             onClick={resetScan}
             style={{
-              flex: 1, padding: "15px", borderRadius: 14,
-              background: "var(--ns-t-primary)", border: "none", cursor: "pointer",
-              fontSize: 14, fontWeight: 700, color: "#000",
+              flex: 1, height: 52, borderRadius: 14,
+              background: "#30D158", border: "none", cursor: "pointer",
+              fontSize: 15, fontWeight: 700, color: "#000",
+              letterSpacing: "-0.03em",
+              boxShadow: "0 4px 16px rgba(48,209,88,0.25)",
+              WebkitTapHighlightColor: "transparent",
             }}
           >
             Escanear outro
@@ -450,8 +584,8 @@ export default function ScanPage() {
         </div>
 
         {result.status === "verified" && (
-          <div style={{ textAlign: "center", fontSize: 12, color: "var(--ns-t-4)", paddingBottom: 4 }}>
-            ✓ Corrigido manualmente
+          <div style={{ textAlign: "center", fontSize: 12, color: "#30D158", paddingBottom: 4, letterSpacing: "-0.01em" }}>
+            Corrigido manualmente
           </div>
         )}
       </div>

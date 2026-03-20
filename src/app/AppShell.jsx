@@ -3,31 +3,30 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 // ── SVG Icons ──────────────────────────────────────────────
 const IconHome = ({ active }) => (
-  <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
     <path
-      d="M3 11L11 3l8 8V19H14v-5H8v5H3V11z"
-      stroke={active ? '#ebebf0' : '#ebebf0'}
-      strokeWidth="1.8"
-      fill="none"
+      d="M3 12L12 3l9 9V21h-5v-6H8v6H3V12z"
+      stroke={active ? '#30D158' : '#636366'}
+      strokeWidth="1.6"
+      fill={active ? 'rgba(48,209,88,0.12)' : 'none'}
       strokeLinejoin="round"
+      strokeLinecap="round"
     />
   </svg>
 );
 
 const IconHistory = ({ active }) => (
-  <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-    <rect x="3" y="5" width="16" height="2" rx="1" fill="#ebebf0" />
-    <rect x="3" y="10" width="12" height="2" rx="1" fill="#ebebf0" />
-    <rect x="3" y="15" width="14" height="2" rx="1" fill="#ebebf0" />
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <path d="M4 6h16M4 12h12M4 18h14" stroke={active ? '#30D158' : '#636366'} strokeWidth="1.6" strokeLinecap="round" />
   </svg>
 );
 
 const IconProgress = ({ active }) => (
-  <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-    <polyline
-      points="3,16 7,10 11,13 19,4"
-      stroke="#ebebf0"
-      strokeWidth="1.8"
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <path
+      d="M3 18L8 11l4.5 3.5L18 6l3 3"
+      stroke={active ? '#30D158' : '#636366'}
+      strokeWidth="1.6"
       strokeLinecap="round"
       strokeLinejoin="round"
     />
@@ -35,43 +34,36 @@ const IconProgress = ({ active }) => (
 );
 
 const IconCoach = ({ active }) => (
-  <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-    <circle cx="11" cy="8" r="3" stroke="#ebebf0" strokeWidth="1.8" />
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <circle cx="12" cy="8" r="3.5" stroke={active ? '#30D158' : '#636366'} strokeWidth="1.6" />
     <path
-      d="M7 14c0-2.2 1.8-4 4-4s4 1.8 4 4"
-      stroke="#ebebf0"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-    />
-    <path
-      d="M4 17h14M6 19.5h10"
-      stroke="#ebebf0"
-      strokeWidth="1.8"
+      d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7"
+      stroke={active ? '#30D158' : '#636366'}
+      strokeWidth="1.6"
       strokeLinecap="round"
     />
   </svg>
 );
 
 const IconProfile = ({ active }) => (
-  <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-    <circle cx="11" cy="7" r="4" stroke="#ebebf0" strokeWidth="1.8" />
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <circle cx="12" cy="7.5" r="4" stroke={active ? '#30D158' : '#636366'} strokeWidth="1.6" />
     <path
-      d="M3 19c0-4.4 3.6-8 8-8s8 3.6 8 8"
-      stroke="#ebebf0"
-      strokeWidth="1.8"
+      d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"
+      stroke={active ? '#30D158' : '#636366'}
+      strokeWidth="1.6"
       strokeLinecap="round"
     />
   </svg>
 );
 
 const IconScan = () => (
-  <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-    <rect x="1" y="1" width="8" height="8" rx="2" stroke="#000" strokeWidth="2" />
-    <rect x="13" y="1" width="8" height="8" rx="2" stroke="#000" strokeWidth="2" />
-    <rect x="1" y="13" width="8" height="8" rx="2" stroke="#000" strokeWidth="2" />
-    <rect x="13" y="13" width="3.5" height="3.5" rx=".6" fill="#000" />
-    <rect x="17.5" y="13" width="3.5" height="3.5" rx=".6" fill="#000" />
-    <rect x="13" y="17.5" width="3.5" height="3.5" rx=".6" fill="#000" />
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <path d="M4 9V5h4" stroke="#000" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M20 9V5h-4" stroke="#000" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M4 15v4h4" stroke="#000" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M20 15v4h-4" stroke="#000" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    <circle cx="12" cy="12" r="3" stroke="#000" strokeWidth="2" />
   </svg>
 );
 
@@ -135,14 +127,32 @@ export function BottomNav({ onScanPress }) {
   const { pathname } = useLocation();
 
   return (
-    <nav className="ns-bottom-nav">
+    <nav
+      className="ns-bottom-nav"
+      style={{
+        background: 'rgba(0,0,0,0.85)',
+        backdropFilter: 'blur(30px) saturate(200%)',
+        WebkitBackdropFilter: 'blur(30px) saturate(200%)',
+        borderTop: '0.5px solid rgba(255,255,255,0.10)',
+      }}
+    >
       {NAV_ITEMS.map((item, i) => {
         if (item.isFab) {
           return (
-            <div key="fab" className="ns-nav-item" onClick={onScanPress}>
-              <div className="ns-fab">
-                <div className="ns-fab-ring-1" />
-                <div className="ns-fab-ring-2" />
+            <div
+              key="fab"
+              className="ns-nav-item"
+              onClick={onScanPress}
+              style={{ WebkitTapHighlightColor: 'transparent' }}
+            >
+              <div
+                className="ns-fab"
+                style={{
+                  background: '#30D158',
+                  boxShadow: '0 0 0 4px #000, 0 4px 20px rgba(48,209,88,0.35)',
+                  transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
+                }}
+              >
                 <IconScan />
               </div>
             </div>
@@ -157,8 +167,25 @@ export function BottomNav({ onScanPress }) {
             key={item.path}
             className={`ns-nav-item${isActive ? ' ns-nav-item--active' : ''}`}
             onClick={() => navigate(item.path)}
-            style={{ position: 'relative' }}
+            style={{
+              position: 'relative',
+              WebkitTapHighlightColor: 'transparent',
+            }}
           >
+            {/* Indicador de linha no topo — estilo iOS */}
+            {isActive && (
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: 20,
+                height: 2.5,
+                borderRadius: '0 0 3px 3px',
+                background: '#30D158',
+                boxShadow: '0 0 8px rgba(48,209,88,0.6)',
+              }} />
+            )}
             <div className="ns-nav-icon">
               <item.Icon active={isActive} />
               {item.path === '/coach' && !isActive && (
@@ -166,16 +193,21 @@ export function BottomNav({ onScanPress }) {
                   position: 'absolute',
                   top: -2,
                   right: -2,
-                  width: 8,
-                  height: 8,
+                  width: 7,
+                  height: 7,
                   borderRadius: '50%',
-                  background: '#ebebf0',
+                  background: '#30D158',
                   border: '1.5px solid #000',
                   animation: 'ns-pulse 2s ease infinite',
                 }} />
               )}
             </div>
-            <span className="ns-nav-label">{item.label}</span>
+            <span
+              className="ns-nav-label"
+              style={{ color: isActive ? '#30D158' : '#636366' }}
+            >
+              {item.label}
+            </span>
           </div>
         );
       })}

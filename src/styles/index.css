@@ -1,94 +1,141 @@
 /* ============================================================
-   NutriScan — Volcanic Ash Theme
-   Neutral Matte Dark · Version 1.0
+   NutriScan — iOS Premium Theme
+   True Black OLED · Apple Design Language · Version 3.0
    ============================================================ */
 
 /* ------------------------------------------------------------
    1. CSS VARIABLES — Core Design Tokens
    ------------------------------------------------------------ */
 :root {
-  /* Backgrounds */
-  --ns-bg-primary:     #111110;
-  --ns-bg-card:        #1a1a18;
-  --ns-bg-elevated:    #222220;
-  --ns-bg-input:       #1a1a18;
-  --ns-bg-hover:       #222220;
-  --ns-bg-pressed:     #2a2a28;
+  /* ── Backgrounds — true OLED black como iPhone ── */
+  --ns-bg-primary:   #000000;
+  --ns-bg-card:      #111111;
+  --ns-bg-elevated:  #1c1c1e;   /* iOS systemGray6 */
+  --ns-bg-input:     #1c1c1e;
+  --ns-bg-hover:     #2c2c2e;   /* iOS systemGray5 */
+  --ns-bg-pressed:   #3a3a3c;   /* iOS systemGray4 */
 
-  /* Borders */
-  --ns-border:         #2a2a28;
-  --ns-border-strong:  #3a3a38;
-  --ns-border-subtle:  #1e1e1c;
+  /* Aliases usados nos componentes */
+  --ns-bg:   #000000;
+  --ns-bg-1: #111111;
+  --ns-bg-2: #1c1c1e;
+  --ns-bg-3: #2c2c2e;
 
-  /* Text */
-  --ns-text-primary:   #e8e8e4;
-  --ns-text-secondary: #999994;
-  --ns-text-muted:     #555550;
-  --ns-text-disabled:  #333330;
+  /* ── Borders — quase invisíveis, iOS-style ── */
+  --ns-border:        rgba(255,255,255,0.08);
+  --ns-border-strong: rgba(255,255,255,0.14);
+  --ns-border-subtle: rgba(255,255,255,0.04);
+  --ns-sep:           rgba(255,255,255,0.06);
+  --ns-sep-subtle:    rgba(255,255,255,0.03);
 
-  /* Accent (white-ash) */
-  --ns-accent:         #e8e8e4;
-  --ns-accent-bg:      #333330;
-  --ns-accent-hover:   #f4f4f0;
+  /* ── Accent principal — Verde iOS (#30D158 é o verde do Apple Fitness dark mode) ── */
+  --ns-accent:       #30D158;
+  --ns-accent-dim:   #25A244;
+  --ns-accent-bg:    rgba(48,209,88,0.12);
+  --ns-accent-hover: #4ADF6B;
 
-  /* Macros */
-  --ns-macro-protein:  #d0d0cc;
-  --ns-macro-carb:     #999994;
-  --ns-macro-fat:      #666660;
+  /* ── Accents secundários (para nutrição) ── */
+  --ns-orange:       #FF9F0A;   /* Apple orange — calorias */
+  --ns-orange-bg:    rgba(255,159,10,0.12);
+  --ns-blue:         #0A84FF;   /* Apple blue — água/hidratação */
+  --ns-blue-bg:      rgba(10,132,255,0.12);
+  --ns-purple:       #BF5AF2;   /* Apple purple — gordura */
+  --ns-purple-bg:    rgba(191,90,242,0.12);
 
-  /* Semantic */
-  --ns-success:        #4a7c59;
-  --ns-success-bg:     #1a2a1e;
-  --ns-warning:        #8a6a30;
-  --ns-warning-bg:     #2a2010;
-  --ns-danger:         #7a3030;
-  --ns-danger-bg:      #2a1010;
+  /* ── Text — iOS system colors ── */
+  --ns-text-primary:   #FFFFFF;
+  --ns-text-secondary: #ebebf0;
+  --ns-text-muted:     #8e8e93;   /* iOS systemGray */
+  --ns-text-disabled:  #48484a;   /* iOS systemGray3 */
 
-  /* Radius */
-  --ns-radius-sm:      8px;
-  --ns-radius-md:      12px;
-  --ns-radius-lg:      16px;
-  --ns-radius-xl:      20px;
-  --ns-radius-full:    9999px;
+  /* Aliases usados nos componentes */
+  --ns-t-primary: #FFFFFF;
+  --ns-t-1:       #FFFFFF;
+  --ns-t-2:       #ebebf0;
+  --ns-t-3:       #8e8e93;
+  --ns-t-4:       #636366;
+  --ns-t-5:       #48484a;
+  --ns-t-6:       #3a3a3c;
 
-  /* Spacing scale */
-  --ns-space-1:        4px;
-  --ns-space-2:        8px;
-  --ns-space-3:        12px;
-  --ns-space-4:        16px;
-  --ns-space-5:        20px;
-  --ns-space-6:        24px;
-  --ns-space-8:        32px;
+  /* ── Macros — Apple-style vivid ── */
+  --ns-macro-protein:  #FF6B35;   /* laranja vibrante para proteína */
+  --ns-macro-carb:     #FFD60A;   /* amarelo iOS */
+  --ns-macro-fat:      #BF5AF2;   /* roxo Apple */
+  --ns-macro-water:    #0A84FF;   /* azul Apple */
 
-  /* Typography */
-  --ns-font-base:      -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --ns-font-mono:      'SF Mono', 'Fira Code', monospace;
+  /* Aliases curtos usados nos componentes */
+  --ns-macro-prot:  #FF6B35;
+  --ns-macro-carbs: #FFD60A;
 
-  --ns-text-xs:        10px;
-  --ns-text-sm:        12px;
-  --ns-text-base:      14px;
-  --ns-text-md:        16px;
-  --ns-text-lg:        20px;
-  --ns-text-xl:        24px;
-  --ns-text-2xl:       30px;
-  --ns-text-3xl:       38px;
+  /* ── Rings do Dashboard ── */
+  --ns-ring-cal:        #30D158;
+  --ns-ring-prot:       #FF6B35;
+  --ns-ring-water:      #0A84FF;
+  --ns-ring-track:      #1c1c1e;
+  --ns-ring-legend-dot: #30D158;
 
-  --ns-weight-normal:  400;
-  --ns-weight-medium:  500;
-  --ns-weight-bold:    600;
+  /* ── Semânticas ── */
+  --ns-success:     #30D158;
+  --ns-success-bg:  rgba(48,209,88,0.12);
+  --ns-warning:     #FFD60A;
+  --ns-warning-bg:  rgba(255,214,10,0.12);
+  --ns-danger:      #FF453A;   /* Apple red */
+  --ns-danger-bg:   rgba(255,69,58,0.12);
 
-  /* Shadows */
-  --ns-shadow-sm:      0 1px 3px rgba(0, 0, 0, 0.4);
-  --ns-shadow-md:      0 4px 12px rgba(0, 0, 0, 0.5);
-  --ns-shadow-lg:      0 8px 24px rgba(0, 0, 0, 0.6);
+  /* ── Typography — SF Pro characteristics ── */
+  --ns-font-base: -apple-system, 'SF Pro Display', 'SF Pro Text', BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  --ns-font-mono: 'SF Mono', 'Fira Code', monospace;
 
-  /* Transitions */
-  --ns-transition:     0.15s ease;
-  --ns-transition-slow: 0.3s ease;
+  --ns-text-xs:   11px;
+  --ns-text-sm:   13px;
+  --ns-text-base: 14px;
+  --ns-text-md:   16px;
+  --ns-text-lg:   18px;
+  --ns-text-xl:   22px;
+  --ns-text-2xl:  28px;
+  --ns-text-3xl:  38px;
 
-  /* Nav */
-  --ns-nav-height: 72px;
-  --ns-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --ns-weight-normal: 400;
+  --ns-weight-medium: 500;
+  --ns-weight-bold:   600;
+  --ns-weight-heavy:  700;
+  --ns-weight-black:  800;
+
+  /* Tamanhos iguais, tracking mais tight */
+  --ns-tracking-tight:   -0.04em;
+  --ns-tracking-tighter: -0.06em;
+  --ns-tracking-wide:     0.05em;
+
+  /* ── Spacing ── */
+  --ns-space-1: 4px;
+  --ns-space-2: 8px;
+  --ns-space-3: 12px;
+  --ns-space-4: 16px;
+  --ns-space-5: 20px;
+  --ns-space-6: 24px;
+  --ns-space-8: 32px;
+
+  --ns-page-px: 16px;
+
+  /* ── Radius ── */
+  --ns-radius-sm:   8px;
+  --ns-radius-md:   12px;
+  --ns-radius-lg:   16px;
+  --ns-radius-xl:   20px;
+  --ns-radius-full: 9999px;
+
+  /* ── Shadows — iOS depth ── */
+  --ns-shadow-sm: 0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
+  --ns-shadow-md: 0 4px 16px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.3);
+  --ns-shadow-lg: 0 8px 32px rgba(0,0,0,0.6), 0 4px 12px rgba(0,0,0,0.4);
+  --ns-shadow-glow: 0 0 24px rgba(48,209,88,0.2);
+  --ns-shadow-glow-sm: 0 0 12px rgba(48,209,88,0.15);
+
+  /* ── Misc ── */
+  --ns-transition:      150ms ease;
+  --ns-transition-slow: 300ms ease;
+  --ns-nav-height:      72px;
+  --ns-safe-bottom:     env(safe-area-inset-bottom, 0px);
 }
 
 
@@ -109,6 +156,16 @@ html {
 html, body, #root {
   margin: 0;
   padding: 0;
+}
+
+html, body {
+  margin: 0; padding: 0;
+  background: var(--ns-bg-primary);
+  color: var(--ns-text-primary);
+  font-family: var(--ns-font-base);
+  font-size: var(--ns-text-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
@@ -200,17 +257,16 @@ input, select, textarea { outline: none; }
    4. CARDS & SURFACES
    ------------------------------------------------------------ */
 .ns-card {
-  background: var(--ns-bg-card);
-  border: 0.5px solid var(--ns-border);
-  border-radius: var(--ns-radius-xl);
-  padding: var(--ns-space-4);
+  background: #111111;
+  border-radius: 16px;
+  border: 0.5px solid rgba(255,255,255,0.06);
+  overflow: hidden;
 }
 
 .ns-card-sm {
-  background: var(--ns-bg-card);
-  border: 0.5px solid var(--ns-border);
-  border-radius: var(--ns-radius-lg);
-  padding: var(--ns-space-3);
+  background: #1c1c1e;
+  border-radius: 12px;
+  border: none;
 }
 
 .ns-divider {
@@ -242,16 +298,22 @@ input, select, textarea { outline: none; }
 
 .ns-btn-primary {
   background: var(--ns-accent);
-  color: var(--ns-bg-primary);
+  color: #000000;   /* preto no verde — máximo contraste */
+  border: none;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  box-shadow: 0 0 24px rgba(48,209,88,0.2);
 }
 
-.ns-btn-primary:hover {
+.ns-btn-primary:hover:not(:disabled) {
   background: var(--ns-accent-hover);
+  box-shadow: 0 0 32px rgba(48,209,88,0.3);
   transform: translateY(-1px);
 }
 
-.ns-btn-primary:active {
+.ns-btn-primary:active:not(:disabled) {
   transform: scale(0.98);
+  box-shadow: none;
 }
 
 .ns-btn-primary:disabled {
@@ -287,26 +349,30 @@ input, select, textarea { outline: none; }
    ------------------------------------------------------------ */
 .ns-input {
   width: 100%;
-  padding: var(--ns-space-3) var(--ns-space-4);
-  background: var(--ns-bg-input);
-  border: 0.5px solid var(--ns-border);
-  border-radius: var(--ns-radius-md);
-  color: var(--ns-text-primary);
-  font-size: var(--ns-text-base);
-  transition: border-color var(--ns-transition);
+  padding: 14px 16px;
+  background: var(--ns-bg-elevated);
+  border: 0.5px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  transition: border-color var(--ns-transition), box-shadow var(--ns-transition), background var(--ns-transition);
   outline: none;
 }
 
 .ns-input::placeholder {
-  color: var(--ns-text-disabled);
+  color: #48484a;
 }
 
 .ns-input:focus {
-  border-color: var(--ns-border-strong);
+  outline: none;
+  border-color: var(--ns-accent);
+  background: rgba(48,209,88,0.04);
+  box-shadow: 0 0 0 3px rgba(48,209,88,0.1);
 }
 
 .ns-input:focus-visible {
-  box-shadow: 0 0 0 2px rgba(232, 232, 228, 0.15);
+  box-shadow: 0 0 0 3px rgba(48,209,88,0.1);
 }
 
 .ns-input-error {
@@ -374,34 +440,34 @@ input, select, textarea { outline: none; }
    ------------------------------------------------------------ */
 .ns-bottom-nav {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: 0; left: 0; right: 0;
   height: calc(var(--ns-nav-height) + var(--ns-safe-bottom));
-  padding-bottom: var(--ns-safe-bottom);
+  background: rgba(0,0,0,0.82);
+  backdrop-filter: blur(30px) saturate(200%);
+  -webkit-backdrop-filter: blur(30px) saturate(200%);
+  border-top: 0.5px solid rgba(255,255,255,0.1);
   display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding-top: var(--ns-space-2);
-  border-top: 0.5px solid var(--ns-border-subtle);
-  background: var(--ns-bg-primary);
+  align-items: flex-start;
+  padding-top: 10px;
+  padding-bottom: var(--ns-safe-bottom);
   z-index: 100;
-  animation: slideUp 0.5s cubic-bezier(0.33, 1, 0.68, 1) both;
 }
 
 .ns-nav-item {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
+  padding: 4px 0;
   cursor: pointer;
-  padding: var(--ns-space-1) var(--ns-space-2);
-  border-radius: var(--ns-radius-sm);
-  transition: all var(--ns-transition);
-  color: var(--ns-text-muted);
-  font-size: var(--ns-text-xs);
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
   background: none;
   border: none;
+  color: var(--ns-text-muted);
+  font-size: var(--ns-text-xs);
+  transition: all var(--ns-transition);
   min-width: 56px;
 }
 
@@ -425,6 +491,74 @@ input, select, textarea { outline: none; }
 
 .ns-nav-item:active {
   transform: scale(0.9);
+}
+
+.ns-nav-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+}
+
+.ns-nav-label {
+  font-size: 10px;
+  font-weight: var(--ns-weight-medium);
+  color: var(--ns-text-muted);
+  letter-spacing: 0.02em;
+  transition: color var(--ns-transition);
+}
+
+/* CORRIGIDO: era .ns-nav-item--active, CSS define .ns-nav-item.active */
+.ns-nav-item.active .ns-nav-label,
+.ns-nav-item--active .ns-nav-label {
+  color: var(--ns-accent);
+}
+
+/* Indicador ativo — iOS pill style */
+.ns-nav-item.active::after,
+.ns-nav-item--active::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--ns-accent);
+  box-shadow: 0 0 10px rgba(48,209,88,0.7);
+}
+
+/* FAB de Scan */
+.ns-fab {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: var(--ns-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -22px;
+  box-shadow: 0 0 0 4px #000, 0 0 20px rgba(48,209,88,0.3);
+  transition: transform var(--ns-transition), box-shadow var(--ns-transition);
+  position: relative;
+}
+.ns-fab:active {
+  transform: scale(0.95);
+}
+.ns-fab-ring-1 {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid rgba(48,209,88,0.25);
+}
+.ns-fab-ring-2 {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 1px solid rgba(48,209,88,0.1);
 }
 
 .ns-scan-fab {
@@ -548,20 +682,9 @@ input, select, textarea { outline: none; }
   color: var(--ns-accent);
 }
 
-.ns-badge-success {
-  background: var(--ns-success-bg);
-  color: #6ab87a;
-}
-
-.ns-badge-warning {
-  background: var(--ns-warning-bg);
-  color: #c09050;
-}
-
-.ns-badge-danger {
-  background: var(--ns-danger-bg);
-  color: #c07070;
-}
+.ns-badge-success { background: var(--ns-success-bg); color: var(--ns-success); border: 0.5px solid rgba(48,209,88,0.25); }
+.ns-badge-warning { background: var(--ns-warning-bg); color: var(--ns-warning); border: 0.5px solid rgba(255,214,10,0.25); }
+.ns-badge-danger  { background: var(--ns-danger-bg);  color: var(--ns-danger);  border: 0.5px solid rgba(255,69,58,0.25); }
 
 
 /* ------------------------------------------------------------
@@ -716,7 +839,405 @@ input, select, textarea { outline: none; }
 
 
 /* ------------------------------------------------------------
-   18. COACH CHAT ANIMATIONS
+   18. NOVOS COMPONENTES — Verde Saúde Theme
+   ------------------------------------------------------------ */
+
+/* ── Componentes de Página ── */
+.ns-px { padding: 0 var(--ns-page-px); }
+
+.ns-label {
+  font-size: var(--ns-text-xs);
+  font-weight: var(--ns-weight-bold);
+  color: var(--ns-text-muted);
+  letter-spacing: var(--ns-tracking-wide);
+  text-transform: uppercase;
+}
+
+/* ── Chips ── */
+.ns-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: var(--ns-radius-full);
+  background: var(--ns-bg-elevated);
+  border: 0.5px solid var(--ns-border);
+  font-size: var(--ns-text-xs);
+  font-weight: var(--ns-weight-medium);
+  color: var(--ns-text-secondary);
+}
+.ns-chip-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--ns-accent);
+  flex-shrink: 0;
+}
+.ns-chip-text { line-height: 1; }
+
+/* ── Biometrics (ProfilePage) ── */
+.ns-bio-cell {
+  background: var(--ns-bg-elevated);
+  border: 0.5px solid var(--ns-border);
+  border-radius: var(--ns-radius-md);
+  padding: 12px 8px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ns-bio-label {
+  font-size: 10px;
+  color: var(--ns-text-muted);
+  font-weight: var(--ns-weight-medium);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.ns-bio-value {
+  font-size: 20px;
+  font-weight: var(--ns-weight-black);
+  color: var(--ns-text-primary);
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.ns-bio-unit {
+  font-size: 10px;
+  color: var(--ns-text-muted);
+}
+
+/* ── Goal Rows (ProfilePage) ── */
+.ns-goal-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 15px;
+  border-top: 0.5px solid var(--ns-border-subtle);
+}
+.ns-goal-key {
+  font-size: var(--ns-text-sm);
+  color: var(--ns-text-secondary);
+  width: 90px;
+  flex-shrink: 0;
+}
+.ns-goal-value {
+  font-size: var(--ns-text-sm);
+  font-weight: var(--ns-weight-bold);
+  color: var(--ns-text-primary);
+  white-space: nowrap;
+}
+
+/* ── Bar Track/Fill (Dashboard, Profile) ── */
+.ns-bar-track {
+  height: 4px;
+  background: var(--ns-bg-elevated);
+  border-radius: var(--ns-radius-full);
+  overflow: hidden;
+  flex: 1;
+}
+.ns-bar-fill {
+  height: 100%;
+  border-radius: var(--ns-radius-full);
+  background: var(--ns-accent);
+  transition: width 0.6s ease;
+}
+
+/* ── Macro Cards (Dashboard) ── */
+.ns-macro-card {
+  background: #111111;
+  border: 0.5px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 14px;
+  flex: 1;
+  min-width: 0;
+}
+.ns-macro-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.ns-macro-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.ns-macro-name {
+  font-size: 10px;
+  color: var(--ns-text-muted);
+  font-weight: var(--ns-weight-medium);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.ns-macro-pct {
+  font-size: 20px;
+  font-weight: var(--ns-weight-black);
+  color: var(--ns-text-primary);
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.ns-macro-value {
+  font-size: var(--ns-text-sm);
+  font-weight: var(--ns-weight-bold);
+  color: var(--ns-text-primary);
+}
+.ns-macro-of {
+  font-size: var(--ns-text-xs);
+  color: var(--ns-text-muted);
+}
+
+/* ── Achievements (ProfilePage) ── */
+.ns-achievement {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+.ns-achievement-icon {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--ns-bg-elevated);
+  border: 0.5px solid var(--ns-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 0 12px rgba(48,209,88,0.08);
+}
+.ns-achievement-label {
+  font-size: 10px;
+  color: var(--ns-text-muted);
+  text-align: center;
+}
+
+/* ── Menu Rows (ProfilePage) ── */
+.ns-menu-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 15px;
+  border-top: 0.5px solid var(--ns-border-subtle);
+  cursor: pointer;
+  transition: background var(--ns-transition);
+  -webkit-tap-highlight-color: transparent;
+}
+.ns-menu-row:active { background: var(--ns-bg-hover); }
+.ns-menu-icon {
+  width: 32px; height: 32px;
+  border-radius: var(--ns-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.ns-menu-text {
+  flex: 1;
+  font-size: var(--ns-text-base);
+  color: var(--ns-text-primary);
+  font-weight: var(--ns-weight-medium);
+}
+
+/* ── History Items ── */
+.ns-segment {
+  display: flex;
+  gap: 2px;
+  background: var(--ns-bg-elevated);
+  border-radius: var(--ns-radius-md);
+  padding: 3px;
+}
+.ns-segment-item {
+  flex: 1;
+  text-align: center;
+  padding: 6px 4px;
+  border-radius: 10px;
+  font-size: var(--ns-text-xs);
+  font-weight: var(--ns-weight-medium);
+  color: var(--ns-text-muted);
+  cursor: pointer;
+  transition: all var(--ns-transition);
+}
+.ns-segment-item--active {
+  background: var(--ns-bg-card);
+  color: var(--ns-text-primary);
+  font-weight: var(--ns-weight-bold);
+  box-shadow: var(--ns-shadow-sm);
+}
+
+.ns-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0 6px;
+}
+.ns-section-title {
+  font-size: var(--ns-text-xs);
+  font-weight: var(--ns-weight-bold);
+  color: var(--ns-text-muted);
+  letter-spacing: var(--ns-tracking-wide);
+  text-transform: uppercase;
+}
+.ns-section-meta {
+  font-size: var(--ns-text-xs);
+  color: var(--ns-text-disabled);
+}
+.ns-eyebrow {
+  font-size: var(--ns-text-xs);
+  font-weight: var(--ns-weight-bold);
+  letter-spacing: var(--ns-tracking-wide);
+  text-transform: uppercase;
+  color: var(--ns-accent);
+  margin-bottom: 4px;
+}
+
+.ns-hist-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+}
+.ns-hist-thumb {
+  width: 44px; height: 44px;
+  border-radius: var(--ns-radius-sm);
+  background: var(--ns-bg-elevated);
+  border: 0.5px solid var(--ns-border);
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+.ns-hist-name {
+  font-size: var(--ns-text-base);
+  font-weight: var(--ns-weight-bold);
+  color: var(--ns-text-primary);
+  margin-bottom: 2px;
+}
+.ns-hist-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.ns-hist-time {
+  font-size: var(--ns-text-xs);
+  color: var(--ns-text-muted);
+}
+.ns-hist-sep {
+  width: 3px; height: 3px;
+  border-radius: 50%;
+  background: var(--ns-text-disabled);
+  flex-shrink: 0;
+}
+.ns-hist-cat {
+  font-size: var(--ns-text-xs);
+  color: var(--ns-text-muted);
+}
+.ns-hist-kcal {
+  font-size: 14px;
+  font-weight: 700;
+  color: #30D158;
+  margin-left: auto;
+  white-space: nowrap;
+  letter-spacing: -0.02em;
+}
+
+/* ── Streak Days (Dashboard) ── */
+.ns-streak-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+.ns-streak-day span:first-child {
+  font-size: 10px;
+  color: var(--ns-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.ns-streak-day span:last-child {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: var(--ns-text-muted);
+  background: var(--ns-bg-elevated);
+  border: 0.5px solid var(--ns-border-subtle);
+}
+.ns-streak-day--done span:last-child {
+  background: var(--ns-accent-bg);
+  border-color: rgba(48,209,88,0.3);
+  color: var(--ns-accent);
+}
+.ns-streak-day--today span:last-child {
+  background: var(--ns-accent);
+  color: #000000;
+  border-color: transparent;
+  font-weight: var(--ns-weight-bold);
+}
+.ns-streak-day--miss span:last-child {
+  background: rgba(255,69,58,0.08);
+  border-color: rgba(255,69,58,0.2);
+  color: var(--ns-danger);
+}
+
+/* ── Ring Legend ── */
+.ns-ring-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ns-ring-legend-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.ns-ring-legend-label {
+  font-size: var(--ns-text-xs);
+  color: var(--ns-text-muted);
+}
+.ns-ring-legend-value {
+  font-size: var(--ns-text-xs);
+  font-weight: var(--ns-weight-bold);
+  color: var(--ns-text-primary);
+  margin-left: auto;
+}
+
+/* ── Shimmer apelido de skeleton ── */
+.ns-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.ns-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(48,209,88,0.04) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s ease infinite;
+}
+
+/* ── Animações adicionais ── */
+@keyframes ns-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes ns-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(0.92); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+/* ------------------------------------------------------------
+   19. COACH CHAT ANIMATIONS
    ------------------------------------------------------------ */
 @keyframes fadeIn {
   from {
@@ -745,4 +1266,169 @@ input, select, textarea { outline: none; }
   color: var(--ns-text-muted);
   font-size: 8px;
   animation: typingDot 1.4s ease-in-out infinite;
+}
+
+
+/* ------------------------------------------------------------
+   20. iOS PREMIUM COMPONENTS
+   ------------------------------------------------------------ */
+
+/* ── iOS-style animations ── */
+@keyframes ns-fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes ns-spring-in {
+  0%   { opacity: 0; transform: scale(0.92); }
+  60%  { opacity: 1; transform: scale(1.02); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes ns-slide-from-right {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.animate-spring      { animation: ns-spring-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.animate-slide-right { animation: ns-slide-from-right 0.3s ease both; }
+
+/* ── Glass card iOS ── */
+.ns-glass-card {
+  background: rgba(28,28,30,0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 0.5px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+}
+
+/* ── iOS grouped list style ── */
+.ns-list-group {
+  background: #111111;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.ns-list-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 16px;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+.ns-list-row:active { background: #2c2c2e; }
+.ns-list-row + .ns-list-row::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 56px; right: 0;
+  height: 0.5px;
+  background: rgba(255,255,255,0.06);
+}
+.ns-list-icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+
+/* ── Pill/capsule components ── */
+.ns-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.ns-pill-green  { background: rgba(48,209,88,0.15);  color: #30D158; }
+.ns-pill-orange { background: rgba(255,159,10,0.15); color: #FF9F0A; }
+.ns-pill-blue   { background: rgba(10,132,255,0.15); color: #0A84FF; }
+.ns-pill-red    { background: rgba(255,69,58,0.15);  color: #FF453A; }
+
+/* ── Stat number big display ── */
+.ns-stat-number {
+  font-size: 48px;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  color: #fff;
+}
+.ns-stat-unit {
+  font-size: 14px;
+  font-weight: 500;
+  color: #8e8e93;
+  letter-spacing: -0.02em;
+}
+
+/* ── Section header iOS style ── */
+.ns-ios-section {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: #fff;
+  margin-bottom: 12px;
+}
+.ns-ios-caption {
+  font-size: 13px;
+  color: #8e8e93;
+  letter-spacing: -0.01em;
+}
+
+/* ── Progress ring container ── */
+.ns-ring-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* ── Touch feedback ── */
+.ns-tappable {
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+  transition: opacity 0.1s ease;
+}
+.ns-tappable:active { opacity: 0.6; }
+
+/* ── Frosted surface ── */
+.ns-frosted {
+  background: rgba(17,17,17,0.9);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* ── iOS-style divider ── */
+.ns-ios-divider {
+  height: 0.5px;
+  background: rgba(255,255,255,0.06);
+  margin: 0;
+}
+
+/* ── Score/confidence badge ── */
+.ns-score-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 11px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+/* ── Gradient text ── */
+.ns-gradient-text-green {
+  background: linear-gradient(135deg, #30D158, #00A86B);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.ns-gradient-text-orange {
+  background: linear-gradient(135deg, #FF9F0A, #FF6B35);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
