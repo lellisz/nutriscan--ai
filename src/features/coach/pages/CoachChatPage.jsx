@@ -2,8 +2,102 @@ import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../auth/hooks/useAuth";
 import * as db from "../../../lib/db";
 
+// ── SVG Icons ────────────────────────────────────────────────────────────────
+
+function IconMenu() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="3" y1="5.5" x2="17" y2="5.5" stroke="#000" strokeWidth="1.7" strokeLinecap="round" />
+      <line x1="3" y1="10" x2="17" y2="10" stroke="#000" strokeWidth="1.7" strokeLinecap="round" />
+      <line x1="3" y1="14.5" x2="17" y2="14.5" stroke="#000" strokeWidth="1.7" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function IconPlus() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="10" y1="3" x2="10" y2="17" stroke="#000" strokeWidth="1.7" strokeLinecap="round" />
+      <line x1="3" y1="10" x2="17" y2="10" stroke="#000" strokeWidth="1.7" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function IconChat() {
+  return (
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M8 10C8 8.34 9.34 7 11 7H37C38.66 7 40 8.34 40 10V30C40 31.66 38.66 33 37 33H26L18 41V33H11C9.34 33 8 31.66 8 30V10Z"
+        stroke="#C0C0C0"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function IconArrowUp({ color = "#fff" }) {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="9" y1="14" x2="9" y2="4" stroke={color} strokeWidth="2" strokeLinecap="round" />
+      <polyline points="4,8 9,3 14,8" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function IconTrash() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="2" y1="4" x2="14" y2="4" stroke="#C0C0C0" strokeWidth="1.7" strokeLinecap="round" />
+      <path d="M5 4V3C5 2.45 5.45 2 6 2H10C10.55 2 11 2.45 11 3V4" stroke="#C0C0C0" strokeWidth="1.7" strokeLinecap="round" />
+      <path d="M3 4L4 13C4 13.55 4.45 14 5 14H11C11.55 14 12 13.55 12 13L13 4" stroke="#C0C0C0" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+// ── Typing Indicator ──────────────────────────────────────────────────────────
+
+function TypingIndicator() {
+  return (
+    <div style={{ display: "flex", justifyContent: "flex-start" }}>
+      <div style={{
+        padding: "14px 18px",
+        borderRadius: "18px 18px 18px 4px",
+        background: "#F5F5F5",
+        display: "flex",
+        gap: 5,
+        alignItems: "center",
+      }}>
+        <style>{`
+          @keyframes ns-dot-bounce {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-4px); opacity: 1; }
+          }
+        `}</style>
+        {[0, 1, 2].map(i => (
+          <span
+            key={i}
+            style={{
+              display: "inline-block",
+              width: 6,
+              height: 6,
+              borderRadius: "50%",
+              background: "#B0B0B0",
+              animation: `ns-dot-bounce 1.2s ease-in-out infinite`,
+              animationDelay: `${i * 0.2}s`,
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Main Component ────────────────────────────────────────────────────────────
+
 export default function CoachChatPage() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [conversations, setConversations] = useState([]);
   const [currentConversation, setCurrentConversation] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -11,32 +105,36 @@ export default function CoachChatPage() {
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [showConversations, setShowConversations] = useState(false);
+  const [sendError, setSendError] = useState(null);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
+  // Aguarda auth resolver antes de carregar conversas
   useEffect(() => {
-    loadConversations();
-  }, [user?.id]);
-
-  useEffect(() => {
-    if (!currentConversation) {
-      console.log("[CHAT] currentConversation é null, aguardando...");
+    if (authLoading) return;
+    if (!user?.id) {
+      setLoading(false);
       return;
     }
-    console.log("[CHAT] Carregando mensagens para:", currentConversation.id);
+    loadConversations();
+  }, [user?.id, authLoading]);
+
+  useEffect(() => {
+    if (!currentConversation) return;
     loadMessages(currentConversation.id);
-  }, [currentConversation]);
+  }, [currentConversation?.id]);
 
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
   async function loadConversations() {
+    if (!user?.id) return;
+    setLoading(true);
     try {
       const convs = await db.listChatConversations(user.id);
       setConversations(convs || []);
 
-      // Se não tem conversa, tenta criar uma nova
       if (!convs || convs.length === 0) {
         try {
           const newConv = await db.createChatConversation(user.id, "Nova conversa");
@@ -44,7 +142,7 @@ export default function CoachChatPage() {
           setCurrentConversation(newConv);
         } catch (createErr) {
           console.error("Erro ao criar conversa:", createErr);
-          // Cria conversa fake para permitir enviar mensagem
+          // Fallback: conversa temporária local para não bloquear o usuário
           const fakeConv = {
             id: `temp-${user.id}`,
             user_id: user.id,
@@ -60,7 +158,7 @@ export default function CoachChatPage() {
       }
     } catch (err) {
       console.error("Erro ao carregar conversas:", err);
-      // Fallback: cria conversa temporária
+      // Fallback: conversa temporária para não bloquear o usuário
       const fakeConv = {
         id: `temp-${user.id}`,
         user_id: user.id,
@@ -76,27 +174,28 @@ export default function CoachChatPage() {
   }
 
   async function loadMessages(conversationId) {
+    // IDs temporários não existem no banco — não tentar carregar
+    const isValidUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!isValidUUID.test(conversationId)) {
+      setMessages([]);
+      return;
+    }
     try {
       const msgs = await db.listChatMessages(conversationId);
       setMessages(msgs || []);
     } catch (err) {
       console.error("Erro ao carregar mensagens:", err);
+      setMessages([]);
     }
   }
 
-  async function handleSendMessage(e) {
-    e.preventDefault();
-    if (!inputMessage.trim() || sending || !currentConversation) return;
+  async function sendMessage(userMessage) {
+    if (!userMessage.trim() || sending || !currentConversation || !user?.id) return;
 
-    const userMessage = inputMessage.trim();
     setInputMessage("");
     setSending(true);
+    setSendError(null);
 
-    console.log("[CHAT] Enviando mensagem:", userMessage);
-    console.log("[CHAT] Conversation ID:", currentConversation.id);
-    console.log("[CHAT] User ID:", user.id);
-
-    // Adiciona mensagem do usuário otimisticamente
     const optimisticMsg = {
       id: `temp-${Date.now()}`,
       role: "user",
@@ -106,30 +205,28 @@ export default function CoachChatPage() {
     setMessages(prev => [...prev, optimisticMsg]);
 
     try {
-      // Chama API do chat
-      console.log("[CHAT] Fazendo POST para /api/chat...");
+      const isValidUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      const convId = isValidUUID.test(currentConversation.id)
+        ? currentConversation.id
+        : undefined;
+
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          conversationId: currentConversation.id,
+          conversationId: convId,
           message: userMessage,
           userId: user.id,
         }),
       });
 
-      console.log("[CHAT] Response status:", response.status);
-
       if (!response.ok) {
-        const errText = await response.text();
-        console.error("[CHAT] Erro na resposta:", errText);
-        throw new Error(`Erro ${response.status}: ${errText}`);
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.message || errData.error || `Erro ${response.status}`);
       }
 
       const data = await response.json();
-      console.log("[CHAT] Dados recebidos:", data);
 
-      // Adiciona resposta da IA
       const aiMsg = {
         id: `ai-${Date.now()}`,
         role: "assistant",
@@ -139,21 +236,26 @@ export default function CoachChatPage() {
       };
       setMessages(prev => [...prev, aiMsg]);
 
-      // Atualiza lista de conversas
-      await loadConversations();
+      // Recarrega conversas para atualizar contadores (ignora erro silenciosamente)
+      loadConversations().catch(() => {});
     } catch (err) {
-      console.error("[CHAT] ERRO COMPLETO:", err);
-      console.error("[CHAT] Stack:", err.stack);
-      // Remove mensagem otimista em caso de erro
+      console.error("Erro ao enviar mensagem:", err);
       setMessages(prev => prev.filter(m => m.id !== optimisticMsg.id));
-      alert(`Erro: ${err.message}`);
+      setSendError("Não consegui responder agora. Tente novamente.");
+      setInputMessage(userMessage);
     } finally {
       setSending(false);
-      inputRef.current?.focus();
+      setTimeout(() => inputRef.current?.focus(), 50);
     }
   }
 
+  async function handleSendMessage(e) {
+    e.preventDefault();
+    await sendMessage(inputMessage.trim());
+  }
+
   async function handleNewConversation() {
+    if (!user?.id) return;
     try {
       const newConv = await db.createChatConversation(user.id, "Nova conversa");
       setConversations(prev => [newConv, ...prev]);
@@ -167,12 +269,24 @@ export default function CoachChatPage() {
 
   async function handleDeleteConversation(convId) {
     if (!confirm("Deletar esta conversa?")) return;
+    // IDs temporários só existem localmente — remover da lista sem chamar o banco
+    const isValidUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!isValidUUID.test(convId)) {
+      const filtered = conversations.filter(c => c.id !== convId);
+      setConversations(filtered);
+      if (currentConversation?.id === convId) {
+        setCurrentConversation(filtered[0] || null);
+        setMessages([]);
+      }
+      return;
+    }
     try {
       await db.deleteChatConversation(convId);
       const filtered = conversations.filter(c => c.id !== convId);
       setConversations(filtered);
       if (currentConversation?.id === convId) {
         setCurrentConversation(filtered[0] || null);
+        setMessages([]);
       }
     } catch (err) {
       console.error("Erro ao deletar conversa:", err);
@@ -183,129 +297,287 @@ export default function CoachChatPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }
 
-  if (loading) {
+  // Aguardando auth carregar
+  if (authLoading || loading) {
     return (
-      <div className="ns-page flex-center" style={{ minHeight: "60vh" }}>
+      <div
+        className="flex-center"
+        style={{ minHeight: "60vh", background: "#FFFFFF" }}
+      >
         <div className="ns-spinner ns-spinner-lg" />
       </div>
     );
   }
 
+  // Usuário não autenticado
+  if (!user) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "60vh",
+          gap: 12,
+          padding: "0 24px",
+          textAlign: "center",
+          background: "#FFFFFF",
+        }}
+      >
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+          <rect x="8" y="18" width="24" height="16" rx="3" stroke="#C0C0C0" strokeWidth="1.8" />
+          <path d="M13 18V13C13 9.13 16.13 6 20 6C23.87 6 27 9.13 27 13V18" stroke="#C0C0C0" strokeWidth="1.8" strokeLinecap="round" />
+        </svg>
+        <p style={{ color: "#9A9A9A", fontSize: 14, margin: 0 }}>
+          Faça login para acessar o NutriCoach.
+        </p>
+      </div>
+    );
+  }
+
+  const canSend = inputMessage.trim().length > 0 && !sending;
+
   return (
     <div style={{
-      display: "flex", flexDirection: "column",
-      height: "100dvh", background: "var(--ns-bg-primary)",
-      maxWidth: 480, margin: "0 auto",
+      display: "flex",
+      flexDirection: "column",
+      height: "calc(100dvh - var(--ns-nav-height, 72px))",
+      background: "#FFFFFF",
+      maxWidth: 480,
+      margin: "0 auto",
     }}>
-      {/* Header */}
+
+      {/* ── Header ─────────────────────────────────────────────────────────── */}
       <div style={{
-        padding: "16px 20px", borderBottom: "1px solid var(--ns-border)",
-        background: "var(--ns-bg-card)", display: "flex",
-        justifyContent: "space-between", alignItems: "center",
+        padding: "14px 16px",
+        borderBottom: "1px solid rgba(0,0,0,0.06)",
+        background: "rgba(255,255,255,0.94)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        flexShrink: 0,
+        position: "sticky",
+        top: 0,
+        zIndex: 10,
       }}>
         <button
           onClick={() => setShowConversations(!showConversations)}
+          aria-label="Abrir conversas"
           style={{
-            background: "none", border: "none", padding: 8,
-            fontSize: 20, cursor: "pointer",
+            background: "none",
+            border: "none",
+            padding: 8,
+            cursor: "pointer",
+            borderRadius: 8,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
           }}
         >
-          ☰
+          <IconMenu />
         </button>
+
         <div style={{ textAlign: "center", flex: 1 }}>
-          <h1 style={{ margin: 0, fontSize: 18, fontWeight: 700 }}>🧠 NutriCoach</h1>
-          <p style={{ margin: 0, fontSize: 11, color: "var(--ns-text-muted)" }}>
+          <div style={{
+            margin: 0,
+            fontSize: 17,
+            fontWeight: 700,
+            color: "#000000",
+            lineHeight: 1.2,
+            letterSpacing: "-0.3px",
+          }}>
+            NutriCoach
+          </div>
+          <div style={{
+            margin: 0,
+            fontSize: 12,
+            color: "#9A9A9A",
+            lineHeight: 1.3,
+            marginTop: 1,
+          }}>
             Seu nutricionista IA
-          </p>
+          </div>
         </div>
+
         <button
           onClick={handleNewConversation}
+          aria-label="Nova conversa"
           style={{
-            background: "none", border: "none", padding: 8,
-            fontSize: 20, cursor: "pointer",
+            background: "none",
+            border: "none",
+            padding: 8,
+            cursor: "pointer",
+            borderRadius: 8,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
           }}
         >
-          ✏️
+          <IconPlus />
         </button>
       </div>
 
-      {/* Conversations sidebar (overlay) */}
+      {/* ── Sidebar overlay ────────────────────────────────────────────────── */}
       {showConversations && (
         <div
           onClick={() => setShowConversations(false)}
           style={{
-            position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)",
-            zIndex: 100, display: "flex",
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.3)",
+            zIndex: 200,
+            display: "flex",
           }}
         >
           <div
             onClick={e => e.stopPropagation()}
             style={{
-              width: "80%", maxWidth: 320, background: "var(--ns-bg-card)",
-              height: "100%", overflowY: "auto", padding: 20,
+              width: "85%",
+              maxWidth: 320,
+              background: "#FFFFFF",
+              height: "100%",
+              overflowY: "auto",
+              padding: "24px 16px 24px 20px",
+              boxShadow: "4px 0 24px rgba(0,0,0,0.08)",
             }}
           >
-            <h3 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 700 }}>Conversas</h3>
-            {conversations.map(conv => (
-              <div
-                key={conv.id}
-                onClick={() => {
-                  setCurrentConversation(conv);
-                  setShowConversations(false);
-                }}
-                style={{
-                  padding: 12, marginBottom: 8, borderRadius: 12,
-                  background: conv.id === currentConversation?.id ? "var(--ns-accent-bg)" : "var(--ns-bg-elevated)",
-                  cursor: "pointer", display: "flex", justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{
-                    fontSize: 14, fontWeight: 600,
-                    color: conv.id === currentConversation?.id ? "var(--ns-accent)" : "var(--ns-text-primary)",
-                    overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-                  }}>
-                    {conv.title || "Sem título"}
-                  </div>
-                  <div style={{ fontSize: 11, color: "var(--ns-text-muted)", marginTop: 2 }}>
-                    {conv.message_count || 0} mensagens
-                  </div>
-                </div>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteConversation(conv.id);
+            <div style={{
+              fontSize: 20,
+              fontWeight: 700,
+              color: "#000000",
+              margin: "0 0 20px",
+              letterSpacing: "-0.4px",
+            }}>
+              Conversas
+            </div>
+
+            {conversations.length === 0 && (
+              <p style={{ color: "#9A9A9A", fontSize: 14, margin: 0 }}>
+                Nenhuma conversa ainda.
+              </p>
+            )}
+
+            {conversations.map(conv => {
+              const isActive = conv.id === currentConversation?.id;
+              return (
+                <div
+                  key={conv.id}
+                  onClick={() => {
+                    setCurrentConversation(conv);
+                    setShowConversations(false);
                   }}
                   style={{
-                    background: "none", border: "none", fontSize: 16,
-                    color: "var(--ns-text-muted)", cursor: "pointer", padding: 4,
+                    padding: "12px 14px",
+                    marginBottom: 8,
+                    borderRadius: 12,
+                    background: isActive ? "#F0FDF4" : "#F5F5F5",
+                    cursor: "pointer",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    borderLeft: isActive ? "3px solid #16A34A" : "3px solid transparent",
+                    transition: "background 0.15s ease",
                   }}
                 >
-                  🗑️
-                </button>
-              </div>
-            ))}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{
+                      fontSize: 14,
+                      fontWeight: 500,
+                      color: "#000000",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}>
+                      {conv.title || "Sem título"}
+                    </div>
+                    <div style={{
+                      fontSize: 12,
+                      color: "#9A9A9A",
+                      marginTop: 2,
+                    }}>
+                      {conv.message_count || 0} mensagens
+                    </div>
+                  </div>
+                  <button
+                    onClick={e => {
+                      e.stopPropagation();
+                      handleDeleteConversation(conv.id);
+                    }}
+                    aria-label="Deletar conversa"
+                    style={{
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      padding: 4,
+                      borderRadius: 6,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexShrink: 0,
+                      marginLeft: 8,
+                    }}
+                  >
+                    <IconTrash />
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
 
-      {/* Messages area */}
+      {/* ── Área de mensagens ───────────────────────────────────────────────── */}
       <div style={{
-        flex: 1, overflowY: "auto", padding: "20px 16px",
-        display: "flex", flexDirection: "column", gap: 16,
+        flex: 1,
+        overflowY: "auto",
+        padding: "20px 16px",
+        display: "flex",
+        flexDirection: "column",
+        gap: 10,
       }}>
+
+        {/* Empty state */}
         {messages.length === 0 && (
-          <div style={{ textAlign: "center", padding: "40px 20px" }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>🧠</div>
-            <h2 style={{ fontSize: 18, fontWeight: 700, margin: "0 0 8px" }}>
-              Oi! Sou o NutriCoach
-            </h2>
-            <p style={{ fontSize: 14, color: "var(--ns-text-muted)", margin: 0 }}>
-              Tire suas duvidas sobre nutricao, alimentacao e seus objetivos!
+          <div style={{
+            textAlign: "center",
+            padding: "48px 24px 32px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 0,
+          }}>
+            <div style={{ marginBottom: 20 }}>
+              <IconChat />
+            </div>
+            <div style={{
+              fontSize: 22,
+              fontWeight: 700,
+              color: "#000000",
+              margin: "0 0 8px",
+              letterSpacing: "-0.5px",
+              lineHeight: 1.2,
+            }}>
+              Como posso te ajudar?
+            </div>
+            <p style={{
+              fontSize: 14,
+              color: "#9A9A9A",
+              margin: "0 0 28px",
+              lineHeight: 1.5,
+            }}>
+              Pergunte sobre nutrição, dieta e saúde
             </p>
             <div style={{
-              marginTop: 24, display: "flex", flexDirection: "column", gap: 8,
+              display: "flex",
+              flexDirection: "column",
+              gap: 8,
+              width: "100%",
+              maxWidth: 320,
             }}>
               {[
                 "O que devo comer hoje?",
@@ -314,9 +586,19 @@ export default function CoachChatPage() {
               ].map(q => (
                 <button
                   key={q}
-                  onClick={() => setInputMessage(q)}
-                  className="ns-btn ns-btn-secondary"
-                  style={{ fontSize: 13, padding: "10px 16px" }}
+                  onClick={() => sendMessage(q)}
+                  style={{
+                    background: "#F5F5F5",
+                    border: "1px solid rgba(0,0,0,0.06)",
+                    borderRadius: 20,
+                    padding: "10px 16px",
+                    fontSize: 14,
+                    color: "#000000",
+                    cursor: "pointer",
+                    textAlign: "center",
+                    transition: "background 0.15s ease",
+                    fontFamily: "inherit",
+                  }}
                 >
                   {q}
                 </button>
@@ -325,54 +607,68 @@ export default function CoachChatPage() {
           </div>
         )}
 
+        {/* Mensagens */}
         {messages.map((msg, idx) => (
           <div
             key={msg.id || idx}
             style={{
               display: "flex",
               justifyContent: msg.role === "user" ? "flex-end" : "flex-start",
-              animation: "fadeIn 0.3s ease",
             }}
           >
             <div style={{
-              maxWidth: "75%",
-              padding: "12px 16px",
-              borderRadius: 16,
-              background: msg.role === "user" ? "var(--ns-accent)" : "var(--ns-bg-card)",
-              color: msg.role === "user" ? "#fff" : "var(--ns-text-primary)",
-              fontSize: 14, lineHeight: 1.5,
-              boxShadow: "var(--ns-shadow-sm)",
+              maxWidth: "78%",
+              padding: "11px 15px",
+              borderRadius: msg.role === "user"
+                ? "18px 18px 4px 18px"
+                : "18px 18px 18px 4px",
+              background: msg.role === "user" ? "#000000" : "#F5F5F5",
+              color: msg.role === "user" ? "#FFFFFF" : "#000000",
+              fontSize: 15,
+              lineHeight: 1.55,
+              wordBreak: "break-word",
+              whiteSpace: "pre-wrap",
             }}>
               {msg.content}
             </div>
           </div>
         ))}
 
-        {sending && (
-          <div style={{ display: "flex", justifyContent: "flex-start" }}>
-            <div style={{
-              padding: "12px 16px", borderRadius: 16,
-              background: "var(--ns-bg-card)",
-              boxShadow: "var(--ns-shadow-sm)",
-            }}>
-              <div style={{ display: "flex", gap: 6 }}>
-                <span className="ns-typing-dot" style={{ animationDelay: "0s" }}>●</span>
-                <span className="ns-typing-dot" style={{ animationDelay: "0.2s" }}>●</span>
-                <span className="ns-typing-dot" style={{ animationDelay: "0.4s" }}>●</span>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Typing indicator */}
+        {sending && <TypingIndicator />}
 
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input area */}
+      {/* ── Banner de erro ──────────────────────────────────────────────────── */}
+      {sendError && (
+        <div style={{
+          margin: "0 16px 8px",
+          padding: "10px 14px",
+          borderRadius: 12,
+          background: "#FEF2F2",
+          color: "#DC2626",
+          fontSize: 13,
+          textAlign: "center",
+          border: "1px solid rgba(220,38,38,0.15)",
+        }}>
+          {sendError}
+        </div>
+      )}
+
+      {/* ── Input bar ───────────────────────────────────────────────────────── */}
       <form
         onSubmit={handleSendMessage}
         style={{
-          padding: "12px 16px", borderTop: "1px solid var(--ns-border)",
-          background: "var(--ns-bg-card)", display: "flex", gap: 10,
+          padding: "10px 16px 12px",
+          borderTop: "1px solid rgba(0,0,0,0.06)",
+          background: "rgba(255,255,255,0.94)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          display: "flex",
+          gap: 10,
+          alignItems: "center",
+          flexShrink: 0,
         }}
       >
         <input
@@ -381,23 +677,39 @@ export default function CoachChatPage() {
           value={inputMessage}
           onChange={e => setInputMessage(e.target.value)}
           placeholder="Digite sua pergunta..."
-          className="ns-input"
           style={{
-            flex: 1, borderRadius: 20, padding: "10px 16px",
-            fontSize: 14,
+            flex: 1,
+            background: "#F5F5F5",
+            border: "none",
+            borderRadius: 22,
+            padding: "11px 18px",
+            fontSize: 15,
+            color: "#000000",
+            outline: "none",
+            fontFamily: "inherit",
           }}
           disabled={sending}
+          autoComplete="off"
         />
         <button
           type="submit"
-          className="ns-btn ns-btn-primary"
+          disabled={!canSend}
+          aria-label="Enviar mensagem"
           style={{
-            borderRadius: 20, padding: "10px 20px",
-            fontSize: 20, lineHeight: 1,
+            width: 40,
+            height: 40,
+            borderRadius: "50%",
+            background: canSend ? "#000000" : "#E8E8E8",
+            border: "none",
+            cursor: canSend ? "pointer" : "default",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
+            transition: "background 0.15s ease",
           }}
-          disabled={!inputMessage.trim() || sending}
         >
-          ↑
+          <IconArrowUp color={canSend ? "#fff" : "#B0B0B0"} />
         </button>
       </form>
     </div>
