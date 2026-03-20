@@ -1,14 +1,11 @@
  
-import React from "react";
-import ReactDOM from "react-dom/client";
-import AppShell from "./app/AppShell.jsx";
-import { initSentry } from "./lib/sentry";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import AppRouter from './app/AppRouter';
+import './styles/apex-neutral.css';
 
-// Initialize Sentry error tracking
-initSentry();
-
-ReactDOM.createRoot(document.getElementById("root")).render(
+ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <AppShell />
-  </React.StrictMode>,
+    <AppRouter />
+  </React.StrictMode>
 );

@@ -5,17 +5,19 @@ import { SignInSchema } from "../../../lib/validation/schemas";
 import { analytics } from "../../../lib/analytics";
 import { logger } from "../../../lib/logger";
 
-const T = {
-  bg: "#F2F2F7",
-  surface: "#FFFFFF",
-  border: "#E5E5EA",
-  text: "#1C1C1E",
-  text2: "#636366",
-  blue: "#007AFF",
-  red: "#FF3B30",
-  r: "18px",
-  shadow: "0 2px 24px rgba(0,0,0,0.07)",
+const SUPABASE_ERROR_MAP = {
+  "invalid login credentials": "Email ou senha incorretos.",
+  "email not confirmed": "Confirme seu email antes de fazer login.",
+  "email rate limit exceeded": "Muitas tentativas. Aguarde alguns minutos antes de tentar novamente.",
+  "too many requests": "Muitas tentativas. Aguarde alguns minutos.",
 };
+
+function translateAuthError(message) {
+  const key = Object.keys(SUPABASE_ERROR_MAP).find((k) =>
+    message.toLowerCase().includes(k)
+  );
+  return key ? SUPABASE_ERROR_MAP[key] : message;
+}
 
 export default function SignInPage() {
   const navigate = useNavigate();
@@ -39,85 +41,95 @@ export default function SignInPage() {
     } catch (err) {
       logger.error("Signin failed", { email: formData.email, error: err.message });
       analytics.trackEvent("signin_error", { error: err.message });
-      if (err.errors) {
+      const issues = err.issues || err.errors;
+      if (issues) {
         const fieldErrors = {};
-        err.errors.forEach((e) => {
+        issues.forEach((e) => {
           fieldErrors[e.path[0]] = e.message;
         });
         setErrors(fieldErrors);
       } else {
-        setGeneralError(err.message);
+        setGeneralError(translateAuthError(err.message));
       }
     }
   }
 
   return (
-    <div style={{ padding: "20px", maxWidth: "400px", margin: "0 auto", minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-      <h1 style={{ textAlign: "center", marginBottom: "30px" }}>NutriScan</h1>
+    <div style={{
+      padding: "20px",
+      maxWidth: "420px",
+      margin: "0 auto",
+      minHeight: "100dvh",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+    }}>
+      {/* Logo & App Name */}
+      <div className="animate-fade-up" style={{ textAlign: "center", marginBottom: 40 }}>
+        <div style={{
+          width: 72,
+          height: 72,
+          borderRadius: 20,
+          background: "var(--ns-accent-bg)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          margin: "0 auto 16px",
+        }}>
+          <span style={{ fontSize: 36 }}>🍎</span>
+        </div>
+        <h1 style={{ margin: "0 0 4px", fontSize: 28, fontWeight: 800, letterSpacing: -0.5, color: "var(--ns-text-primary)" }}>NutriScan</h1>
+        <p style={{ margin: 0, fontSize: 14, color: "var(--ns-text-secondary)" }}>Análise inteligente de alimentos</p>
+      </div>
 
       {generalError && (
-        <div style={{ background: T.red + "18", color: T.red, padding: "12px", borderRadius: T.r, marginBottom: "20px", fontSize: "14px" }}>
-          {generalError}
+        <div className="ns-error-banner animate-scale-in">
+          <span>⚠️</span> {generalError}
         </div>
       )}
 
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "16px" }}>
-          <label style={{ display: "block", fontSize: "14px", fontWeight: 500, marginBottom: "6px" }}>Email</label>
+      <form onSubmit={handleSubmit} className="animate-fade-up stagger-2">
+        <div style={{ marginBottom: 16 }}>
+          <label className="ns-label-field">Email</label>
           <input
             type="email"
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            style={{
-              width: "100%",
-              padding: "12px",
-              border: `1px solid ${errors.email ? T.red : T.border}`,
-              borderRadius: "12px",
-              fontSize: "14px",
-            }}
+            className={`ns-input ${errors.email ? "ns-input-error" : ""}`}
+            placeholder="seu@email.com"
+            autoComplete="email"
           />
-          {errors.email && <div style={{ color: T.red, fontSize: "12px", marginTop: "4px" }}>{errors.email}</div>}
+          {errors.email && <div className="ns-error-text">{errors.email}</div>}
         </div>
 
-        <div style={{ marginBottom: "24px" }}>
-          <label style={{ display: "block", fontSize: "14px", fontWeight: 500, marginBottom: "6px" }}>Senha</label>
+        <div style={{ marginBottom: 28 }}>
+          <label className="ns-label-field">Senha</label>
           <input
             type="password"
             value={formData.password}
             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            style={{
-              width: "100%",
-              padding: "12px",
-              border: `1px solid ${errors.password ? T.red : T.border}`,
-              borderRadius: "12px",
-              fontSize: "14px",
-            }}
+            className={`ns-input ${errors.password ? "ns-input-error" : ""}`}
+            placeholder="••••••••"
+            autoComplete="current-password"
           />
-          {errors.password && <div style={{ color: T.red, fontSize: "12px", marginTop: "4px" }}>{errors.password}</div>}
+          {errors.password && <div className="ns-error-text">{errors.password}</div>}
         </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            width: "100%",
-            padding: "14px",
-            background: T.blue,
-            color: "white",
-            border: "none",
-            borderRadius: T.r,
-            fontSize: "16px",
-            fontWeight: 600,
-            cursor: loading ? "wait" : "pointer",
-            opacity: loading ? 0.7 : 1,
-          }}
-        >
-          {loading ? "Entrando..." : "Entrar"}
+        <button type="submit" disabled={loading} className="ns-btn ns-btn-primary">
+          {loading ? (
+            <>
+              <div className="ns-spinner" />
+              Entrando...
+            </>
+          ) : "Entrar"}
         </button>
       </form>
 
-      <div style={{ textAlign: "center", marginTop: "20px", fontSize: "14px" }}>
-        Não tem conta? <Link to="/signup" style={{ color: T.blue, textDecoration: "none", fontWeight: 600 }}>Criar conta</Link>
+      <div className="animate-fade-up stagger-3" style={{ textAlign: "center", marginTop: 24, fontSize: 14 }}>
+        <span style={{ color: "var(--ns-text-secondary)" }}>Não tem conta? </span>
+        <Link to="/signup" style={{ color: "var(--ns-accent)", textDecoration: "none", fontWeight: 700 }}>
+          Criar conta
+        </Link>
       </div>
     </div>
   );

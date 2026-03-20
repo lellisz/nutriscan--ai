@@ -1,0 +1,748 @@
+/* ============================================================
+   NutriScan — Volcanic Ash Theme
+   Neutral Matte Dark · Version 1.0
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. CSS VARIABLES — Core Design Tokens
+   ------------------------------------------------------------ */
+:root {
+  /* Backgrounds */
+  --ns-bg-primary:     #111110;
+  --ns-bg-card:        #1a1a18;
+  --ns-bg-elevated:    #222220;
+  --ns-bg-input:       #1a1a18;
+  --ns-bg-hover:       #222220;
+  --ns-bg-pressed:     #2a2a28;
+
+  /* Borders */
+  --ns-border:         #2a2a28;
+  --ns-border-strong:  #3a3a38;
+  --ns-border-subtle:  #1e1e1c;
+
+  /* Text */
+  --ns-text-primary:   #e8e8e4;
+  --ns-text-secondary: #999994;
+  --ns-text-muted:     #555550;
+  --ns-text-disabled:  #333330;
+
+  /* Accent (white-ash) */
+  --ns-accent:         #e8e8e4;
+  --ns-accent-bg:      #333330;
+  --ns-accent-hover:   #f4f4f0;
+
+  /* Macros */
+  --ns-macro-protein:  #d0d0cc;
+  --ns-macro-carb:     #999994;
+  --ns-macro-fat:      #666660;
+
+  /* Semantic */
+  --ns-success:        #4a7c59;
+  --ns-success-bg:     #1a2a1e;
+  --ns-warning:        #8a6a30;
+  --ns-warning-bg:     #2a2010;
+  --ns-danger:         #7a3030;
+  --ns-danger-bg:      #2a1010;
+
+  /* Radius */
+  --ns-radius-sm:      8px;
+  --ns-radius-md:      12px;
+  --ns-radius-lg:      16px;
+  --ns-radius-xl:      20px;
+  --ns-radius-full:    9999px;
+
+  /* Spacing scale */
+  --ns-space-1:        4px;
+  --ns-space-2:        8px;
+  --ns-space-3:        12px;
+  --ns-space-4:        16px;
+  --ns-space-5:        20px;
+  --ns-space-6:        24px;
+  --ns-space-8:        32px;
+
+  /* Typography */
+  --ns-font-base:      -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --ns-font-mono:      'SF Mono', 'Fira Code', monospace;
+
+  --ns-text-xs:        10px;
+  --ns-text-sm:        12px;
+  --ns-text-base:      14px;
+  --ns-text-md:        16px;
+  --ns-text-lg:        20px;
+  --ns-text-xl:        24px;
+  --ns-text-2xl:       30px;
+  --ns-text-3xl:       38px;
+
+  --ns-weight-normal:  400;
+  --ns-weight-medium:  500;
+  --ns-weight-bold:    600;
+
+  /* Shadows */
+  --ns-shadow-sm:      0 1px 3px rgba(0, 0, 0, 0.4);
+  --ns-shadow-md:      0 4px 12px rgba(0, 0, 0, 0.5);
+  --ns-shadow-lg:      0 8px 24px rgba(0, 0, 0, 0.6);
+
+  /* Transitions */
+  --ns-transition:     0.15s ease;
+  --ns-transition-slow: 0.3s ease;
+
+  /* Nav */
+  --ns-nav-height: 72px;
+  --ns-safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+
+/* ------------------------------------------------------------
+   2. GLOBAL RESET & BASE
+   ------------------------------------------------------------ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--ns-bg-primary);
+  color: var(--ns-text-primary);
+  font-family: var(--ns-font-base);
+  font-size: var(--ns-text-base);
+  font-weight: var(--ns-weight-normal);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: var(--ns-accent);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--ns-accent-hover);
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+input, button, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+input, select, textarea { outline: none; }
+
+::-webkit-scrollbar { width: 0; height: 0; }
+
+
+/* ------------------------------------------------------------
+   3. ANIMATIONS
+   ------------------------------------------------------------ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(100%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ns-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes ns-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.animate-fade-up { animation: fadeUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) both; }
+.animate-fade-in { animation: fadeIn 0.3s ease both; }
+.animate-scale-in { animation: scaleIn 0.32s cubic-bezier(0.4, 0, 0.2, 1) both; }
+.animate-slide-up { animation: slideUp 0.4s cubic-bezier(0.33, 1, 0.68, 1) both; }
+
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.1s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.2s; }
+.stagger-5 { animation-delay: 0.25s; }
+
+
+/* ------------------------------------------------------------
+   4. CARDS & SURFACES
+   ------------------------------------------------------------ */
+.ns-card {
+  background: var(--ns-bg-card);
+  border: 0.5px solid var(--ns-border);
+  border-radius: var(--ns-radius-xl);
+  padding: var(--ns-space-4);
+}
+
+.ns-card-sm {
+  background: var(--ns-bg-card);
+  border: 0.5px solid var(--ns-border);
+  border-radius: var(--ns-radius-lg);
+  padding: var(--ns-space-3);
+}
+
+.ns-divider {
+  height: 0.5px;
+  background: var(--ns-border-subtle);
+  border: none;
+  margin: var(--ns-space-3) 0;
+}
+
+
+/* ------------------------------------------------------------
+   5. BUTTONS
+   ------------------------------------------------------------ */
+.ns-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ns-space-2);
+  padding: var(--ns-space-3) var(--ns-space-4);
+  border-radius: var(--ns-radius-md);
+  font-size: var(--ns-text-base);
+  font-weight: var(--ns-weight-medium);
+  cursor: pointer;
+  transition: all var(--ns-transition);
+  border: none;
+  outline: none;
+  width: 100%;
+}
+
+.ns-btn-primary {
+  background: var(--ns-accent);
+  color: var(--ns-bg-primary);
+}
+
+.ns-btn-primary:hover {
+  background: var(--ns-accent-hover);
+  transform: translateY(-1px);
+}
+
+.ns-btn-primary:active {
+  transform: scale(0.98);
+}
+
+.ns-btn-primary:disabled {
+  opacity: 0.4;
+  cursor: wait;
+  transform: none;
+}
+
+.ns-btn-secondary {
+  background: transparent;
+  color: var(--ns-text-primary);
+  border: 0.5px solid var(--ns-border-strong);
+}
+
+.ns-btn-secondary:hover {
+  background: var(--ns-bg-hover);
+}
+
+.ns-btn-danger {
+  background: transparent;
+  color: var(--ns-text-muted);
+  border: 0.5px solid var(--ns-border);
+}
+
+.ns-btn-danger:hover {
+  color: #e87070;
+  border-color: var(--ns-danger);
+}
+
+
+/* ------------------------------------------------------------
+   6. FORM ELEMENTS
+   ------------------------------------------------------------ */
+.ns-input {
+  width: 100%;
+  padding: var(--ns-space-3) var(--ns-space-4);
+  background: var(--ns-bg-input);
+  border: 0.5px solid var(--ns-border);
+  border-radius: var(--ns-radius-md);
+  color: var(--ns-text-primary);
+  font-size: var(--ns-text-base);
+  transition: border-color var(--ns-transition);
+  outline: none;
+}
+
+.ns-input::placeholder {
+  color: var(--ns-text-disabled);
+}
+
+.ns-input:focus {
+  border-color: var(--ns-border-strong);
+}
+
+.ns-input:focus-visible {
+  box-shadow: 0 0 0 2px rgba(232, 232, 228, 0.15);
+}
+
+.ns-input-error {
+  border-color: var(--ns-danger) !important;
+}
+
+.ns-input-error:focus-visible {
+  box-shadow: 0 0 0 2px rgba(122, 48, 48, 0.3);
+}
+
+.ns-label-field {
+  display: block;
+  font-size: var(--ns-text-xs);
+  color: var(--ns-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--ns-space-2);
+}
+
+.ns-select {
+  appearance: none;
+  width: 100%;
+  padding: var(--ns-space-3) var(--ns-space-4);
+  background: var(--ns-bg-input);
+  border: 0.5px solid var(--ns-border);
+  border-radius: var(--ns-radius-md);
+  color: var(--ns-text-primary);
+  font-size: var(--ns-text-base);
+  cursor: pointer;
+  outline: none;
+}
+
+.ns-select:focus {
+  border-color: var(--ns-border-strong);
+}
+
+
+/* ------------------------------------------------------------
+   7. ERROR MESSAGES
+   ------------------------------------------------------------ */
+.ns-error-text {
+  color: #c07070;
+  font-size: var(--ns-text-sm);
+  margin-top: var(--ns-space-1);
+  font-weight: var(--ns-weight-medium);
+}
+
+.ns-error-banner {
+  background: var(--ns-danger-bg);
+  color: #c07070;
+  padding: var(--ns-space-3) var(--ns-space-4);
+  border-radius: var(--ns-radius-md);
+  border: 0.5px solid var(--ns-danger);
+  font-size: var(--ns-text-base);
+  font-weight: var(--ns-weight-medium);
+  margin-bottom: var(--ns-space-5);
+  display: flex;
+  align-items: center;
+  gap: var(--ns-space-2);
+}
+
+
+/* ------------------------------------------------------------
+   8. NAVIGATION
+   ------------------------------------------------------------ */
+.ns-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(var(--ns-nav-height) + var(--ns-safe-bottom));
+  padding-bottom: var(--ns-safe-bottom);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding-top: var(--ns-space-2);
+  border-top: 0.5px solid var(--ns-border-subtle);
+  background: var(--ns-bg-primary);
+  z-index: 100;
+  animation: slideUp 0.5s cubic-bezier(0.33, 1, 0.68, 1) both;
+}
+
+.ns-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  padding: var(--ns-space-1) var(--ns-space-2);
+  border-radius: var(--ns-radius-sm);
+  transition: all var(--ns-transition);
+  color: var(--ns-text-muted);
+  font-size: var(--ns-text-xs);
+  background: none;
+  border: none;
+  min-width: 56px;
+}
+
+.ns-nav-item:hover {
+  color: var(--ns-text-secondary);
+}
+
+.ns-nav-item.active {
+  color: var(--ns-accent);
+}
+
+.ns-nav-item .icon {
+  font-size: 20px;
+  line-height: 1;
+  opacity: 0.3;
+}
+
+.ns-nav-item.active .icon {
+  opacity: 1;
+}
+
+.ns-nav-item:active {
+  transform: scale(0.9);
+}
+
+.ns-scan-fab {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  margin-top: -22px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.ns-scan-fab-circle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--ns-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid var(--ns-bg-primary);
+  box-shadow: var(--ns-shadow-md);
+  transition: all var(--ns-transition);
+  color: var(--ns-bg-primary);
+  font-size: 22px;
+}
+
+.ns-scan-fab:active .ns-scan-fab-circle {
+  transform: scale(0.92);
+}
+
+.ns-scan-fab-label {
+  font-size: var(--ns-text-xs);
+  font-weight: var(--ns-weight-bold);
+  color: var(--ns-accent);
+  margin-top: 2px;
+}
+
+
+/* ------------------------------------------------------------
+   9. NUTRITION COMPONENTS
+   ------------------------------------------------------------ */
+.ns-macro-bar-bg {
+  height: 2px;
+  background: var(--ns-border);
+  border-radius: 2px;
+  margin-top: var(--ns-space-2);
+  overflow: hidden;
+}
+
+.ns-macro-bar {
+  height: 2px;
+  border-radius: 2px;
+  transition: width 0.6s ease;
+}
+
+.ns-macro-bar--protein { background: var(--ns-macro-protein); }
+.ns-macro-bar--carb    { background: var(--ns-macro-carb); }
+.ns-macro-bar--fat     { background: var(--ns-macro-fat); }
+
+.ns-scan-cta {
+  background: var(--ns-accent);
+  border-radius: var(--ns-radius-lg);
+  padding: var(--ns-space-4);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all var(--ns-transition);
+  margin-bottom: var(--ns-space-2);
+  border: none;
+  width: 100%;
+}
+
+.ns-scan-cta:hover {
+  background: var(--ns-accent-hover);
+  transform: translateY(-1px);
+}
+
+.ns-scan-cta:active {
+  transform: scale(0.99);
+}
+
+
+/* ------------------------------------------------------------
+   10. SELECT CARDS (Onboarding)
+   ------------------------------------------------------------ */
+.ns-select-card {
+  padding: var(--ns-space-3);
+  border: 1px solid var(--ns-border);
+  border-radius: var(--ns-radius-lg);
+  cursor: pointer;
+  background: var(--ns-bg-card);
+  transition: all var(--ns-transition);
+}
+
+.ns-select-card:hover {
+  border-color: var(--ns-border-strong);
+}
+
+.ns-select-card--active {
+  border-color: var(--ns-accent);
+  background: var(--ns-accent-bg);
+}
+
+
+/* ------------------------------------------------------------
+   11. BADGES
+   ------------------------------------------------------------ */
+.ns-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px var(--ns-space-2);
+  border-radius: var(--ns-radius-full);
+  font-size: var(--ns-text-xs);
+  font-weight: var(--ns-weight-medium);
+  background: var(--ns-accent-bg);
+  color: var(--ns-accent);
+}
+
+.ns-badge-success {
+  background: var(--ns-success-bg);
+  color: #6ab87a;
+}
+
+.ns-badge-warning {
+  background: var(--ns-warning-bg);
+  color: #c09050;
+}
+
+.ns-badge-danger {
+  background: var(--ns-danger-bg);
+  color: #c07070;
+}
+
+
+/* ------------------------------------------------------------
+   12. PAGE LAYOUT
+   ------------------------------------------------------------ */
+.ns-page {
+  padding: var(--ns-space-5);
+  padding-bottom: calc(var(--ns-nav-height) + 24px + var(--ns-safe-bottom));
+  max-width: 600px;
+  margin: 0 auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--ns-bg-primary);
+}
+
+.ns-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--ns-space-6);
+  padding-top: var(--ns-space-2);
+}
+
+.ns-page-title {
+  font-size: var(--ns-text-lg);
+  font-weight: var(--ns-weight-medium);
+  color: var(--ns-text-primary);
+  margin: 0;
+}
+
+.ns-page-sub {
+  font-size: var(--ns-text-sm);
+  color: var(--ns-text-muted);
+  margin-top: 2px;
+}
+
+
+/* ------------------------------------------------------------
+   13. LOADING STATES
+   ------------------------------------------------------------ */
+.ns-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--ns-border);
+  border-top-color: var(--ns-accent);
+  border-radius: 50%;
+  animation: ns-spin 0.7s linear infinite;
+}
+
+.ns-spinner-lg {
+  width: 36px;
+  height: 36px;
+  border-width: 3px;
+}
+
+.ns-skeleton {
+  background: linear-gradient(90deg, var(--ns-bg-card) 25%, var(--ns-bg-elevated) 50%, var(--ns-bg-card) 75%);
+  background-size: 200% 100%;
+  animation: ns-shimmer 1.5s infinite;
+  border-radius: var(--ns-radius-sm);
+}
+
+
+/* ------------------------------------------------------------
+   14. EMPTY STATES
+   ------------------------------------------------------------ */
+.ns-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--ns-space-8) var(--ns-space-4);
+  text-align: center;
+  gap: var(--ns-space-2);
+}
+
+.ns-empty-icon {
+  font-size: 40px;
+  opacity: 0.15;
+  margin-bottom: var(--ns-space-2);
+}
+
+.ns-empty-sub {
+  font-size: var(--ns-text-sm);
+  color: var(--ns-text-muted);
+  line-height: 1.6;
+}
+
+
+/* ------------------------------------------------------------
+   15. SPLASH SCREEN
+   ------------------------------------------------------------ */
+.ns-splash {
+  position: fixed;
+  inset: 0;
+  background: var(--ns-bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.4s ease;
+}
+
+.ns-splash-fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+
+/* ------------------------------------------------------------
+   16. PROGRESS BAR
+   ------------------------------------------------------------ */
+.ns-progress-track {
+  height: 4px;
+  background: var(--ns-border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.ns-progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+/* ------------------------------------------------------------
+   17. UTILITY CLASSES
+   ------------------------------------------------------------ */
+.ns-flex         { display: flex; }
+.ns-flex-col     { display: flex; flex-direction: column; }
+.ns-items-center { align-items: center; }
+.ns-justify-between { justify-content: space-between; }
+.ns-gap-1        { gap: var(--ns-space-1); }
+.ns-gap-2        { gap: var(--ns-space-2); }
+.ns-gap-3        { gap: var(--ns-space-3); }
+.ns-gap-4        { gap: var(--ns-space-4); }
+.ns-mb-2         { margin-bottom: var(--ns-space-2); }
+.ns-mb-3         { margin-bottom: var(--ns-space-3); }
+.ns-mb-4         { margin-bottom: var(--ns-space-4); }
+.ns-mt-2         { margin-top: var(--ns-space-2); }
+.ns-mt-4         { margin-top: var(--ns-space-4); }
+.ns-w-full       { width: 100%; }
+.ns-text-center  { text-align: center; }
+.ns-text-right   { text-align: right; }
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* ------------------------------------------------------------
+   18. COACH CHAT ANIMATIONS
+   ------------------------------------------------------------ */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes typingDot {
+  0%, 60%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.ns-typing-dot {
+  display: inline-block;
+  color: var(--ns-text-muted);
+  font-size: 8px;
+  animation: typingDot 1.4s ease-in-out infinite;
+}

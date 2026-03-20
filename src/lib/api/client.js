@@ -5,15 +5,27 @@ import { getSupabaseClient } from "../supabase";
 const API_URL = import.meta.env.VITE_API_URL || "";
 
 class APIClient {
-  async fetch(endpoint, options = {}) {
+  async fetch(endpoint, options = {}, timeoutMs = 30000) {
     const url = `${API_URL}${endpoint}`;
-    const response = await fetch(url, {
-      ...options,
-      headers: {
-        "Content-Type": "application/json",
-        ...options.headers,
-      },
-    });
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+    let response;
+    try {
+      response = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+        headers: {
+          "Content-Type": "application/json",
+          ...options.headers,
+        },
+      });
+    } catch (err) {
+      if (err.name === "AbortError") throw new Error("A requisição demorou demais. Tente novamente.");
+      throw err;
+    } finally {
+      clearTimeout(timer);
+    }
 
     // Handle 401 Unauthorized - token may have expired
     if (response.status === 401) {
@@ -52,8 +64,8 @@ class APIClient {
     const payload = {
       imageBase64,
       mediaType,
-      userId,
-      imageUrl,
+      ...(userId && { userId }),
+      ...(imageUrl && { imageUrl }),
     };
 
     // Validar payload antes de enviar

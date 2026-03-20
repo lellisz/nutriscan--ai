@@ -27,14 +27,14 @@ export const ProfileSchema = z.object({
 export const ScanRequestSchema = z.object({
   imageBase64: z.string(),
   mediaType: z.string(),
-  userId: z.string().uuid().optional(),
-  imageUrl: z.string().url().optional(),
+  userId: z.string().uuid().optional().nullable(),
+  imageUrl: z.string().url().optional().nullable(),
 });
 
 export const ScanResponseSchema = z.object({
   food_name: z.string(),
   emoji: z.string(),
-  category: z.enum(["proteína", "carboidrato", "gordura", "fruta", "vegetal", "bebida", "misto"]),
+  category: z.enum(["proteina", "carboidrato", "gordura", "fruta", "vegetal", "bebida", "misto"]),
   portion: z.string(),
   calories: z.number(),
   protein: z.number(),
@@ -43,10 +43,10 @@ export const ScanResponseSchema = z.object({
   fiber: z.number(),
   sugar: z.number(),
   sodium: z.number(),
-  glycemic_index: z.enum(["baixo", "médio", "alto"]),
+  glycemic_index: z.enum(["baixo", "medio", "alto"]),
   satiety_score: z.number().int().min(1).max(10),
   cutting_score: z.number().int().min(1).max(10),
-  confidence: z.enum(["alta", "média", "baixa"]),
+  confidence: z.enum(["alta", "media", "baixa"]),
   benefits: z.array(z.string()).max(2),
   watch_out: z.string().nullable(),
   ai_tip: z.string(),

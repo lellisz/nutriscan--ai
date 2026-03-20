@@ -88,8 +88,8 @@ const ScanRequestSchema = z.object({
     (val) => val.startsWith("image/"),
     "mediaType must be a valid image MIME type"
   ),
-  userId: z.string().uuid().optional(),
-  imageUrl: z.string().url().optional(),
+  userId: z.string().uuid().optional().nullable(),
+  imageUrl: z.string().url().optional().nullable(),
 });
 
 /**
@@ -135,6 +135,122 @@ function getAdminSupabase() {
 }
 
 /**
+ * Chama Groq API (llama-3.2-90b-vision) com retry automático
+ * Tier gratuito: 14.400 req/dia, sem cartão de crédito
+ */
+async function callGroqWithRetry(imageBase64, mediaType, maxRetries = 3) {
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey) throw new Error("GROQ_API_KEY not configured");
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: "meta-llama/llama-4-scout-17b-16e-instruct",
+          max_tokens: 1000,
+          temperature: 0.1,
+          messages: [
+            { role: "system", content: SYSTEM_PROMPT },
+            {
+              role: "user",
+              content: [
+                {
+                  type: "image_url",
+                  image_url: { url: `data:${mediaType};base64,${imageBase64}` },
+                },
+                { type: "text", text: "Analise o alimento na imagem." },
+              ],
+            },
+          ],
+        }),
+      });
+
+      if (!response.ok) {
+        if (response.status >= 500 || response.status === 429) {
+          if (attempt < maxRetries) {
+            const waitTime = Math.pow(2, attempt - 1) * 1000;
+            await new Promise((resolve) => setTimeout(resolve, waitTime));
+            continue;
+          }
+        }
+        const errorBody = await response.text();
+        throw new Error(`Groq API error: ${response.status} - ${errorBody}`);
+      }
+
+      const data = await response.json();
+      const text = data.choices?.[0]?.message?.content ?? "";
+      if (!text) throw new Error("Empty response from Groq");
+
+      return { content: [{ type: "text", text }], provider: "groq" };
+    } catch (error) {
+      if (attempt === maxRetries) throw error;
+      const waitTime = Math.pow(2, attempt - 1) * 1000;
+      await new Promise((resolve) => setTimeout(resolve, waitTime));
+    }
+  }
+}
+
+/**
+ * Chama Gemini API com retry automático e exponential backoff
+ * Tier gratuito: 1.500 requisições/dia, sem custo
+ */
+async function callGeminiWithRetry(imageBase64, mediaType, maxRetries = 3) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error("GEMINI_API_KEY not configured");
+  }
+
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+          contents: [{
+            parts: [
+              { inline_data: { mime_type: mediaType, data: imageBase64 } },
+              { text: "Analise o alimento na imagem." },
+            ],
+          }],
+          generationConfig: { maxOutputTokens: 1000, temperature: 0.1 },
+        }),
+      });
+
+      if (!response.ok) {
+        if (response.status >= 500 || response.status === 429) {
+          if (attempt < maxRetries) {
+            const waitTime = Math.pow(2, attempt - 1) * 1000;
+            await new Promise((resolve) => setTimeout(resolve, waitTime));
+            continue;
+          }
+        }
+        const errorBody = await response.text();
+        throw new Error(`Gemini API error: ${response.status} - ${errorBody}`);
+      }
+
+      const data = await response.json();
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+      if (!text) throw new Error("Empty response from Gemini");
+
+      // Retorna no formato compatível com o parser existente
+      return { content: [{ type: "text", text }], provider: "gemini" };
+    } catch (error) {
+      if (attempt === maxRetries) throw error;
+      const waitTime = Math.pow(2, attempt - 1) * 1000;
+      await new Promise((resolve) => setTimeout(resolve, waitTime));
+    }
+  }
+}
+
+/**
  * Chama Anthropic API com retry automático e exponential backoff
  */
 async function callAnthropicWithRetry(imageBase64, mediaType, maxRetries = 3) {
@@ -153,7 +269,7 @@ async function callAnthropicWithRetry(imageBase64, mediaType, maxRetries = 3) {
           "anthropic-version": "2023-06-01",
         },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: "claude-haiku-4-5-20251001",
           max_tokens: 1000,
           system: SYSTEM_PROMPT,
           messages: [
@@ -192,6 +308,63 @@ async function callAnthropicWithRetry(imageBase64, mediaType, maxRetries = 3) {
 
       const data = await response.json();
       return data;
+    } catch (error) {
+      if (attempt === maxRetries) {
+        throw error;
+      }
+      const waitTime = Math.pow(2, attempt - 1) * 1000;
+      await new Promise((resolve) => setTimeout(resolve, waitTime));
+    }
+  }
+}
+
+/**
+ * Chama Ollama API (llava) com retry automático e exponential backoff
+ * Usado como fallback quando Anthropic falha ou como provider principal (local)
+ */
+async function callOllamaWithRetry(imageBase64, mediaType, maxRetries = 2) {
+  const ollamaUrl = process.env.OLLAMA_BASE_URL || "http://localhost:11434";
+  const model = process.env.OLLAMA_MODEL || "llava";
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await fetch(`${ollamaUrl}/api/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model,
+          stream: false,
+          messages: [
+            {
+              role: "system",
+              content: SYSTEM_PROMPT,
+            },
+            {
+              role: "user",
+              content: "Analise o alimento na imagem.",
+              images: [imageBase64],
+            },
+          ],
+        }),
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        throw new Error(`Ollama API error: ${response.status} - ${errorBody}`);
+      }
+
+      const data = await response.json();
+      // Ollama retorna { message: { content: "..." } }
+      const text = data.message?.content ?? "";
+      if (!text) {
+        throw new Error("Empty response from Ollama");
+      }
+
+      // Adapta resposta para formato compatível com Anthropic
+      return {
+        content: [{ type: "text", text }],
+        provider: "ollama",
+      };
     } catch (error) {
       if (attempt === maxRetries) {
         throw error;
@@ -264,6 +437,11 @@ async function incrementFreeScanCount(supabase, userId) {
       .eq("user_id", userId);
   }
 }
+
+/**
+ * Salva resultado do scan no banco de dados
+ */
+async function saveScanToDatabase(requestId, { userId, imageUrl, analysis }) {
   if (!userId) {
     console.log(`[${requestId}] No userId, skipping database save`);
     return null;
@@ -328,10 +506,14 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  // Validação inicial do ambiente
+  // Validação inicial do ambiente - pelo menos um provider deve estar disponível
   const anthropicKey = process.env.ANTHROPIC_API_KEY;
-  if (!anthropicKey) {
-    console.error(`[${requestId}] ANTHROPIC_API_KEY not configured`);
+  const geminiKey = process.env.GEMINI_API_KEY;
+  const groqKey = process.env.GROQ_API_KEY;
+  const aiProvider = process.env.AI_PROVIDER || "groq_with_fallback"; // "groq", "groq_with_fallback", "gemini", "gemini_with_fallback", "anthropic", "anthropic_with_fallback", "ollama"
+
+  if (!groqKey && !geminiKey && !anthropicKey && aiProvider !== "ollama") {
+    console.error(`[${requestId}] Nenhuma chave de AI configurada`);
     return res.status(500).json({ error: "Server misconfigured" });
   }
 
@@ -341,37 +523,46 @@ export default async function handler(req, res) {
     validatedRequest = ScanRequestSchema.parse(req.body ?? {});
     console.log(`[${requestId}] Request validation passed`);
   } catch (validationError) {
-    console.warn(`[${requestId}] Request validation failed:`, validationError.errors);
+    const issues = validationError.issues || validationError.errors || [];
+    console.warn(`[${requestId}] Request validation failed:`, issues);
     return res.status(400).json({
       error: "Invalid request",
-      details: validationError.errors.map((e) => e.message),
+      details: issues.map((e) => e.message),
     });
   }
 
-  const { imageBase64, mediaType, userId, imageUrl = null } = validatedRequest;
+  const { mediaType, userId, imageUrl = null } = validatedRequest;
+  // Strip data URL prefix if present (e.g. "data:image/jpeg;base64,/9j/...")
+  const imageBase64 = validatedRequest.imageBase64.includes(",")
+    ? validatedRequest.imageBase64.split(",")[1]
+    : validatedRequest.imageBase64;
 
   // Check scan permission (premium or free scans remaining)
   if (userId) {
     const supabase = getAdminSupabase();
-    try {
-      const permissionCheck = await checkScanPermission(supabase, userId);
-      if (!permissionCheck.allowed) {
-        console.warn(`[${requestId}] User ${userId} has no remaining free scans`);
-        return res.status(402).json({
-          error: permissionCheck.error,
-          upgrade: true,
-        });
+    if (supabase) {
+      try {
+        const permissionCheck = await checkScanPermission(supabase, userId);
+        if (!permissionCheck.allowed) {
+          console.warn(`[${requestId}] User ${userId} has no remaining free scans`);
+          return res.status(402).json({
+            error: permissionCheck.error,
+            upgrade: true,
+          });
+        }
+        if (permissionCheck.remaining !== null) {
+          console.log(`[${requestId}] User ${userId} has ${permissionCheck.remaining} free scans remaining`);
+        }
+      } catch (permissionError) {
+        console.error(`[${requestId}] Permission check failed:`, permissionError.message);
+        return res.status(500).json({ error: "Failed to check scan permission" });
       }
-      if (permissionCheck.remaining !== null) {
-        console.log(`[${requestId}] User ${userId} has ${permissionCheck.remaining} free scans remaining`);
-      }
-    } catch (permissionError) {
-      console.error(`[${requestId}] Permission check failed:`, permissionError.message);
-      return res.status(500).json({ error: "Failed to check scan permission" });
+    } else {
+      console.warn(`[${requestId}] Supabase not configured, skipping permission check`);
     }
   }
 
-  try {
+  // Rate limiting
   const rateLimitCheck = rateLimiter.check(userId);
   if (!rateLimitCheck.allowed && userId) {
     console.warn(`[${requestId}] Rate limit exceeded for user ${userId}`);
@@ -401,15 +592,65 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Chama Anthropic com retry
-    console.log(`[${requestId}] Calling Anthropic API...`);
-    const response = await callAnthropicWithRetry(imageBase64, mediaType);
+    // Chama AI com fallback baseado na configuração
+    let response;
+    let usedProvider;
+
+    if (aiProvider === "ollama") {
+      console.log(`[${requestId}] Calling Ollama (${process.env.OLLAMA_MODEL || "llava"})...`);
+      response = await callOllamaWithRetry(imageBase64, mediaType);
+      usedProvider = "ollama";
+    } else if (aiProvider === "groq") {
+      console.log(`[${requestId}] Calling Groq API...`);
+      response = await callGroqWithRetry(imageBase64, mediaType);
+      usedProvider = "groq";
+    } else if (aiProvider === "groq_with_fallback") {
+      // Padrão: Groq grátis primeiro, fallback para Anthropic Haiku
+      try {
+        console.log(`[${requestId}] Calling Groq API...`);
+        response = await callGroqWithRetry(imageBase64, mediaType);
+        usedProvider = "groq";
+      } catch (groqError) {
+        console.warn(`[${requestId}] Groq failed: ${groqError.message}. Falling back to Anthropic Haiku...`);
+        response = await callAnthropicWithRetry(imageBase64, mediaType);
+        usedProvider = "anthropic";
+      }
+    } else if (aiProvider === "gemini") {
+      console.log(`[${requestId}] Calling Gemini API...`);
+      response = await callGeminiWithRetry(imageBase64, mediaType);
+      usedProvider = "gemini";
+    } else if (aiProvider === "gemini_with_fallback") {
+      try {
+        console.log(`[${requestId}] Calling Gemini API...`);
+        response = await callGeminiWithRetry(imageBase64, mediaType);
+        usedProvider = "gemini";
+      } catch (geminiError) {
+        console.warn(`[${requestId}] Gemini failed: ${geminiError.message}. Falling back to Anthropic Haiku...`);
+        response = await callAnthropicWithRetry(imageBase64, mediaType);
+        usedProvider = "anthropic";
+      }
+    } else if (aiProvider === "anthropic") {
+      console.log(`[${requestId}] Calling Anthropic API (Haiku)...`);
+      response = await callAnthropicWithRetry(imageBase64, mediaType);
+      usedProvider = "anthropic";
+    } else {
+      // anthropic_with_fallback (legado): Anthropic primeiro, fallback para Ollama
+      try {
+        console.log(`[${requestId}] Calling Anthropic API (Haiku)...`);
+        response = await callAnthropicWithRetry(imageBase64, mediaType);
+        usedProvider = "anthropic";
+      } catch (anthropicError) {
+        console.warn(`[${requestId}] Anthropic failed: ${anthropicError.message}. Falling back to Ollama...`);
+        response = await callOllamaWithRetry(imageBase64, mediaType);
+        usedProvider = "ollama";
+      }
+    }
 
     // Extrai texto da resposta
     const text =
       response.content?.find((block) => block.type === "text")?.text ?? "";
     if (!text) {
-      console.error(`[${requestId}] Empty response from Anthropic`);
+      console.error(`[${requestId}] Empty response from ${usedProvider}`);
       return res.status(502).json({ error: "Empty response from AI" });
     }
 
@@ -431,10 +672,11 @@ export default async function handler(req, res) {
       parsed = ScanResponseSchema.parse(parsed);
       console.log(`[${requestId}] Response validation passed`);
     } catch (validationError) {
-      console.error(`[${requestId}] Response validation failed:`, validationError.errors);
+      const issues = validationError.issues || validationError.errors || [];
+      console.error(`[${requestId}] Response validation failed:`, issues);
       return res.status(502).json({
         error: "Invalid AI response format",
-        details: validationError.errors.map((e) => `${e.path.join(".")}: ${e.message}`),
+        details: issues.map((e) => `${e.path.join(".")}: ${e.message}`),
       });
     }
 
@@ -450,17 +692,20 @@ export default async function handler(req, res) {
       // Increment free scan count after successful scan
       if (userId) {
         const supabase = getAdminSupabase();
-        await incrementFreeScanCount(supabase, userId);
+        if (supabase) {
+          await incrementFreeScanCount(supabase, userId);
+        }
       }
     } catch (databaseError) {
       console.error(`[${requestId}] Database save error (non-fatal):`, databaseError.message);
       // Não falha a requisição, retorna sucesso mesmo assim
     }
 
-    console.log(`[${requestId}] Request completed successfully`);
+    console.log(`[${requestId}] Request completed successfully via ${usedProvider}`);
     return res.status(200).json({
       result: parsed,
       savedScan,
+      provider: usedProvider,
     });
   } catch (error) {
     console.error(`[${requestId}] Unexpected error:`, error.message);

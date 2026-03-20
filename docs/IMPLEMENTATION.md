@@ -63,6 +63,11 @@ src/
 - Refatorado para aceitar `userId` e `imageUrl`
 - Salva resultado em `scan_history` do Supabase quando userId está presente
 - Mantém chaves sensíveis no servidor apenas
+- **Ollama/llava integrado** como provider local de IA com visão
+- Suporte a 3 modos via `AI_PROVIDER`:
+  - `anthropic` — usa apenas Anthropic Claude (cloud)
+  - `ollama` — usa apenas Ollama llava (local, gratuito)
+  - `anthropic_with_fallback` — tenta Anthropic, se falhar usa Ollama (default)
 
 #### 7. Build e Compilação
 - ✅ Build sem erros: 168 módulos transformados
@@ -102,6 +107,11 @@ VITE_SUPABASE_ANON_KEY=sua-chave-anonima
 SUPABASE_URL=https://seu-projeto.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=sua-chave-de-servico
 ANTHROPIC_API_KEY=sua-chave-anthropic
+
+# Ollama (opcional - IA local gratuita)
+OLLAMA_BASE_URL=http://localhost:11434
+OLLAMA_MODEL=llava
+AI_PROVIDER=anthropic_with_fallback
 ```
 
 ### 2. Executar Migrations no Supabase
