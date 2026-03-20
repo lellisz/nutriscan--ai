@@ -2,11 +2,11 @@ import { StatusBar } from '../../../app/AppShell';
 import { useAuth } from '../../auth/hooks/useAuth';
 
 const GOALS = [
-  { key: 'Calorias',    color: 'var(--ns-macro-prot)',  pct: 100, value: '2.732 kcal' },
-  { key: 'Proteína',    color: 'var(--ns-macro-prot)',  pct: 38,  value: '150g/dia'   },
-  { key: 'Carboidrato', color: 'var(--ns-macro-carb)',  pct: 65,  value: '260g/dia'   },
-  { key: 'Gordura',     color: 'var(--ns-macro-fat)',   pct: 21,  value: '82g/dia'    },
-  { key: 'Hidratação',  color: 'var(--ns-macro-water)', pct: 55,  value: '2.625ml'    },
+  { key: 'Calorias',    pct: 100, value: '2.732 kcal' },
+  { key: 'Proteína',    pct: 38,  value: '150g/dia'   },
+  { key: 'Carboidrato', pct: 65,  value: '260g/dia'   },
+  { key: 'Gordura',     pct: 21,  value: '82g/dia'    },
+  { key: 'Hidratação',  pct: 55,  value: '2.625ml',   isWater: true },
 ];
 
 const ACHIEVEMENTS = [
@@ -17,137 +17,269 @@ const ACHIEVEMENTS = [
 ];
 
 const MENU = [
-  { emoji: '👤', label: 'Dados pessoais',    right: true },
-  { emoji: '🎯', label: 'Metas e objetivos', right: true },
+  { emoji: '👤', label: 'Dados pessoais',    right: true  },
+  { emoji: '🎯', label: 'Metas e objetivos', right: true  },
   { emoji: '🤖', label: 'Modelo de IA',      badge: 'Groq' },
   { emoji: '🔔', label: 'Notificações',      badge: '2 novas' },
-  { emoji: '🔒', label: 'Privacidade',       right: true },
-  { emoji: '⚙️', label: 'Preferências',      right: true },
+  { emoji: '🔒', label: 'Privacidade',       right: true  },
+  { emoji: '⚙️', label: 'Preferências',      right: true  },
 ];
 
+function calcBMI(weight, height) {
+  if (!weight || !height) return null;
+  const h = height / 100;
+  return (weight / (h * h)).toFixed(1);
+}
+
+function bmiLabel(bmi) {
+  if (!bmi) return '—';
+  const v = parseFloat(bmi);
+  if (v < 18.5) return 'Abaixo';
+  if (v < 25)   return 'Normal';
+  if (v < 30)   return 'Acima';
+  return 'Obeso';
+}
+
+// Chevron SVG
+const Chevron = () => (
+  <svg width="7" height="12" viewBox="0 0 7 12" fill="none" style={{ flexShrink: 0 }}>
+    <path d="M1 1l5 5-5 5" stroke="#C0C0C0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
 export default function ProfilePage() {
-  const { user, profile } = useAuth();
-  const name    = profile?.name    ?? 'Felipe';
-  const email   = user?.email      ?? 'felipe@email.com';
+  const { user, profile, signOut } = useAuth();
+  const name    = profile?.full_name ?? user?.email?.split('@')[0] ?? 'Usuário';
+  const email   = user?.email ?? '';
   const initial = name.charAt(0).toUpperCase();
 
+  const age    = profile?.age    ?? '—';
+  const height = profile?.height ?? '—';
+  const weight = profile?.weight ?? '—';
+  const bmi    = calcBMI(profile?.weight, profile?.height);
+  const bmiStr = bmi ?? '—';
+
+  // Stats fictícios
+  const scansCount  = 24;
+  const streakCount = 5;
+  const daysCount   = 12;
+
   return (
-    <div className="ns-page">
+    <div style={{ background: '#FFFFFF', minHeight: '100dvh', paddingBottom: 100 }}>
       <StatusBar />
 
-      {/* ── Avatar & Info ── */}
-      <div style={{ padding: '16px var(--ns-page-px) 14px', display: 'flex', gap: 16, alignItems: 'center' }}>
+      {/* ── Avatar centralizado ── */}
+      <div style={{ padding: '20px 20px 0', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <div style={{
-          width: 72, height: 72, borderRadius: '50%',
-          background: 'var(--ns-bg-2)',
+          width: 80, height: 80, borderRadius: '50%',
+          background: '#F5F5F5',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 28, fontWeight: 700, color: 'var(--ns-t-primary)', flexShrink: 0,
-          border: '1.5px solid var(--ns-bg-3)',
-          position: 'relative',
+          fontSize: 32, fontWeight: 800, color: '#000',
+          border: '0.5px solid rgba(0,0,0,0.08)',
         }}>
           {initial}
-          <div style={{
-            position: 'absolute', inset: -5, borderRadius: '50%',
-            border: '0.5px solid var(--ns-sep)',
-          }} />
         </div>
-        <div>
-          <div style={{
-            fontSize: 24, fontWeight: 700, color: 'var(--ns-t-primary)',
-            letterSpacing: '-0.04em', lineHeight: 1.1,
-          }}>{name}</div>
-          <div style={{
-            fontSize: 13, color: 'var(--ns-t-5)',
-            marginTop: 3, letterSpacing: '-0.01em',
-          }}>{email}</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 7 }}>
-            <div style={{
-              width: 5, height: 5, borderRadius: '50%',
-              background: 'var(--ns-t-3)',
-              animation: 'ns-pulse 2s ease infinite',
-            }} />
-            <div style={{ fontSize: 11, color: 'var(--ns-t-4)', letterSpacing: '-0.01em' }}>
-              Manutenção · 12 scans · 5d streak
-            </div>
-          </div>
+        <div style={{
+          fontSize: 24, fontWeight: 800, color: '#000',
+          letterSpacing: '-0.04em', lineHeight: 1.1,
+          marginTop: 12, textAlign: 'center',
+        }}>
+          {name}
         </div>
-      </div>
+        <div style={{ fontSize: 14, color: '#6B6B6B', marginTop: 4, textAlign: 'center' }}>
+          {profile?.goal ?? 'Manutenção'}
+        </div>
+        <div style={{ fontSize: 13, color: '#B0B0B0', marginTop: 2, textAlign: 'center' }}>
+          {email}
+        </div>
 
-      {/* ── Biometrics ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6, margin: '0 var(--ns-page-px) 10px' }}>
-        {[
-          ['Idade', '30', 'anos'],
-          ['Altura', '175', 'cm'],
-          ['Peso', '75', 'kg'],
-          ['IMC', '24.5', 'Normal'],
-        ].map(([l, v, u], i) => (
-          <div key={l} className="ns-bio-cell">
-            <div className="ns-bio-label">{l}</div>
-            <div className="ns-bio-value" style={i === 3 ? { color: 'var(--ns-t-1)' } : {}}>{v}</div>
-            <div className="ns-bio-unit" style={i === 3 ? { color: 'var(--ns-t-2)' } : {}}>{u}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* ── Goals ── */}
-      <div className="ns-card-sm" style={{ margin: '0 var(--ns-page-px) 10px', overflow: 'hidden' }}>
-        <div className="ns-label" style={{ padding: '14px 15px 10px' }}>
-          Metas diárias · TDEE
-        </div>
-        {GOALS.map(g => (
-          <div key={g.key} className="ns-goal-row">
-            <span className="ns-goal-key">{g.key}</span>
-            <div className="ns-bar-track" style={{ flex: 1 }}>
-              <div className="ns-bar-fill" style={{ width: `${g.pct}%`, background: g.color }} />
-            </div>
-            <span className="ns-goal-value">{g.value}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* ── Achievements ── */}
-      <div className="ns-card-sm" style={{ margin: '0 var(--ns-page-px) 10px', padding: '14px 15px' }}>
-        <div className="ns-label" style={{ marginBottom: 12 }}>
-          Conquistas
-        </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          {ACHIEVEMENTS.map(a => (
-            <div key={a.label} className="ns-achievement">
-              <div className="ns-achievement-icon">{a.emoji}</div>
-              <div className="ns-achievement-label">{a.label}</div>
+        {/* Stats row */}
+        <div style={{ display: 'flex', gap: 0, marginTop: 20, width: '100%', maxWidth: 320 }}>
+          {[
+            { v: scansCount,  l: 'Scans'  },
+            { v: streakCount, l: 'Streak' },
+            { v: daysCount,   l: 'Dias'   },
+          ].map(({ v, l }, i) => (
+            <div key={l} style={{
+              flex: 1, textAlign: 'center',
+              borderRight: i < 2 ? '0.5px solid rgba(0,0,0,0.08)' : 'none',
+              padding: '0 8px',
+            }}>
+              <div style={{ fontSize: 24, fontWeight: 800, color: '#000', letterSpacing: '-0.04em' }}>
+                {v}
+              </div>
+              <div style={{ fontSize: 11, color: '#B0B0B0', marginTop: 2, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                {l}
+              </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* ── Menu ── */}
-      <div className="ns-card-sm" style={{ margin: '0 var(--ns-page-px) 8px', overflow: 'hidden' }}>
-        <div className="ns-label" style={{ padding: '14px 15px 10px' }}>
-          Conta
-        </div>
-        {MENU.map(item => (
-          <div key={item.label} className="ns-menu-row">
-            <div className="ns-menu-icon" style={{ background: 'var(--ns-bg-2)' }}>{item.emoji}</div>
-            <span className="ns-menu-text">{item.label}</span>
-            {item.right && (
-              <svg width="7" height="12" viewBox="0 0 7 12" fill="none" style={{ flexShrink: 0 }}>
-                <path d="M1 1l5 5-5 5" stroke="var(--ns-t-6)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            )}
-            {item.badge && (
-              <span style={{
-                fontSize: 10, fontWeight: 600,
-                background: 'var(--ns-bg-2)', color: 'var(--ns-t-3)',
-                padding: '3px 9px', borderRadius: 20,
-              }}>
-                {item.badge}
-              </span>
-            )}
+      {/* ── Biometrics 2x2 ── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8, margin: '20px 20px 0' }}>
+        {[
+          ['Idade',  age,    age    === '—' ? '' : 'anos'],
+          ['Altura', height, height === '—' ? '' : 'cm'],
+          ['Peso',   weight, weight === '—' ? '' : 'kg'],
+          ['IMC',    bmiStr, bmiLabel(bmi)],
+        ].map(([l, v, u]) => (
+          <div key={l} style={{
+            background: '#F5F5F5',
+            borderRadius: 12,
+            padding: '12px 8px',
+            textAlign: 'center',
+            display: 'flex', flexDirection: 'column', gap: 2,
+          }}>
+            <div style={{ fontSize: 10, color: '#B0B0B0', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              {l}
+            </div>
+            <div style={{ fontSize: 20, fontWeight: 800, color: '#000', letterSpacing: '-0.04em', lineHeight: 1 }}>
+              {v}
+            </div>
+            <div style={{ fontSize: 10, color: '#B0B0B0' }}>{u}</div>
           </div>
         ))}
       </div>
 
-      <div style={{ height: 8 }} />
+      {/* ── Metas diárias — iOS grouped list ── */}
+      <div style={{ margin: '16px 20px 0' }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: '#B0B0B0', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 8 }}>
+          Metas diárias
+        </div>
+        <div style={{
+          background: '#FFFFFF',
+          borderRadius: 16,
+          overflow: 'hidden',
+          border: '0.5px solid rgba(0,0,0,0.08)',
+        }}>
+          {GOALS.map((g, i) => (
+            <div key={g.key} style={{
+              display: 'flex', alignItems: 'center', gap: 12,
+              padding: '12px 16px',
+              borderTop: i > 0 ? '0.5px solid rgba(0,0,0,0.05)' : 'none',
+            }}>
+              <span style={{ fontSize: 13, color: '#000', flex: 1, fontWeight: 500 }}>{g.key}</span>
+              <div style={{ width: 80, height: 3, background: '#F0F0F0', borderRadius: 2, overflow: 'hidden' }}>
+                <div style={{
+                  height: '100%',
+                  width: `${g.pct}%`,
+                  background: g.isWater ? '#2563EB' : '#000',
+                  borderRadius: 2,
+                  transition: 'width 0.6s ease',
+                }} />
+              </div>
+              <span style={{ fontSize: 13, fontWeight: 700, color: '#000', letterSpacing: '-0.02em', minWidth: 72, textAlign: 'right' }}>
+                {g.value}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Conquistas ── */}
+      <div style={{ margin: '16px 20px 0' }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: '#B0B0B0', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 8 }}>
+          Conquistas
+        </div>
+        <div style={{
+          background: '#FFFFFF',
+          borderRadius: 16,
+          border: '0.5px solid rgba(0,0,0,0.08)',
+          padding: '16px',
+          display: 'flex', gap: 8,
+        }}>
+          {ACHIEVEMENTS.map(a => (
+            <div key={a.label} style={{
+              flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
+            }}>
+              <div style={{
+                width: 48, height: 48, borderRadius: '50%',
+                background: '#F5F5F5',
+                border: '0.5px solid rgba(0,0,0,0.06)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 22,
+              }}>
+                {a.emoji}
+              </div>
+              <div style={{ fontSize: 11, color: '#6B6B6B', textAlign: 'center', fontWeight: 500 }}>
+                {a.label}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Menu de configurações — iOS style ── */}
+      <div style={{ margin: '16px 20px 0' }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: '#B0B0B0', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 8 }}>
+          Conta
+        </div>
+        <div style={{
+          background: '#FFFFFF',
+          borderRadius: 16,
+          overflow: 'hidden',
+          border: '0.5px solid rgba(0,0,0,0.08)',
+        }}>
+          {MENU.map((item, i) => (
+            <div key={item.label} style={{
+              display: 'flex', alignItems: 'center', gap: 12,
+              padding: '13px 16px',
+              borderTop: i > 0 ? '0.5px solid rgba(0,0,0,0.05)' : 'none',
+              cursor: 'pointer',
+              WebkitTapHighlightColor: 'transparent',
+            }}>
+              <div style={{
+                width: 32, height: 32, borderRadius: 8,
+                background: '#F5F5F5',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 16, flexShrink: 0,
+              }}>
+                {item.emoji}
+              </div>
+              <span style={{ flex: 1, fontSize: 15, color: '#000', fontWeight: 500 }}>
+                {item.label}
+              </span>
+              {item.right && <Chevron />}
+              {item.badge && (
+                <span style={{
+                  fontSize: 11, fontWeight: 600,
+                  background: '#F5F5F5', color: '#6B6B6B',
+                  padding: '3px 9px', borderRadius: 20,
+                }}>
+                  {item.badge}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Botão Sair ── */}
+      <div style={{ margin: '16px 20px 24px' }}>
+        <button
+          onClick={signOut}
+          style={{
+            width: '100%',
+            height: 52,
+            borderRadius: 12,
+            border: '1px solid #DC2626',
+            background: 'transparent',
+            color: '#DC2626',
+            fontSize: 15,
+            fontWeight: 600,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8,
+            letterSpacing: '-0.01em',
+            WebkitTapHighlightColor: 'transparent',
+          }}
+        >
+          🚪 Sair da conta
+        </button>
+      </div>
     </div>
   );
 }

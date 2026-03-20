@@ -31,77 +31,71 @@ const MEALS = [
   },
 ];
 
-function HistItem({ item }) {
-  const total = item.macros.p + item.macros.c + item.macros.g || 1;
-
+function HistItem({ item, isLast }) {
   return (
-    <div
-      className="ns-hist-item ns-shimmer"
-      style={{
-        display: 'flex', alignItems: 'center', gap: 14,
-        padding: '14px 20px',
-        background: '#1c1c1e',
-        WebkitTapHighlightColor: 'transparent',
-        cursor: 'pointer',
-        transition: 'opacity 0.15s cubic-bezier(0.4,0,0.2,1)',
-      }}
-    >
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: 12,
+      padding: '14px 16px',
+      borderTop: 'none',
+      WebkitTapHighlightColor: 'transparent',
+      cursor: 'pointer',
+    }}>
       {/* Thumb */}
-      <div
-        className="ns-hist-thumb"
-        style={{
-          width: 48, height: 48, borderRadius: 10,
-          background: 'rgba(255,255,255,0.07)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 24, flexShrink: 0,
-        }}
-      >
+      <div style={{
+        width: 44, height: 44,
+        background: '#F5F5F5',
+        borderRadius: 10,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: 22, flexShrink: 0,
+      }}>
         {item.emoji}
       </div>
 
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div
-          className="ns-hist-name"
-          style={{
-            fontSize: 15, fontWeight: 600, color: '#ffffff',
-            letterSpacing: '-0.02em', lineHeight: 1.2, marginBottom: 3,
-            whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-          }}
-        >
+        <div style={{
+          fontSize: 15, fontWeight: 600, color: '#000',
+          letterSpacing: '-0.02em', lineHeight: 1.2, marginBottom: 3,
+          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
+        }}>
           {item.name}
         </div>
-        <div className="ns-hist-meta" style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-          <span className="ns-hist-time" style={{ fontSize: 12, color: '#8e8e93', letterSpacing: '-0.01em' }}>{item.time}</span>
-          <div style={{ width: 2, height: 2, borderRadius: '50%', background: '#48484a' }} />
-          <span className="ns-hist-cat" style={{ fontSize: 12, color: '#636366', letterSpacing: '-0.01em' }}>{item.category}</span>
+        <div style={{ fontSize: 12, color: '#B0B0B0', marginBottom: 6 }}>
+          {item.time} · {item.category}
         </div>
-        {/* Barras de macro proporcionais */}
+        {/* Barras de macro — pretas */}
         <div style={{ display: 'flex', gap: 1.5, height: 3, borderRadius: 2, overflow: 'hidden' }}>
-          <div style={{ width: `${(item.macros.p / total) * 100}%`, background: '#FF6B35', borderRadius: 2 }} />
-          <div style={{ width: `${(item.macros.c / total) * 100}%`, background: '#FFD60A', borderRadius: 2 }} />
-          <div style={{ width: `${(item.macros.g / total) * 100}%`, background: '#BF5AF2', borderRadius: 2 }} />
+          {(() => {
+            const total = item.macros.p + item.macros.c + item.macros.g || 1;
+            return (
+              <>
+                <div style={{ width: `${(item.macros.p / total) * 100}%`, background: '#000', borderRadius: 2 }} />
+                <div style={{ width: `${(item.macros.c / total) * 100}%`, background: '#6B6B6B', borderRadius: 2 }} />
+                <div style={{ width: `${(item.macros.g / total) * 100}%`, background: '#B0B0B0', borderRadius: 2 }} />
+              </>
+            );
+          })()}
         </div>
-        <div style={{ display: 'flex', gap: 10, marginTop: 5 }}>
-          <span style={{ fontSize: 10, color: '#FF6B35', letterSpacing: '-0.01em', fontWeight: 500 }}>P {item.macros.p}g</span>
-          <span style={{ fontSize: 10, color: '#FFD60A', letterSpacing: '-0.01em', fontWeight: 500 }}>C {item.macros.c}g</span>
-          <span style={{ fontSize: 10, color: '#BF5AF2', letterSpacing: '-0.01em', fontWeight: 500 }}>G {item.macros.g}g</span>
+        <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
+          <span style={{ fontSize: 10, color: '#6B6B6B', fontWeight: 600 }}>P {item.macros.p}g</span>
+          <span style={{ fontSize: 10, color: '#6B6B6B', fontWeight: 600 }}>C {item.macros.c}g</span>
+          <span style={{ fontSize: 10, color: '#6B6B6B', fontWeight: 600 }}>G {item.macros.g}g</span>
         </div>
       </div>
 
+      {/* Calorias — PRETAS */}
       <div style={{ flexShrink: 0, textAlign: 'right' }}>
-        <div
-          className="ns-hist-kcal"
-          style={{
-            fontSize: 18, fontWeight: 700, color: '#30D158',
-            letterSpacing: '-0.04em', lineHeight: 1,
-          }}
-        >
+        <div style={{
+          fontSize: 15, fontWeight: 700, color: '#000',
+          letterSpacing: '-0.02em', lineHeight: 1,
+        }}>
           {item.calories}
         </div>
-        <div style={{ fontSize: 10, color: '#636366', marginTop: 2, letterSpacing: '-0.01em' }}>kcal</div>
+        <div style={{ fontSize: 10, color: '#B0B0B0', marginTop: 2 }}>kcal</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 3, justifyContent: 'flex-end', marginTop: 5 }}>
-          <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#30D158', boxShadow: '0 0 4px rgba(48,209,88,0.5)' }} />
-          <span style={{ fontSize: 10, color: '#48484a', letterSpacing: '-0.01em' }}>{item.confidence}%</span>
+          <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#16A34A' }} />
+          <span style={{ fontSize: 10, color: '#B0B0B0' }}>{item.confidence}%</span>
         </div>
       </div>
     </div>
@@ -119,57 +113,54 @@ export default function HistoryPage() {
   const totalMeals    = MEALS.length;
 
   return (
-    <div className="ns-page" style={{ background: '#000000' }}>
+    <div style={{ background: '#FFFFFF', minHeight: '100dvh', paddingBottom: 100 }}>
       <StatusBar />
 
-      <div className="ns-page-header" style={{ paddingBottom: 10, padding: '0 20px 10px' }}>
-        <div style={{ fontSize: 13, color: '#636366', letterSpacing: '-0.01em', marginBottom: 2, fontWeight: 500 }}>Registro</div>
+      <div style={{ padding: '0 20px 10px' }}>
+        <div style={{ fontSize: 13, color: '#B0B0B0', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 2, paddingTop: 4 }}>
+          Registro
+        </div>
         <div style={{
-          fontSize: 36, fontWeight: 800, color: '#ffffff',
+          fontSize: 36, fontWeight: 800, color: '#000',
           letterSpacing: '-0.05em', lineHeight: 1.02, marginBottom: 18,
         }}>
           Histórico
         </div>
 
-        {/* Stats row */}
+        {/* Stats row — valores em PRETO */}
         <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
           {[
-            { v: todayKcal, l: 'kcal hoje', color: '#30D158' },
-            { v: yesterdayKcal.toLocaleString('pt-BR'), l: 'kcal ontem', color: '#FF9F0A' },
-            { v: totalMeals, l: 'refeições', color: '#0A84FF' },
-          ].map(({ v, l, color }) => (
+            { v: todayKcal,                              l: 'kcal hoje'  },
+            { v: yesterdayKcal.toLocaleString('pt-BR'),  l: 'kcal ontem' },
+            { v: totalMeals,                             l: 'refeições'  },
+          ].map(({ v, l }) => (
             <div
               key={l}
-              className="ns-card-sm ns-shimmer"
               style={{
                 flex: 1, padding: '12px 12px',
-                background: '#111111',
-                border: '0.5px solid rgba(255,255,255,0.07)', borderRadius: 14,
+                background: '#F5F5F5',
+                borderRadius: 14,
               }}
             >
               <div style={{
-                fontSize: 20, fontWeight: 800, color,
+                fontSize: 20, fontWeight: 800, color: '#000',
                 letterSpacing: '-0.04em', lineHeight: 1,
               }}>
                 {v}
               </div>
-              <div style={{ fontSize: 10, color: '#636366', marginTop: 4, letterSpacing: '-0.01em' }}>{l}</div>
+              <div style={{ fontSize: 10, color: '#B0B0B0', marginTop: 4 }}>{l}</div>
             </div>
           ))}
         </div>
 
-        {/* Segmented control */}
-        <div
-          className="ns-segment"
-          style={{
-            display: 'flex', gap: 0,
-            background: '#1c1c1e', borderRadius: 12, padding: 3,
-          }}
-        >
+        {/* Segmented control — light */}
+        <div style={{
+          display: 'flex', gap: 0,
+          background: '#F5F5F5', borderRadius: 12, padding: 3,
+        }}>
           {FILTERS.map(f => (
             <div
               key={f}
-              className={`ns-segment-item${filter === f ? ' ns-segment-item--active' : ''}`}
               onClick={() => setFilter(f)}
               style={{
                 flex: 1, textAlign: 'center',
@@ -177,8 +168,9 @@ export default function HistoryPage() {
                 fontSize: 13, fontWeight: 600, letterSpacing: '-0.02em',
                 cursor: 'pointer', transition: 'all 0.2s cubic-bezier(0.4,0,0.2,1)',
                 WebkitTapHighlightColor: 'transparent',
-                background: filter === f ? '#2c2c2e' : 'transparent',
-                color: filter === f ? '#ffffff' : '#636366',
+                background: filter === f ? '#FFFFFF' : 'transparent',
+                color: filter === f ? '#000' : '#B0B0B0',
+                boxShadow: filter === f ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
               }}
             >
               {f}
@@ -187,55 +179,60 @@ export default function HistoryPage() {
         </div>
       </div>
 
-      {/* Today */}
+      {/* Hoje */}
       <div style={{
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         padding: '14px 20px 8px',
       }}>
         <span style={{
-          fontSize: 13, fontWeight: 600, color: '#8e8e93',
-          letterSpacing: '0.02em', textTransform: 'uppercase',
+          fontSize: 13, fontWeight: 600, color: '#B0B0B0',
+          letterSpacing: '0.04em', textTransform: 'uppercase',
         }}>
           Hoje
         </span>
-        <span style={{ fontSize: 13, color: '#30D158', fontWeight: 600, letterSpacing: '-0.02em' }}>
+        <span style={{ fontSize: 13, color: '#000', fontWeight: 700, letterSpacing: '-0.02em' }}>
           {todayKcal} kcal
         </span>
       </div>
-      {/* Lista hoje com separadores */}
-      <div style={{ background: '#1c1c1e', borderRadius: 16, overflow: 'hidden', margin: '0 16px' }}>
+      <div style={{
+        background: '#FFFFFF',
+        borderRadius: 16,
+        overflow: 'hidden',
+        border: '0.5px solid rgba(0,0,0,0.08)',
+        margin: '0 16px',
+      }}>
         {today.map((m, i) => (
-          <div key={m.id}>
-            <HistItem item={m} />
-            {i < today.length - 1 && (
-              <div style={{ height: '0.5px', background: 'rgba(255,255,255,0.05)', margin: '0 20px' }} />
-            )}
+          <div key={m.id} style={{ borderTop: i > 0 ? '0.5px solid rgba(0,0,0,0.05)' : 'none' }}>
+            <HistItem item={m} isLast={i === today.length - 1} />
           </div>
         ))}
       </div>
 
-      {/* Yesterday */}
+      {/* Ontem */}
       <div style={{
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         padding: '18px 20px 8px',
       }}>
         <span style={{
-          fontSize: 13, fontWeight: 600, color: '#8e8e93',
-          letterSpacing: '0.02em', textTransform: 'uppercase',
+          fontSize: 13, fontWeight: 600, color: '#B0B0B0',
+          letterSpacing: '0.04em', textTransform: 'uppercase',
         }}>
           Ontem
         </span>
-        <span style={{ fontSize: 13, color: '#FF9F0A', fontWeight: 600, letterSpacing: '-0.02em' }}>
+        <span style={{ fontSize: 13, color: '#000', fontWeight: 700, letterSpacing: '-0.02em' }}>
           {yesterdayKcal} kcal
         </span>
       </div>
-      <div style={{ background: '#1c1c1e', borderRadius: 16, overflow: 'hidden', margin: '0 16px' }}>
+      <div style={{
+        background: '#FFFFFF',
+        borderRadius: 16,
+        overflow: 'hidden',
+        border: '0.5px solid rgba(0,0,0,0.08)',
+        margin: '0 16px',
+      }}>
         {yesterday.map((m, i) => (
-          <div key={m.id}>
-            <HistItem item={m} />
-            {i < yesterday.length - 1 && (
-              <div style={{ height: '0.5px', background: 'rgba(255,255,255,0.05)', margin: '0 20px' }} />
-            )}
+          <div key={m.id} style={{ borderTop: i > 0 ? '0.5px solid rgba(0,0,0,0.05)' : 'none' }}>
+            <HistItem item={m} isLast={i === yesterday.length - 1} />
           </div>
         ))}
       </div>

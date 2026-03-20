@@ -1,99 +1,99 @@
 /* ============================================================
-   NutriScan — iOS Premium Theme
-   True Black OLED · Apple Design Language · Version 3.0
+   NutriScan — Polar Theme
+   Editorial Bold · Pure White · Extreme Minimalism · Version 4.0
    ============================================================ */
 
 /* ------------------------------------------------------------
    1. CSS VARIABLES — Core Design Tokens
    ------------------------------------------------------------ */
 :root {
-  /* ── Backgrounds — true OLED black como iPhone ── */
-  --ns-bg-primary:   #000000;
-  --ns-bg-card:      #111111;
-  --ns-bg-elevated:  #1c1c1e;   /* iOS systemGray6 */
-  --ns-bg-input:     #1c1c1e;
-  --ns-bg-hover:     #2c2c2e;   /* iOS systemGray5 */
-  --ns-bg-pressed:   #3a3a3c;   /* iOS systemGray4 */
+  /* ── Backgrounds ── */
+  --ns-bg-primary:   #FFFFFF;
+  --ns-bg-card:      #FFFFFF;
+  --ns-bg-elevated:  #F5F5F5;
+  --ns-bg-input:     #F5F5F5;
+  --ns-bg-hover:     #F0F0F0;
+  --ns-bg-pressed:   #E8E8E8;
 
   /* Aliases usados nos componentes */
-  --ns-bg:   #000000;
-  --ns-bg-1: #111111;
-  --ns-bg-2: #1c1c1e;
-  --ns-bg-3: #2c2c2e;
+  --ns-bg:   #FFFFFF;
+  --ns-bg-1: #FFFFFF;
+  --ns-bg-2: #F5F5F5;
+  --ns-bg-3: #EBEBEB;
 
-  /* ── Borders — quase invisíveis, iOS-style ── */
-  --ns-border:        rgba(255,255,255,0.08);
-  --ns-border-strong: rgba(255,255,255,0.14);
-  --ns-border-subtle: rgba(255,255,255,0.04);
-  --ns-sep:           rgba(255,255,255,0.06);
-  --ns-sep-subtle:    rgba(255,255,255,0.03);
+  /* ── Borders — sutis, luz do dia ── */
+  --ns-border:        rgba(0,0,0,0.08);
+  --ns-border-strong: rgba(0,0,0,0.15);
+  --ns-border-subtle: rgba(0,0,0,0.04);
+  --ns-sep:           rgba(0,0,0,0.06);
+  --ns-sep-subtle:    rgba(0,0,0,0.03);
 
-  /* ── Accent principal — Verde iOS (#30D158 é o verde do Apple Fitness dark mode) ── */
-  --ns-accent:       #30D158;
-  --ns-accent-dim:   #25A244;
-  --ns-accent-bg:    rgba(48,209,88,0.12);
-  --ns-accent-hover: #4ADF6B;
+  /* ── Accent — Verde só para sucesso/progresso ── */
+  --ns-accent:       #16A34A;
+  --ns-accent-dim:   #15803D;
+  --ns-accent-bg:    #F0FDF4;
+  --ns-accent-hover: #22C55E;
 
-  /* ── Accents secundários (para nutrição) ── */
-  --ns-orange:       #FF9F0A;   /* Apple orange — calorias */
-  --ns-orange-bg:    rgba(255,159,10,0.12);
-  --ns-blue:         #0A84FF;   /* Apple blue — água/hidratação */
-  --ns-blue-bg:      rgba(10,132,255,0.12);
-  --ns-purple:       #BF5AF2;   /* Apple purple — gordura */
-  --ns-purple-bg:    rgba(191,90,242,0.12);
+  /* ── Cores secundárias (apenas para barras de progresso e badges) ── */
+  --ns-orange:    #EA580C;
+  --ns-orange-bg: #FFF7ED;
+  --ns-blue:      #2563EB;
+  --ns-blue-bg:   #EFF6FF;
+  --ns-purple:    #7C3AED;
+  --ns-purple-bg: #F5F3FF;
 
-  /* ── Text — iOS system colors ── */
-  --ns-text-primary:   #FFFFFF;
-  --ns-text-secondary: #ebebf0;
-  --ns-text-muted:     #8e8e93;   /* iOS systemGray */
-  --ns-text-disabled:  #48484a;   /* iOS systemGray3 */
+  /* ── Text ── */
+  --ns-text-primary:   #000000;
+  --ns-text-secondary: #1A1A1A;
+  --ns-text-muted:     #6B6B6B;
+  --ns-text-disabled:  #B0B0B0;
 
   /* Aliases usados nos componentes */
-  --ns-t-primary: #FFFFFF;
-  --ns-t-1:       #FFFFFF;
-  --ns-t-2:       #ebebf0;
-  --ns-t-3:       #8e8e93;
-  --ns-t-4:       #636366;
-  --ns-t-5:       #48484a;
-  --ns-t-6:       #3a3a3c;
+  --ns-t-primary: #000000;
+  --ns-t-1:       #000000;
+  --ns-t-2:       #1A1A1A;
+  --ns-t-3:       #6B6B6B;
+  --ns-t-4:       #9A9A9A;
+  --ns-t-5:       #B0B0B0;
+  --ns-t-6:       #D4D4D4;
 
-  /* ── Macros — Apple-style vivid ── */
-  --ns-macro-protein:  #FF6B35;   /* laranja vibrante para proteína */
-  --ns-macro-carb:     #FFD60A;   /* amarelo iOS */
-  --ns-macro-fat:      #BF5AF2;   /* roxo Apple */
-  --ns-macro-water:    #0A84FF;   /* azul Apple */
+  /* ── Macros — PRETOS (minimalista) ── */
+  --ns-macro-protein:  #000000;
+  --ns-macro-carb:     #000000;
+  --ns-macro-fat:      #000000;
+  --ns-macro-water:    #2563EB;
 
   /* Aliases curtos usados nos componentes */
-  --ns-macro-prot:  #FF6B35;
-  --ns-macro-carbs: #FFD60A;
+  --ns-macro-prot:  #000000;
+  --ns-macro-carbs: #000000;
 
   /* ── Rings do Dashboard ── */
-  --ns-ring-cal:        #30D158;
-  --ns-ring-prot:       #FF6B35;
-  --ns-ring-water:      #0A84FF;
-  --ns-ring-track:      #1c1c1e;
-  --ns-ring-legend-dot: #30D158;
+  --ns-ring-cal:        #16A34A;
+  --ns-ring-prot:       #000000;
+  --ns-ring-water:      #2563EB;
+  --ns-ring-track:      #F0F0F0;
+  --ns-ring-legend-dot: #16A34A;
 
   /* ── Semânticas ── */
-  --ns-success:     #30D158;
-  --ns-success-bg:  rgba(48,209,88,0.12);
-  --ns-warning:     #FFD60A;
-  --ns-warning-bg:  rgba(255,214,10,0.12);
-  --ns-danger:      #FF453A;   /* Apple red */
-  --ns-danger-bg:   rgba(255,69,58,0.12);
+  --ns-success:     #16A34A;
+  --ns-success-bg:  #F0FDF4;
+  --ns-warning:     #D97706;
+  --ns-warning-bg:  #FFFBEB;
+  --ns-danger:      #DC2626;
+  --ns-danger-bg:   #FEF2F2;
 
-  /* ── Typography — SF Pro characteristics ── */
-  --ns-font-base: -apple-system, 'SF Pro Display', 'SF Pro Text', BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  /* ── Typography ── */
+  --ns-font-base: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
   --ns-font-mono: 'SF Mono', 'Fira Code', monospace;
 
   --ns-text-xs:   11px;
   --ns-text-sm:   13px;
-  --ns-text-base: 14px;
-  --ns-text-md:   16px;
-  --ns-text-lg:   18px;
-  --ns-text-xl:   22px;
-  --ns-text-2xl:  28px;
-  --ns-text-3xl:  38px;
+  --ns-text-base: 15px;
+  --ns-text-md:   17px;
+  --ns-text-lg:   20px;
+  --ns-text-xl:   24px;
+  --ns-text-2xl:  30px;
+  --ns-text-3xl:  40px;
 
   --ns-weight-normal: 400;
   --ns-weight-medium: 500;
@@ -101,7 +101,6 @@
   --ns-weight-heavy:  700;
   --ns-weight-black:  800;
 
-  /* Tamanhos iguais, tracking mais tight */
   --ns-tracking-tight:   -0.04em;
   --ns-tracking-tighter: -0.06em;
   --ns-tracking-wide:     0.05em;
@@ -115,7 +114,7 @@
   --ns-space-6: 24px;
   --ns-space-8: 32px;
 
-  --ns-page-px: 16px;
+  --ns-page-px: 20px;
 
   /* ── Radius ── */
   --ns-radius-sm:   8px;
@@ -124,12 +123,12 @@
   --ns-radius-xl:   20px;
   --ns-radius-full: 9999px;
 
-  /* ── Shadows — iOS depth ── */
-  --ns-shadow-sm: 0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
-  --ns-shadow-md: 0 4px 16px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.3);
-  --ns-shadow-lg: 0 8px 32px rgba(0,0,0,0.6), 0 4px 12px rgba(0,0,0,0.4);
-  --ns-shadow-glow: 0 0 24px rgba(48,209,88,0.2);
-  --ns-shadow-glow-sm: 0 0 12px rgba(48,209,88,0.15);
+  /* ── Shadows — sutis, quase invisíveis ── */
+  --ns-shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --ns-shadow-md: 0 2px 8px rgba(0,0,0,0.06);
+  --ns-shadow-lg: 0 4px 16px rgba(0,0,0,0.08);
+  --ns-shadow-glow: 0 0 20px rgba(22,163,74,0.15);
+  --ns-shadow-glow-sm: 0 0 10px rgba(22,163,74,0.10);
 
   /* ── Misc ── */
   --ns-transition:      150ms ease;
@@ -160,8 +159,8 @@ html, body, #root {
 
 html, body {
   margin: 0; padding: 0;
-  background: var(--ns-bg-primary);
-  color: var(--ns-text-primary);
+  background: #FFFFFF;
+  color: #000000;
   font-family: var(--ns-font-base);
   font-size: var(--ns-text-base);
   -webkit-font-smoothing: antialiased;
@@ -257,14 +256,14 @@ input, select, textarea { outline: none; }
    4. CARDS & SURFACES
    ------------------------------------------------------------ */
 .ns-card {
-  background: #111111;
+  background: #FFFFFF;
   border-radius: 16px;
-  border: 0.5px solid rgba(255,255,255,0.06);
+  border: 0.5px solid rgba(0,0,0,0.08);
   overflow: hidden;
 }
 
 .ns-card-sm {
-  background: #1c1c1e;
+  background: #F5F5F5;
   border-radius: 12px;
   border: none;
 }
@@ -297,39 +296,39 @@ input, select, textarea { outline: none; }
 }
 
 .ns-btn-primary {
-  background: var(--ns-accent);
-  color: #000000;   /* preto no verde — máximo contraste */
+  background: #000000;
+  color: #FFFFFF;
   border: none;
   font-weight: 700;
-  letter-spacing: -0.02em;
-  box-shadow: 0 0 24px rgba(48,209,88,0.2);
+  letter-spacing: -0.01em;
+  box-shadow: none;
 }
 
 .ns-btn-primary:hover:not(:disabled) {
-  background: var(--ns-accent-hover);
-  box-shadow: 0 0 32px rgba(48,209,88,0.3);
+  background: #1A1A1A;
   transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
 }
 
 .ns-btn-primary:active:not(:disabled) {
   transform: scale(0.98);
-  box-shadow: none;
+  background: #000000;
 }
 
 .ns-btn-primary:disabled {
-  opacity: 0.4;
-  cursor: wait;
+  opacity: 0.3;
+  cursor: not-allowed;
   transform: none;
 }
 
 .ns-btn-secondary {
   background: transparent;
-  color: var(--ns-text-primary);
-  border: 0.5px solid var(--ns-border-strong);
+  color: #000000;
+  border: 1px solid rgba(0,0,0,0.15);
 }
 
 .ns-btn-secondary:hover {
-  background: var(--ns-bg-hover);
+  background: #F5F5F5;
 }
 
 .ns-btn-danger {
@@ -350,37 +349,37 @@ input, select, textarea { outline: none; }
 .ns-input {
   width: 100%;
   padding: 14px 16px;
-  background: var(--ns-bg-elevated);
-  border: 0.5px solid rgba(255,255,255,0.08);
+  background: #F5F5F5;
+  border: 1px solid transparent;
   border-radius: 12px;
-  color: #fff;
+  color: #000000;
   font-size: 15px;
   letter-spacing: -0.01em;
-  transition: border-color var(--ns-transition), box-shadow var(--ns-transition), background var(--ns-transition);
+  transition: all 150ms ease;
   outline: none;
 }
 
 .ns-input::placeholder {
-  color: #48484a;
+  color: #B0B0B0;
 }
 
 .ns-input:focus {
   outline: none;
-  border-color: var(--ns-accent);
-  background: rgba(48,209,88,0.04);
-  box-shadow: 0 0 0 3px rgba(48,209,88,0.1);
+  border-color: #000000;
+  background: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
 }
 
 .ns-input:focus-visible {
-  box-shadow: 0 0 0 3px rgba(48,209,88,0.1);
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
 }
 
 .ns-input-error {
-  border-color: var(--ns-danger) !important;
+  border-color: #DC2626 !important;
 }
 
 .ns-input-error:focus-visible {
-  box-shadow: 0 0 0 2px rgba(122, 48, 48, 0.3);
+  box-shadow: 0 0 0 2px rgba(220,38,38,0.15);
 }
 
 .ns-label-field {
@@ -414,18 +413,18 @@ input, select, textarea { outline: none; }
    7. ERROR MESSAGES
    ------------------------------------------------------------ */
 .ns-error-text {
-  color: #c07070;
+  color: #DC2626;
   font-size: var(--ns-text-sm);
   margin-top: var(--ns-space-1);
   font-weight: var(--ns-weight-medium);
 }
 
 .ns-error-banner {
-  background: var(--ns-danger-bg);
-  color: #c07070;
+  background: #FEF2F2;
+  color: #DC2626;
   padding: var(--ns-space-3) var(--ns-space-4);
   border-radius: var(--ns-radius-md);
-  border: 0.5px solid var(--ns-danger);
+  border: 0.5px solid rgba(220,38,38,0.2);
   font-size: var(--ns-text-base);
   font-weight: var(--ns-weight-medium);
   margin-bottom: var(--ns-space-5);
@@ -442,10 +441,10 @@ input, select, textarea { outline: none; }
   position: fixed;
   bottom: 0; left: 0; right: 0;
   height: calc(var(--ns-nav-height) + var(--ns-safe-bottom));
-  background: rgba(0,0,0,0.82);
-  backdrop-filter: blur(30px) saturate(200%);
-  -webkit-backdrop-filter: blur(30px) saturate(200%);
-  border-top: 0.5px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.94);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-top: 0.5px solid rgba(0,0,0,0.08);
   display: flex;
   align-items: flex-start;
   padding-top: 10px;
@@ -472,11 +471,11 @@ input, select, textarea { outline: none; }
 }
 
 .ns-nav-item:hover {
-  color: var(--ns-text-secondary);
+  color: #1A1A1A;
 }
 
 .ns-nav-item.active {
-  color: var(--ns-accent);
+  color: #000000;
 }
 
 .ns-nav-item .icon {
@@ -505,18 +504,17 @@ input, select, textarea { outline: none; }
 .ns-nav-label {
   font-size: 10px;
   font-weight: var(--ns-weight-medium);
-  color: var(--ns-text-muted);
+  color: #B0B0B0;
   letter-spacing: 0.02em;
   transition: color var(--ns-transition);
 }
 
-/* CORRIGIDO: era .ns-nav-item--active, CSS define .ns-nav-item.active */
 .ns-nav-item.active .ns-nav-label,
 .ns-nav-item--active .ns-nav-label {
-  color: var(--ns-accent);
+  color: #000000;
 }
 
-/* Indicador ativo — iOS pill style */
+/* Indicador ativo — barra preta minimalista */
 .ns-nav-item.active::after,
 .ns-nav-item--active::after {
   content: '';
@@ -524,24 +522,23 @@ input, select, textarea { outline: none; }
   top: -8px;
   left: 50%;
   transform: translateX(-50%);
-  width: 24px;
-  height: 3px;
-  border-radius: 2px;
-  background: var(--ns-accent);
-  box-shadow: 0 0 10px rgba(48,209,88,0.7);
+  width: 20px;
+  height: 2px;
+  border-radius: 1px;
+  background: #000000;
 }
 
 /* FAB de Scan */
 .ns-fab {
-  width: 54px;
-  height: 54px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
-  background: var(--ns-accent);
+  background: #000000;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: -22px;
-  box-shadow: 0 0 0 4px #000, 0 0 20px rgba(48,209,88,0.3);
+  margin-top: -20px;
+  box-shadow: 0 0 0 4px #FFFFFF, 0 4px 16px rgba(0,0,0,0.2);
   transition: transform var(--ns-transition), box-shadow var(--ns-transition);
   position: relative;
 }
@@ -552,13 +549,13 @@ input, select, textarea { outline: none; }
   position: absolute;
   inset: -4px;
   border-radius: 50%;
-  border: 1px solid rgba(48,209,88,0.25);
+  border: 1px solid rgba(0,0,0,0.08);
 }
 .ns-fab-ring-2 {
   position: absolute;
   inset: -8px;
   border-radius: 50%;
-  border: 1px solid rgba(48,209,88,0.1);
+  border: 1px solid rgba(0,0,0,0.04);
 }
 
 .ns-scan-fab {
@@ -578,14 +575,14 @@ input, select, textarea { outline: none; }
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  background: var(--ns-accent);
+  background: #000000;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 3px solid var(--ns-bg-primary);
+  border: 3px solid #FFFFFF;
   box-shadow: var(--ns-shadow-md);
   transition: all var(--ns-transition);
-  color: var(--ns-bg-primary);
+  color: #FFFFFF;
   font-size: 22px;
 }
 
@@ -596,7 +593,7 @@ input, select, textarea { outline: none; }
 .ns-scan-fab-label {
   font-size: var(--ns-text-xs);
   font-weight: var(--ns-weight-bold);
-  color: var(--ns-accent);
+  color: #000000;
   margin-top: 2px;
 }
 
@@ -623,7 +620,7 @@ input, select, textarea { outline: none; }
 .ns-macro-bar--fat     { background: var(--ns-macro-fat); }
 
 .ns-scan-cta {
-  background: var(--ns-accent);
+  background: #000000;
   border-radius: var(--ns-radius-lg);
   padding: var(--ns-space-4);
   display: flex;
@@ -637,7 +634,7 @@ input, select, textarea { outline: none; }
 }
 
 .ns-scan-cta:hover {
-  background: var(--ns-accent-hover);
+  background: #1A1A1A;
   transform: translateY(-1px);
 }
 
@@ -663,8 +660,8 @@ input, select, textarea { outline: none; }
 }
 
 .ns-select-card--active {
-  border-color: var(--ns-accent);
-  background: var(--ns-accent-bg);
+  border-color: #000000;
+  background: #F5F5F5;
 }
 
 
@@ -677,14 +674,15 @@ input, select, textarea { outline: none; }
   padding: 3px var(--ns-space-2);
   border-radius: var(--ns-radius-full);
   font-size: var(--ns-text-xs);
-  font-weight: var(--ns-weight-medium);
-  background: var(--ns-accent-bg);
-  color: var(--ns-accent);
+  font-weight: 600;
+  background: #F0F0F0;
+  color: #000000;
+  border: 0.5px solid rgba(0,0,0,0.08);
 }
 
-.ns-badge-success { background: var(--ns-success-bg); color: var(--ns-success); border: 0.5px solid rgba(48,209,88,0.25); }
-.ns-badge-warning { background: var(--ns-warning-bg); color: var(--ns-warning); border: 0.5px solid rgba(255,214,10,0.25); }
-.ns-badge-danger  { background: var(--ns-danger-bg);  color: var(--ns-danger);  border: 0.5px solid rgba(255,69,58,0.25); }
+.ns-badge-success { background: #F0FDF4; color: #16A34A; border: 0.5px solid rgba(22,163,74,0.2); }
+.ns-badge-warning { background: #FFFBEB; color: #D97706; border: 0.5px solid rgba(217,119,6,0.2); }
+.ns-badge-danger  { background: #FEF2F2; color: #DC2626; border: 0.5px solid rgba(220,38,38,0.2); }
 
 
 /* ------------------------------------------------------------
@@ -728,8 +726,8 @@ input, select, textarea { outline: none; }
 .ns-spinner {
   width: 20px;
   height: 20px;
-  border: 2px solid var(--ns-border);
-  border-top-color: var(--ns-accent);
+  border: 2px solid #E8E8E8;
+  border-top-color: #000000;
   border-radius: 50%;
   animation: ns-spin 0.7s linear infinite;
 }
@@ -741,7 +739,7 @@ input, select, textarea { outline: none; }
 }
 
 .ns-skeleton {
-  background: linear-gradient(90deg, var(--ns-bg-card) 25%, var(--ns-bg-elevated) 50%, var(--ns-bg-card) 75%);
+  background: linear-gradient(90deg, #F5F5F5 25%, #EBEBEB 50%, #F5F5F5 75%);
   background-size: 200% 100%;
   animation: ns-shimmer 1.5s infinite;
   border-radius: var(--ns-radius-sm);
@@ -942,8 +940,8 @@ input, select, textarea { outline: none; }
 
 /* ── Macro Cards (Dashboard) ── */
 .ns-macro-card {
-  background: #111111;
-  border: 0.5px solid rgba(255,255,255,0.06);
+  background: #FFFFFF;
+  border: 0.5px solid rgba(0,0,0,0.08);
   border-radius: 14px;
   padding: 14px;
   flex: 1;
@@ -968,9 +966,9 @@ input, select, textarea { outline: none; }
   text-transform: uppercase;
 }
 .ns-macro-pct {
-  font-size: 20px;
-  font-weight: var(--ns-weight-black);
-  color: var(--ns-text-primary);
+  font-size: 22px;
+  font-weight: 800;
+  color: #000000;
   letter-spacing: -0.04em;
   line-height: 1;
 }
@@ -1001,7 +999,7 @@ input, select, textarea { outline: none; }
   align-items: center;
   justify-content: center;
   font-size: 20px;
-  box-shadow: 0 0 12px rgba(48,209,88,0.08);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
 .ns-achievement-label {
   font-size: 10px;
@@ -1136,7 +1134,7 @@ input, select, textarea { outline: none; }
 .ns-hist-kcal {
   font-size: 14px;
   font-weight: 700;
-  color: #30D158;
+  color: #000000;
   margin-left: auto;
   white-space: nowrap;
   letter-spacing: -0.02em;
@@ -1168,20 +1166,20 @@ input, select, textarea { outline: none; }
   border: 0.5px solid var(--ns-border-subtle);
 }
 .ns-streak-day--done span:last-child {
-  background: var(--ns-accent-bg);
-  border-color: rgba(48,209,88,0.3);
-  color: var(--ns-accent);
+  background: #F0FDF4;
+  border-color: rgba(22,163,74,0.3);
+  color: #16A34A;
 }
 .ns-streak-day--today span:last-child {
-  background: var(--ns-accent);
-  color: #000000;
+  background: #000000;
+  color: #FFFFFF;
   border-color: transparent;
   font-weight: var(--ns-weight-bold);
 }
 .ns-streak-day--miss span:last-child {
-  background: rgba(255,69,58,0.08);
-  border-color: rgba(255,69,58,0.2);
-  color: var(--ns-danger);
+  background: #FEF2F2;
+  border-color: rgba(220,38,38,0.2);
+  color: #DC2626;
 }
 
 /* ── Ring Legend ── */
@@ -1215,7 +1213,7 @@ input, select, textarea { outline: none; }
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(48,209,88,0.04) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.03) 50%, transparent 100%);
   background-size: 200% 100%;
   animation: shimmer 2s ease infinite;
 }
@@ -1290,19 +1288,20 @@ input, select, textarea { outline: none; }
 .animate-spring      { animation: ns-spring-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
 .animate-slide-right { animation: ns-slide-from-right 0.3s ease both; }
 
-/* ── Glass card iOS ── */
+/* ── Glass card — Polar style ── */
 .ns-glass-card {
-  background: rgba(28,28,30,0.8);
+  background: rgba(255,255,255,0.88);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 0.5px solid rgba(255,255,255,0.1);
+  border: 0.5px solid rgba(0,0,0,0.08);
   border-radius: 16px;
 }
 
-/* ── iOS grouped list style ── */
+/* ── List group — Polar style ── */
 .ns-list-group {
-  background: #111111;
+  background: #FFFFFF;
   border-radius: 16px;
+  border: 0.5px solid rgba(0,0,0,0.08);
   overflow: hidden;
 }
 .ns-list-row {
@@ -1315,13 +1314,13 @@ input, select, textarea { outline: none; }
   cursor: pointer;
   transition: background 0.1s ease;
 }
-.ns-list-row:active { background: #2c2c2e; }
+.ns-list-row:active { background: #F0F0F0; }
 .ns-list-row + .ns-list-row::before {
   content: '';
   position: absolute;
   top: 0; left: 56px; right: 0;
   height: 0.5px;
-  background: rgba(255,255,255,0.06);
+  background: rgba(0,0,0,0.06);
 }
 .ns-list-icon {
   width: 32px; height: 32px;
@@ -1341,37 +1340,39 @@ input, select, textarea { outline: none; }
   font-weight: 600;
   letter-spacing: -0.01em;
 }
-.ns-pill-green  { background: rgba(48,209,88,0.15);  color: #30D158; }
-.ns-pill-orange { background: rgba(255,159,10,0.15); color: #FF9F0A; }
-.ns-pill-blue   { background: rgba(10,132,255,0.15); color: #0A84FF; }
-.ns-pill-red    { background: rgba(255,69,58,0.15);  color: #FF453A; }
+.ns-pill-green  { background: #F0FDF4; color: #16A34A; }
+.ns-pill-black  { background: #000000; color: #FFFFFF; }
+.ns-pill-orange { background: #FFF7ED; color: #EA580C; }
+.ns-pill-blue   { background: #EFF6FF; color: #2563EB; }
+.ns-pill-red    { background: #FEF2F2; color: #DC2626; }
+.ns-pill-gray   { background: #F5F5F5; color: #6B6B6B; }
 
 /* ── Stat number big display ── */
 .ns-stat-number {
-  font-size: 48px;
+  font-size: 52px;
   font-weight: 800;
   letter-spacing: -0.05em;
   line-height: 1;
-  color: #fff;
+  color: #000000;
 }
 .ns-stat-unit {
   font-size: 14px;
   font-weight: 500;
-  color: #8e8e93;
+  color: #6B6B6B;
   letter-spacing: -0.02em;
 }
 
-/* ── Section header iOS style ── */
+/* ── Section header — Polar style ── */
 .ns-ios-section {
   font-size: 22px;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: -0.04em;
-  color: #fff;
+  color: #000000;
   margin-bottom: 12px;
 }
 .ns-ios-caption {
   font-size: 13px;
-  color: #8e8e93;
+  color: #6B6B6B;
   letter-spacing: -0.01em;
 }
 
@@ -1389,19 +1390,19 @@ input, select, textarea { outline: none; }
   cursor: pointer;
   transition: opacity 0.1s ease;
 }
-.ns-tappable:active { opacity: 0.6; }
+.ns-tappable:active { opacity: 0.5; }
 
-/* ── Frosted surface ── */
+/* ── Frosted surface — Polar ── */
 .ns-frosted {
-  background: rgba(17,17,17,0.9);
+  background: rgba(255,255,255,0.92);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
 
-/* ── iOS-style divider ── */
+/* ── Polar divider ── */
 .ns-ios-divider {
   height: 0.5px;
-  background: rgba(255,255,255,0.06);
+  background: rgba(0,0,0,0.06);
   margin: 0;
 }
 
@@ -1419,16 +1420,43 @@ input, select, textarea { outline: none; }
   letter-spacing: 0;
 }
 
-/* ── Gradient text ── */
+/* ── Gradient text — Polar (verde sutil) ── */
 .ns-gradient-text-green {
-  background: linear-gradient(135deg, #30D158, #00A86B);
+  background: linear-gradient(135deg, #16A34A, #15803D);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 .ns-gradient-text-orange {
-  background: linear-gradient(135deg, #FF9F0A, #FF6B35);
+  background: linear-gradient(135deg, #EA580C, #D97706);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+
+/* ------------------------------------------------------------
+   21. POLAR THEME — Utilities
+   ------------------------------------------------------------ */
+.ns-polar-divider {
+  height: 0.5px;
+  background: rgba(0,0,0,0.06);
+  margin: 0;
+}
+
+.ns-polar-section-title {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: #000000;
+  margin-bottom: 14px;
+}
+
+.ns-polar-caption {
+  font-size: 13px;
+  color: #6B6B6B;
+  letter-spacing: -0.01em;
+}
+
+.ns-pill-gray { background: #F5F5F5; color: #6B6B6B; }
+.ns-pill-black { background: #000000; color: #FFFFFF; }
