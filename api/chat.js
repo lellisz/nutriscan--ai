@@ -204,27 +204,27 @@ function analyzeNutrition(context) {
     };
   }
 
-  // Insights automáticos
+  // Insights automáticos — sem emojis, linguagem direta de nutricionista
   const insights = [];
 
   if (percentages) {
     if (percentages.protein < 70) {
-      insights.push(`⚠️ Proteína baixa (${percentages.protein}%) - considere adicionar fontes proteicas`);
+      insights.push(`Proteina abaixo da meta (${percentages.protein}%) — priorize fontes proteicas nas proximas refeicoes`);
     }
     if (percentages.calories > 110) {
-      insights.push(`⚠️ Calorias acima da meta (${percentages.calories}%)`);
+      insights.push(`Calorias acima da meta diaria (${percentages.calories}%)`);
     }
     if (percentages.calories < 50 && todayScans.length > 0) {
-      insights.push(`💪 Ainda tem ${goals.calories - todayTotals.calories} kcal disponíveis hoje`);
+      insights.push(`Ainda ha ${goals.calories - todayTotals.calories} kcal disponiveis para hoje`);
     }
   }
 
   if (todayTotals.fiber < 10 && todayScans.length >= 2) {
-    insights.push(`🥗 Baixa ingestão de fibras - adicione vegetais/grãos integrais`);
+    insights.push(`Ingestao de fibras baixa — inclua vegetais ou graos integrais`);
   }
 
   if (weightProgress && profile?.goal === 'cutting' && weightProgress.change > 0) {
-    insights.push(`📊 Peso subindo - revise seu déficit calórico`);
+    insights.push(`Peso em alta — revise o deficit calorico`);
   }
 
   return {
@@ -236,70 +236,90 @@ function analyzeNutrition(context) {
   };
 }
 
-// ── System Prompt Otimizado ────────────────────────────────
+// ── System Prompt ──────────────────────────────────────────
+// Diretrizes de qualidade do coach:
+// - Sem emojis em nenhuma circunstância
+// - Tom de nutricionista real: profissional, direto, baseado em evidências
+// - Respostas curtas e objetivas — parágrafos de 2-3 frases no máximo
+// - Usar dados reais do perfil e scans para personalizar, nunca respostas genéricas
+// - Nunca inventar dados nutricionais; se incerto, dizer explicitamente
+// - Bullet points para listas, negrito para termos importantes
+// - Sempre em português brasileiro
 function buildSystemPrompt(context, quick = false) {
   const analysis = analyzeNutrition(context);
 
-  let prompt = `Você é NutriCoach, um assistente de nutrição inteligente e amigável.
+  // Instrucoes base do coach — sem emojis, tom profissional
+  let prompt = `Voce e NutriCoach, um nutricionista especialista em nutricao esportiva e emagrecimento.
 
-FORMATO DE RESPOSTA:
-${quick ? '- MUITO CURTO (máximo 2-3 frases)' : '- Curto e direto (máximo 4 parágrafos)'}
-- Use emojis relevantes (🍎🥗💪📊)
-- Tom motivador e positivo
-- Dê dicas práticas e acionáveis
-- Use dados do usuário para personalizar
+COMPORTAMENTO:
+- Responda sempre em portugues brasileiro
+- Tom profissional e direto, como um nutricionista real falando com um paciente adulto
+- Nunca use emojis em nenhuma circunstancia
+- Nunca invente dados nutricionais — se nao tiver certeza de um valor, diga "nao tenho informacoes precisas sobre isso"
+- Base suas recomendacoes em ciencia nutricional consolidada (nao em modismos)
+- Respostas personalizadas usando os dados do perfil e scans do usuario — nunca respostas genericas
 
-IDIOMA: Português (pt-BR)`;
+FORMATO:
+${quick ? '- Resposta muito curta: maximo 2-3 frases, direto ao ponto' : '- Resposta concisa: maximo 4 paragrafos curtos (2-3 frases cada)'}
+- Use bullet points quando listar opcoes ou alimentos
+- Use **negrito** para termos nutricionais importantes
+- Nunca use listas com mais de 5 itens`;
 
   if (!context) return prompt;
 
   const { profile, goals } = context;
 
   if (profile) {
-    prompt += `\n\n📋 PERFIL:`;
+    prompt += `\n\nPERFIL DO USUARIO:`;
     if (profile.full_name) prompt += `\nNome: ${profile.full_name}`;
-    if (profile.age) prompt += ` | Idade: ${profile.age}`;
+    if (profile.age) prompt += ` | Idade: ${profile.age} anos`;
     if (profile.weight && profile.height) {
       const bmi = (profile.weight / Math.pow(profile.height / 100, 2)).toFixed(1);
       prompt += `\nPeso: ${profile.weight}kg | Altura: ${profile.height}cm | IMC: ${bmi}`;
     }
     if (profile.goal) {
       const goalMap = {
-        cutting: 'Perder gordura 🔥',
-        bulking: 'Ganhar massa 💪',
-        maintain: 'Manutenção ⚖️'
+        cutting: 'Reducao de gordura corporal',
+        bulking: 'Ganho de massa muscular',
+        maintain: 'Manutencao do peso atual'
       };
       prompt += `\nObjetivo: ${goalMap[profile.goal] || profile.goal}`;
+    }
+    if (profile.dietary_restrictions) {
+      prompt += `\nRestricoes alimentares: ${profile.dietary_restrictions}`;
     }
   }
 
   if (goals) {
-    prompt += `\n\n🎯 METAS DIÁRIAS:`;
-    prompt += `\n${goals.calories} kcal | ${goals.protein}g prot | ${goals.carbs}g carbs | ${goals.fat}g gord`;
+    prompt += `\n\nMETAS DIARIAS:`;
+    prompt += `\nCalorias: ${goals.calories} kcal | Proteina: ${goals.protein}g | Carboidratos: ${goals.carbs}g | Gordura: ${goals.fat}g`;
   }
 
   if (analysis) {
-    prompt += `\n\n📊 STATUS HOJE:`;
-    const { todayTotals, percentages, insights, mealsToday } = analysis;
+    const { todayTotals, percentages, insights, mealsToday, weightProgress } = analysis;
 
-    prompt += `\nRefeições registradas: ${mealsToday}`;
-    prompt += `\nConsumo: ${todayTotals.calories} kcal | ${todayTotals.protein}g prot`;
+    prompt += `\n\nCONSUMO DE HOJE (${mealsToday} refeicoes registradas):`;
+    prompt += `\nCalorias: ${todayTotals.calories} kcal`;
+    prompt += ` | Proteina: ${todayTotals.protein}g`;
+    prompt += ` | Carboidratos: ${todayTotals.carbs}g`;
+    prompt += ` | Gordura: ${todayTotals.fat}g`;
+    prompt += ` | Fibras: ${todayTotals.fiber}g`;
 
     if (percentages) {
-      prompt += `\nProgresso: ${percentages.calories}% calorias | ${percentages.protein}% proteína`;
+      prompt += `\nProgresso em relacao as metas: ${percentages.calories}% das calorias | ${percentages.protein}% da proteina | ${percentages.carbs}% dos carboidratos`;
     }
 
     if (insights.length > 0) {
-      prompt += `\n\n⚡ INSIGHTS AUTOMÁTICOS:`;
-      insights.forEach(i => prompt += `\n${i}`);
+      prompt += `\n\nALERTAS NUTRICIONAIS IDENTIFICADOS:`;
+      insights.forEach(i => prompt += `\n- ${i}`);
     }
 
-    if (analysis.weightProgress) {
-      prompt += `\n\n⚖️ EVOLUÇÃO PESO: ${analysis.weightProgress.current}kg (${analysis.weightProgress.change > 0 ? '+' : ''}${analysis.weightProgress.change}kg em ${analysis.weightProgress.days} dias)`;
+    if (weightProgress) {
+      prompt += `\n\nEVOLUCAO DE PESO: ${weightProgress.current}kg (${weightProgress.change > 0 ? '+' : ''}${weightProgress.change}kg nos ultimos ${weightProgress.days} dias — tendencia: ${weightProgress.trend})`;
     }
   }
 
-  prompt += `\n\n💡 Use essas informações para dar respostas personalizadas e relevantes!`;
+  prompt += `\n\nUse todos os dados acima para dar respostas especificas e uteis. Nunca ignore o contexto do usuario.`;
 
   return prompt;
 }

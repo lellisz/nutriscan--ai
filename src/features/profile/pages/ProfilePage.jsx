@@ -9,20 +9,92 @@ const GOALS = [
   { key: 'Gordura',     pct: 21,  value: '82g/dia'    },
 ];
 
+// ── Ícones SVG para conquistas ─────────────────────────────
+const IconFlame = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#6B6B6B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M10 17c-3.3 0-6-2.5-6-5.5 0-2 1.2-3.8 2.5-5C7.8 5 8.5 3.2 8 1.5 10.5 2.5 14 5.5 14 9c.8-.5 1.5-1.5 1.5-2.5 1 1.2 1.5 2.7 1.5 4C17 14.5 13.8 17 10 17z" />
+  </svg>
+);
+
+const IconCamera = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#6B6B6B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M2 6.5A1.5 1.5 0 013.5 5h1l1.5-2h8l1.5 2h1A1.5 1.5 0 0118 6.5v8A1.5 1.5 0 0116.5 16h-13A1.5 1.5 0 012 14.5v-8z" />
+    <circle cx="10" cy="10.5" r="2.5" />
+  </svg>
+);
+
+const IconDropAchievement = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#6B6B6B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M10 2.5C10 2.5 4.5 9 4.5 13a5.5 5.5 0 0011 0C15.5 9 10 2.5 10 2.5z" />
+  </svg>
+);
+
+const IconStar = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#6B6B6B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M10 2l2.4 5 5.6.8-4 3.9.9 5.5L10 14.5l-4.9 2.7.9-5.5-4-3.9 5.6-.8z" />
+  </svg>
+);
+
+// ── Ícones SVG para menu de configurações ──────────────────
+const IconPerson = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#6B6B6B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="10" cy="6.5" r="3" />
+    <path d="M3.5 17.5c0-3.3 2.9-6 6.5-6s6.5 2.7 6.5 6" />
+  </svg>
+);
+
+const IconTarget = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#6B6B6B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="10" cy="10" r="8" />
+    <circle cx="10" cy="10" r="4.5" />
+    <circle cx="10" cy="10" r="1.5" />
+  </svg>
+);
+
+const IconChip = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#6B6B6B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="5" y="5" width="10" height="10" rx="1.5" />
+    <path d="M7.5 5V3M10 5V3M12.5 5V3" />
+    <path d="M7.5 17v-2M10 17v-2M12.5 17v-2" />
+    <path d="M5 7.5H3M5 10H3M5 12.5H3" />
+    <path d="M17 7.5h-2M17 10h-2M17 12.5h-2" />
+  </svg>
+);
+
+const IconBell = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#6B6B6B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M10 2.5a5.5 5.5 0 00-5.5 5.5c0 2.5-.5 4-1.5 5h14c-1-1-1.5-2.5-1.5-5A5.5 5.5 0 0010 2.5z" />
+    <path d="M8.5 13a1.5 1.5 0 003 0" />
+  </svg>
+);
+
+const IconShield = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#6B6B6B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M10 2L3.5 5v5c0 4 2.8 7.5 6.5 8.5 3.7-1 6.5-4.5 6.5-8.5V5L10 2z" />
+  </svg>
+);
+
+const IconGear = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#6B6B6B" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="10" cy="10" r="2.5" />
+    <path d="M10 2.5v1.8M10 15.7v1.8M17.5 10h-1.8M4.3 10H2.5M15.4 4.6l-1.3 1.3M5.9 14.1l-1.3 1.3M15.4 15.4l-1.3-1.3M5.9 5.9L4.6 4.6" />
+  </svg>
+);
+
 const ACHIEVEMENTS = [
-  { emoji: '🔥', label: '5 dias'     },
-  { emoji: '📸', label: '10 scans'   },
-  { emoji: '💧', label: 'Hidratação' },
-  { emoji: '🎯', label: 'Meta'       },
+  { Icon: IconFlame,          label: '5 dias'     },
+  { Icon: IconCamera,         label: '10 scans'   },
+  { Icon: IconDropAchievement, label: 'Hidratação' },
+  { Icon: IconStar,           label: 'Meta'       },
 ];
 
 const MENU = [
-  { emoji: '👤', label: 'Dados pessoais',    right: true  },
-  { emoji: '🎯', label: 'Metas e objetivos', right: true  },
-  { emoji: '🤖', label: 'Modelo de IA',      badge: 'Groq' },
-  { emoji: '🔔', label: 'Notificações',      badge: '2 novas' },
-  { emoji: '🔒', label: 'Privacidade',       right: true  },
-  { emoji: '⚙️', label: 'Preferências',      right: true  },
+  { icon: IconPerson, label: 'Dados pessoais',    right: true    },
+  { icon: IconTarget, label: 'Metas e objetivos', right: true    },
+  { icon: IconChip,   label: 'Modelo de IA',      badge: 'Groq'  },
+  { icon: IconBell,   label: 'Notificações',      badge: '2 novas' },
+  { icon: IconShield, label: 'Privacidade',        right: true    },
+  { icon: IconGear,   label: 'Preferências',       right: true    },
 ];
 
 function calcBMI(weight, height) {
@@ -356,9 +428,8 @@ export default function ProfilePage() {
                 background: '#FFFFFF',
                 border: '1px solid rgba(0,0,0,0.06)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 20,
               }}>
-                {a.emoji}
+                <a.Icon />
               </div>
               <div style={{
                 fontSize: 10, color: '#9A9A9A', textAlign: 'center', fontWeight: 500,
@@ -396,9 +467,9 @@ export default function ProfilePage() {
                 width: 36, height: 36, borderRadius: 10,
                 background: '#F5F5F5',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 16, flexShrink: 0,
+                flexShrink: 0,
               }}>
-                {item.emoji}
+                <item.icon />
               </div>
               <span style={{ flex: 1, fontSize: 15, color: '#000', fontWeight: 500 }}>
                 {item.label}

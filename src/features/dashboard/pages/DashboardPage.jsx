@@ -147,7 +147,7 @@ export default function DashboardPage() {
           fontSize: 28, fontWeight: 800, letterSpacing: '-0.05em',
           color: '#000', lineHeight: 1.1, marginBottom: 20,
         }}>
-          {greeting()}, {firstName} 👋
+          {greeting()}, {firstName}
         </div>
 
         {/* ── Hero Card de Calorias ── */}

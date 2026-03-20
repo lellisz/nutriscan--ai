@@ -44,13 +44,18 @@ function HistItem({ item, isLast }) {
     }}>
       {/* Thumb */}
       <div style={{
-        width: 44, height: 44,
+        width: 46, height: 46,
         background: '#F5F5F5',
         borderRadius: 10,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: 22, flexShrink: 0,
+        flexShrink: 0,
       }}>
-        {item.emoji}
+        <span style={{
+          fontSize: 18, fontWeight: 700, color: '#000',
+          textTransform: 'uppercase', lineHeight: 1,
+        }}>
+          {item.name.charAt(0)}
+        </span>
       </div>
 
       <div style={{ flex: 1, minWidth: 0 }}>
