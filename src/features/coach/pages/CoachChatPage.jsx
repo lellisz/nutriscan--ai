@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import { useAuth } from "../../auth/hooks/useAuth";
 import { getSupabaseClient } from "../../../lib/supabase";
 import * as db from "../../../lib/db";
+import PraxiAvatar from "../../../components/praxi/PraxiAvatar";
 
 // ── SVG Icons ────────────────────────────────────────────────────────────────
 
@@ -62,7 +63,10 @@ function IconTrash() {
 
 function TypingIndicator() {
   return (
-    <div style={{ display: "flex", justifyContent: "flex-start" }}>
+    <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "flex-end", gap: 8 }}>
+      <div style={{ flexShrink: 0, marginBottom: 2 }}>
+        <PraxiAvatar state="thinking" size="sm" />
+      </div>
       <div style={{
         padding: "14px 18px",
         borderRadius: "18px 18px 18px 4px",
@@ -433,25 +437,34 @@ export default function CoachChatPage() {
           <IconMenu />
         </button>
 
-        <div style={{ textAlign: "center", flex: 1 }}>
-          <div style={{
-            margin: 0,
-            fontSize: 17,
-            fontWeight: 700,
-            color: "var(--ns-text-primary)",
-            lineHeight: 1.2,
-            letterSpacing: "-0.3px",
-          }}>
-            Coach Praxis
-          </div>
-          <div style={{
-            margin: 0,
-            fontSize: 12,
-            color: "var(--ns-text-muted)",
-            lineHeight: 1.3,
-            marginTop: 1,
-          }}>
-            Seu nutricionista IA
+        <div style={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 10,
+        }}>
+          <PraxiAvatar state="happy" size="sm" />
+          <div style={{ textAlign: "left" }}>
+            <div style={{
+              margin: 0,
+              fontSize: 17,
+              fontWeight: 700,
+              color: "var(--ns-text-primary)",
+              lineHeight: 1.2,
+              letterSpacing: "-0.3px",
+            }}>
+              Coach Praxi
+            </div>
+            <div style={{
+              margin: 0,
+              fontSize: 12,
+              color: "var(--ns-text-muted)",
+              lineHeight: 1.3,
+              marginTop: 1,
+            }}>
+              Seu nutricionista IA
+            </div>
           </div>
         </div>
 
@@ -614,7 +627,7 @@ export default function CoachChatPage() {
             gap: 0,
           }}>
             <div style={{ marginBottom: 20 }}>
-              <IconChat />
+              <PraxiAvatar state="waving" size="lg" />
             </div>
             <div style={{
               fontSize: 22,

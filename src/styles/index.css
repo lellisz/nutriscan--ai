@@ -1,89 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700&family=DM+Sans:wght@400;500&family=Space+Grotesk:wght@700&display=swap');
+
 /* ============================================================
-   NutriScan — Polar Theme
-   Editorial Bold · Pure White · Extreme Minimalism · Version 4.0
+   Praxis Nutri — Design System
+   Verde Petróleo Premium · Científico · Orgânico · Precisão · Version 6.0
    ============================================================ */
 
 /* ------------------------------------------------------------
    1. CSS VARIABLES — Core Design Tokens
    ------------------------------------------------------------ */
 :root {
+  /* ── Identidade da marca ── */
+  --ns-primary:    #1B3A2D;   /* Verde petróleo escuro — headers, textos fortes */
+
   /* ── Backgrounds ── */
-  --ns-bg-primary:   #FFFFFF;
-  --ns-bg-card:      #FFFFFF;
-  --ns-bg-elevated:  #F5F5F5;
-  --ns-bg-input:     #F5F5F5;
-  --ns-bg-hover:     #F0F0F0;
-  --ns-bg-pressed:   #E8E8E8;
+  --ns-bg-primary:  #F4F5F0;   /* Off-white quente — fundo geral */
+  --ns-bg-card:     #FFFFFF;   /* Cards */
+  --ns-bg-elevated: #EAEBE6;   /* Elevated surfaces */
+  --ns-bg-input:    #EAEBE6;   /* Campos de formulário */
+  --ns-bg-hover:    #DFE0DB;   /* Hover / pressed suave */
+  --ns-bg-pressed:  #D4D5D0;   /* Estado active mais firme */
 
   /* Aliases usados nos componentes */
-  --ns-bg:   #FFFFFF;
+  --ns-bg:   #F4F5F0;
   --ns-bg-1: #FFFFFF;
-  --ns-bg-2: #F5F5F5;
-  --ns-bg-3: #EBEBEB;
+  --ns-bg-2: #F4F5F0;
+  --ns-bg-3: #EAEBE6;
 
-  /* ── Borders — sutis, luz do dia ── */
-  --ns-border:        rgba(0,0,0,0.08);
-  --ns-border-strong: rgba(0,0,0,0.15);
-  --ns-border-subtle: rgba(0,0,0,0.04);
-  --ns-sep:           rgba(0,0,0,0.06);
-  --ns-sep-subtle:    rgba(0,0,0,0.03);
+  /* ── Borders — tom verde petróleo ── */
+  --ns-border:        rgba(27,58,45,0.10);
+  --ns-border-strong: rgba(27,58,45,0.20);
+  --ns-border-subtle: rgba(27,58,45,0.06);
+  --ns-sep:           rgba(27,58,45,0.10);
+  --ns-sep-subtle:    rgba(27,58,45,0.06);
 
-  /* ── Accent — Verde só para sucesso/progresso ── */
-  --ns-accent:       #16A34A;
-  --ns-accent-dim:   #15803D;
-  --ns-accent-bg:    #F0FDF4;
-  --ns-accent-hover: #22C55E;
+  /* ── Accent — Verde folha ── */
+  --ns-accent:       #2D8F5E;   /* Verde folha — botões, CTA, progresso */
+  --ns-accent-dim:   #238B52;   /* Accent hover/active */
+  --ns-accent-bg:    #E8F5EE;   /* Verde pálido — badges, highlights */
+  --ns-accent-hover: #34A068;
 
-  /* ── Cores secundárias (apenas para barras de progresso e badges) ── */
-  --ns-orange:    #EA580C;
-  --ns-orange-bg: #FFF7ED;
-  --ns-blue:      #2563EB;
-  --ns-blue-bg:   #EFF6FF;
-  --ns-purple:    #7C3AED;
-  --ns-purple-bg: #F5F3FF;
+  /* ── Cores secundárias ── */
+  --ns-orange:    #D97706;   /* Âmbar energia */
+  --ns-orange-bg: #FEF7E6;
+  --ns-blue:      #2563EB;   /* Azul ciência */
+  --ns-blue-bg:   #EFF4FD;
+  --ns-purple:    #7C3AED;   /* Roxo profundo */
+  --ns-purple-bg: #F3EFFE;
 
-  /* ── Text ── */
-  --ns-text-primary:   #000000;
-  --ns-text-secondary: #1A1A1A;
-  --ns-text-muted:     #6B6B6B;
-  --ns-text-disabled:  #B0B0B0;
+  /* ── Text — escala verde-neutro ── */
+  --ns-text-primary:   #1A2E23;   /* Verde escuro — não preto puro */
+  --ns-text-secondary: #3D5347;   /* Secundário */
+  --ns-text-muted:     #6B7C72;   /* Muted cinza-verde */
+  --ns-text-disabled:  #B8C2BC;   /* Disabled */
+  --ns-text-tertiary:  #96A39B;   /* Terciário */
 
   /* Aliases usados nos componentes */
-  --ns-t-primary: #000000;
-  --ns-t-1:       #000000;
-  --ns-t-2:       #1A1A1A;
-  --ns-t-3:       #6B6B6B;
-  --ns-t-4:       #9A9A9A;
-  --ns-t-5:       #B0B0B0;
-  --ns-t-6:       #D4D4D4;
+  --ns-t-primary: #1A2E23;
+  --ns-t-1:       #1A2E23;
+  --ns-t-2:       #3D5347;
+  --ns-t-3:       #6B7C72;
+  --ns-t-4:       #96A39B;
+  --ns-t-5:       #B8C2BC;
+  --ns-t-6:       #D0D6D2;
 
-  /* ── Macros — PRETOS (minimalista) ── */
-  --ns-macro-protein:  #000000;
-  --ns-macro-carb:     #000000;
-  --ns-macro-fat:      #000000;
+  /* ── Macros — cores científicas distintas por nutriente ── */
+  --ns-macro-protein:  #2563EB;   /* Azul ciência */
+  --ns-macro-carb:     #D97706;   /* Âmbar energia */
+  --ns-macro-fat:      #7C3AED;   /* Roxo profundo */
   --ns-macro-water:    #2563EB;
 
   /* Aliases curtos usados nos componentes */
-  --ns-macro-prot:  #000000;
-  --ns-macro-carbs: #000000;
+  --ns-macro-prot:  #2563EB;
+  --ns-macro-carbs: #D97706;
 
   /* ── Rings do Dashboard ── */
-  --ns-ring-cal:        #16A34A;
-  --ns-ring-prot:       #000000;
+  --ns-ring-cal:        #2D8F5E;
+  --ns-ring-prot:       #2563EB;
   --ns-ring-water:      #2563EB;
-  --ns-ring-track:      #F0F0F0;
-  --ns-ring-legend-dot: #16A34A;
+  --ns-ring-track:      #DEDED9;
+  --ns-ring-legend-dot: #2D8F5E;
 
   /* ── Semânticas ── */
-  --ns-success:     #16A34A;
-  --ns-success-bg:  #F0FDF4;
-  --ns-warning:     #D97706;
-  --ns-warning-bg:  #FFFBEB;
-  --ns-danger:      #DC2626;
-  --ns-danger-bg:   #FEF2F2;
+  --ns-success:     #2D8F5E;
+  --ns-success-bg:  #E8F5EE;
+  --ns-warning:     #D4880C;   /* Âmbar escuro */
+  --ns-warning-bg:  #FEF7E6;
+  --ns-danger:      #C4391C;   /* Vermelho terroso */
+  --ns-danger-bg:   #FEF0EC;
+  --ns-info:        #2563EB;
 
   /* ── Typography ── */
-  --ns-font-base: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  --ns-font-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --ns-font-mono: 'SF Mono', 'Fira Code', monospace;
 
   --ns-text-xs:   11px;
@@ -97,12 +104,12 @@
 
   --ns-weight-normal: 400;
   --ns-weight-medium: 500;
-  --ns-weight-bold:   600;
-  --ns-weight-heavy:  700;
-  --ns-weight-black:  800;
+  --ns-weight-bold:   600;   /* semibold — títulos normais */
+  --ns-weight-heavy:  700;   /* bold — números grandes, títulos de destaque */
+  --ns-weight-black:  700;   /* máximo — nunca 800 ou 900 */
 
-  --ns-tracking-tight:   -0.04em;
-  --ns-tracking-tighter: -0.06em;
+  --ns-tracking-tight:   -0.02em;
+  --ns-tracking-tighter: -0.04em;
   --ns-tracking-wide:     0.05em;
 
   /* ── Spacing ── */
@@ -123,18 +130,29 @@
   --ns-radius-xl:   20px;
   --ns-radius-full: 9999px;
 
-  /* ── Shadows — sutis, quase invisíveis ── */
-  --ns-shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
-  --ns-shadow-md: 0 2px 8px rgba(0,0,0,0.06);
-  --ns-shadow-lg: 0 4px 16px rgba(0,0,0,0.08);
-  --ns-shadow-glow: 0 0 20px rgba(22,163,74,0.15);
-  --ns-shadow-glow-sm: 0 0 10px rgba(22,163,74,0.10);
+  /* ── Shadows — tom verde petróleo ── */
+  --ns-shadow-sm: 0 1px 3px rgba(27,58,45,0.06), 0 1px 2px rgba(27,58,45,0.04);
+  --ns-shadow-md: 0 4px 12px rgba(27,58,45,0.08), 0 1px 4px rgba(27,58,45,0.04);
+  --ns-shadow-lg: 0 8px 24px rgba(27,58,45,0.10), 0 2px 8px rgba(27,58,45,0.05);
+  --ns-shadow-glow: 0 0 20px rgba(45,143,94,0.18);
+  --ns-shadow-glow-sm: 0 0 10px rgba(45,143,94,0.12);
 
   /* ── Misc ── */
   --ns-transition:      150ms ease;
   --ns-transition-slow: 300ms ease;
   --ns-nav-height:      72px;
   --ns-safe-bottom:     env(safe-area-inset-bottom, 0px);
+
+  /* ── Design System v2 — Praxis Nutri ── */
+  --praxis-green:       #1A7F56;
+  --praxis-green-light: #E8F5EC;
+  --praxis-coral:       #FF8A65;
+  --bg-warm:            #FAF8F5;
+  --macro-protein:      #3B82F6;
+  --macro-carb:         #F59E0B;
+  --macro-fat:          #8B5CF6;
+  --attention-gentle:   #E5A44D;
+  --success-soft:       #7CB37F;
 }
 
 
@@ -159,8 +177,8 @@ html, body, #root {
 
 html, body {
   margin: 0; padding: 0;
-  background: #FFFFFF;
-  color: #000000;
+  background: var(--ns-bg-primary);
+  color: var(--ns-text-primary);
   font-family: var(--ns-font-base);
   font-size: var(--ns-text-base);
   -webkit-font-smoothing: antialiased;
@@ -204,6 +222,29 @@ button {
 }
 
 input, select, textarea { outline: none; }
+
+/* ------------------------------------------------------------
+   2b. DESIGN SYSTEM v2 — Tipografia & Animações
+   ------------------------------------------------------------ */
+
+.font-heading { font-family: 'Nunito', sans-serif; font-weight: 700; }
+.font-body    { font-family: 'DM Sans', sans-serif; }
+.font-number  { font-family: 'Space Grotesk', sans-serif; font-weight: 700; }
+
+@keyframes praxis-fill {
+  from { stroke-dashoffset: var(--dash-total); }
+  to   { stroke-dashoffset: var(--dash-offset); }
+}
+
+@keyframes praxis-count {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes praxis-ripple {
+  0%   { transform: scale(0); opacity: 0.6; }
+  100% { transform: scale(2); opacity: 0; }
+}
 
 ::-webkit-scrollbar { width: 0; height: 0; }
 
@@ -256,14 +297,15 @@ input, select, textarea { outline: none; }
    4. CARDS & SURFACES
    ------------------------------------------------------------ */
 .ns-card {
-  background: #FFFFFF;
+  background: var(--ns-bg-card);
   border-radius: 16px;
-  border: 0.5px solid rgba(0,0,0,0.08);
+  border: 0.5px solid var(--ns-border);
+  box-shadow: var(--ns-shadow-sm);
   overflow: hidden;
 }
 
 .ns-card-sm {
-  background: #F5F5F5;
+  background: var(--ns-bg-elevated);
   border-radius: 12px;
   border: none;
 }
@@ -296,23 +338,23 @@ input, select, textarea { outline: none; }
 }
 
 .ns-btn-primary {
-  background: #000000;
+  background: var(--ns-accent);
   color: #FFFFFF;
   border: none;
-  font-weight: 700;
+  font-weight: var(--ns-weight-bold);
   letter-spacing: -0.01em;
   box-shadow: none;
 }
 
 .ns-btn-primary:hover:not(:disabled) {
-  background: #1A1A1A;
+  background: var(--ns-accent-dim);
   transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 16px rgba(45,143,94,0.25);
 }
 
 .ns-btn-primary:active:not(:disabled) {
   transform: scale(0.98);
-  background: #000000;
+  background: var(--ns-accent-dim);
 }
 
 .ns-btn-primary:disabled {
@@ -323,12 +365,12 @@ input, select, textarea { outline: none; }
 
 .ns-btn-secondary {
   background: transparent;
-  color: #000000;
-  border: 1px solid rgba(0,0,0,0.15);
+  color: var(--ns-text-primary);
+  border: 1px solid var(--ns-border);
 }
 
 .ns-btn-secondary:hover {
-  background: #F5F5F5;
+  background: var(--ns-bg-elevated);
 }
 
 .ns-btn-danger {
@@ -338,7 +380,7 @@ input, select, textarea { outline: none; }
 }
 
 .ns-btn-danger:hover {
-  color: #e87070;
+  color: var(--ns-danger);
   border-color: var(--ns-danger);
 }
 
@@ -349,10 +391,10 @@ input, select, textarea { outline: none; }
 .ns-input {
   width: 100%;
   padding: 14px 16px;
-  background: #F5F5F5;
+  background: var(--ns-bg-input);
   border: 1px solid transparent;
   border-radius: 12px;
-  color: #000000;
+  color: var(--ns-text-primary);
   font-size: 15px;
   letter-spacing: -0.01em;
   transition: all 150ms ease;
@@ -360,26 +402,26 @@ input, select, textarea { outline: none; }
 }
 
 .ns-input::placeholder {
-  color: #B0B0B0;
+  color: var(--ns-text-disabled);
 }
 
 .ns-input:focus {
   outline: none;
-  border-color: #000000;
-  background: #FFFFFF;
-  box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
+  border-color: var(--ns-accent);
+  background: var(--ns-bg-card);
+  box-shadow: 0 0 0 3px rgba(45,143,94,0.12);
 }
 
 .ns-input:focus-visible {
-  box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
+  box-shadow: 0 0 0 3px rgba(45,143,94,0.12);
 }
 
 .ns-input-error {
-  border-color: #DC2626 !important;
+  border-color: var(--ns-danger) !important;
 }
 
 .ns-input-error:focus-visible {
-  box-shadow: 0 0 0 2px rgba(220,38,38,0.15);
+  box-shadow: 0 0 0 3px rgba(196,57,28,0.12);
 }
 
 .ns-label-field {
@@ -413,18 +455,18 @@ input, select, textarea { outline: none; }
    7. ERROR MESSAGES
    ------------------------------------------------------------ */
 .ns-error-text {
-  color: #DC2626;
+  color: var(--ns-danger);
   font-size: var(--ns-text-sm);
   margin-top: var(--ns-space-1);
   font-weight: var(--ns-weight-medium);
 }
 
 .ns-error-banner {
-  background: #FEF2F2;
-  color: #DC2626;
+  background: var(--ns-danger-bg);
+  color: var(--ns-danger);
   padding: var(--ns-space-3) var(--ns-space-4);
   border-radius: var(--ns-radius-md);
-  border: 0.5px solid rgba(220,38,38,0.2);
+  border: 0.5px solid rgba(196,57,28,0.2);
   font-size: var(--ns-text-base);
   font-weight: var(--ns-weight-medium);
   margin-bottom: var(--ns-space-5);
@@ -441,10 +483,10 @@ input, select, textarea { outline: none; }
   position: fixed;
   bottom: 0; left: 0; right: 0;
   height: calc(var(--ns-nav-height) + var(--ns-safe-bottom));
-  background: rgba(255,255,255,0.94);
+  background: rgba(244,245,240,0.94);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border-top: 0.5px solid rgba(0,0,0,0.08);
+  border-top: 0.5px solid rgba(27,58,45,0.10);
   display: flex;
   align-items: flex-start;
   padding-top: 10px;
@@ -471,11 +513,11 @@ input, select, textarea { outline: none; }
 }
 
 .ns-nav-item:hover {
-  color: #1A1A1A;
+  color: var(--ns-text-secondary);
 }
 
 .ns-nav-item.active {
-  color: #000000;
+  color: var(--ns-accent);
 }
 
 .ns-nav-item .icon {
@@ -504,17 +546,17 @@ input, select, textarea { outline: none; }
 .ns-nav-label {
   font-size: 10px;
   font-weight: var(--ns-weight-medium);
-  color: #B0B0B0;
+  color: var(--ns-text-disabled);
   letter-spacing: 0.02em;
   transition: color var(--ns-transition);
 }
 
 .ns-nav-item.active .ns-nav-label,
 .ns-nav-item--active .ns-nav-label {
-  color: #000000;
+  color: var(--ns-accent);
 }
 
-/* Indicador ativo — barra preta minimalista */
+/* Indicador ativo — barra verde saúde */
 .ns-nav-item.active::after,
 .ns-nav-item--active::after {
   content: '';
@@ -525,7 +567,7 @@ input, select, textarea { outline: none; }
   width: 20px;
   height: 2px;
   border-radius: 1px;
-  background: #000000;
+  background: var(--ns-accent);
 }
 
 /* FAB de Scan */
@@ -533,12 +575,12 @@ input, select, textarea { outline: none; }
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  background: #000000;
+  background: var(--ns-accent);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-top: -20px;
-  box-shadow: 0 0 0 4px #FFFFFF, 0 4px 16px rgba(0,0,0,0.2);
+  box-shadow: 0 0 0 4px var(--ns-bg-primary), 0 4px 16px rgba(45,143,94,0.30);
   transition: transform var(--ns-transition), box-shadow var(--ns-transition);
   position: relative;
 }
@@ -549,13 +591,13 @@ input, select, textarea { outline: none; }
   position: absolute;
   inset: -4px;
   border-radius: 50%;
-  border: 1px solid rgba(0,0,0,0.08);
+  border: 1px solid rgba(27,58,45,0.08);
 }
 .ns-fab-ring-2 {
   position: absolute;
   inset: -8px;
   border-radius: 50%;
-  border: 1px solid rgba(0,0,0,0.04);
+  border: 1px solid rgba(27,58,45,0.04);
 }
 
 .ns-scan-fab {
@@ -575,11 +617,11 @@ input, select, textarea { outline: none; }
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  background: #000000;
+  background: var(--ns-accent);
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 3px solid #FFFFFF;
+  border: 3px solid var(--ns-bg-primary);
   box-shadow: var(--ns-shadow-md);
   transition: all var(--ns-transition);
   color: #FFFFFF;
@@ -593,7 +635,7 @@ input, select, textarea { outline: none; }
 .ns-scan-fab-label {
   font-size: var(--ns-text-xs);
   font-weight: var(--ns-weight-bold);
-  color: #000000;
+  color: var(--ns-accent);
   margin-top: 2px;
 }
 
@@ -620,7 +662,7 @@ input, select, textarea { outline: none; }
 .ns-macro-bar--fat     { background: var(--ns-macro-fat); }
 
 .ns-scan-cta {
-  background: #000000;
+  background: var(--ns-accent);
   border-radius: var(--ns-radius-lg);
   padding: var(--ns-space-4);
   display: flex;
@@ -634,7 +676,7 @@ input, select, textarea { outline: none; }
 }
 
 .ns-scan-cta:hover {
-  background: #1A1A1A;
+  background: var(--ns-accent-dim);
   transform: translateY(-1px);
 }
 
@@ -660,8 +702,8 @@ input, select, textarea { outline: none; }
 }
 
 .ns-select-card--active {
-  border-color: #000000;
-  background: #F5F5F5;
+  border-color: var(--ns-accent);
+  background: var(--ns-accent-bg);
 }
 
 
@@ -675,14 +717,14 @@ input, select, textarea { outline: none; }
   border-radius: var(--ns-radius-full);
   font-size: var(--ns-text-xs);
   font-weight: 600;
-  background: #F0F0F0;
-  color: #000000;
-  border: 0.5px solid rgba(0,0,0,0.08);
+  background: var(--ns-bg-elevated);
+  color: var(--ns-text-secondary);
+  border: 0.5px solid var(--ns-border);
 }
 
-.ns-badge-success { background: #F0FDF4; color: #16A34A; border: 0.5px solid rgba(22,163,74,0.2); }
-.ns-badge-warning { background: #FFFBEB; color: #D97706; border: 0.5px solid rgba(217,119,6,0.2); }
-.ns-badge-danger  { background: #FEF2F2; color: #DC2626; border: 0.5px solid rgba(220,38,38,0.2); }
+.ns-badge-success { background: var(--ns-success-bg); color: var(--ns-success); border: 0.5px solid rgba(45,143,94,0.2); }
+.ns-badge-warning { background: var(--ns-warning-bg); color: var(--ns-warning); border: 0.5px solid rgba(212,136,12,0.2); }
+.ns-badge-danger  { background: var(--ns-danger-bg);  color: var(--ns-danger);  border: 0.5px solid rgba(196,57,28,0.2); }
 
 
 /* ------------------------------------------------------------
@@ -708,8 +750,9 @@ input, select, textarea { outline: none; }
 
 .ns-page-title {
   font-size: var(--ns-text-lg);
-  font-weight: var(--ns-weight-medium);
+  font-weight: var(--ns-weight-heavy);
   color: var(--ns-text-primary);
+  letter-spacing: -0.02em;
   margin: 0;
 }
 
@@ -726,8 +769,8 @@ input, select, textarea { outline: none; }
 .ns-spinner {
   width: 20px;
   height: 20px;
-  border: 2px solid #E8E8E8;
-  border-top-color: #000000;
+  border: 2px solid var(--ns-border);
+  border-top-color: var(--ns-accent);
   border-radius: 50%;
   animation: ns-spin 0.7s linear infinite;
 }
@@ -739,7 +782,7 @@ input, select, textarea { outline: none; }
 }
 
 .ns-skeleton {
-  background: linear-gradient(90deg, #F5F5F5 25%, #EBEBEB 50%, #F5F5F5 75%);
+  background: linear-gradient(90deg, var(--ns-bg-elevated) 25%, var(--ns-bg-hover) 50%, var(--ns-bg-elevated) 75%);
   background-size: 200% 100%;
   animation: ns-shimmer 1.5s infinite;
   border-radius: var(--ns-radius-sm);
@@ -940,12 +983,13 @@ input, select, textarea { outline: none; }
 
 /* ── Macro Cards (Dashboard) ── */
 .ns-macro-card {
-  background: #FFFFFF;
-  border: 0.5px solid rgba(0,0,0,0.08);
+  background: var(--ns-bg-card);
+  border: 0.5px solid var(--ns-border);
   border-radius: 14px;
   padding: 14px;
   flex: 1;
   min-width: 0;
+  box-shadow: var(--ns-shadow-sm);
 }
 .ns-macro-header {
   display: flex;
@@ -967,8 +1011,8 @@ input, select, textarea { outline: none; }
 }
 .ns-macro-pct {
   font-size: 22px;
-  font-weight: 800;
-  color: #000000;
+  font-weight: var(--ns-weight-heavy);
+  color: var(--ns-text-primary);
   letter-spacing: -0.04em;
   line-height: 1;
 }
@@ -999,7 +1043,7 @@ input, select, textarea { outline: none; }
   align-items: center;
   justify-content: center;
   font-size: 20px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  box-shadow: var(--ns-shadow-sm);
 }
 .ns-achievement-label {
   font-size: 10px;
@@ -1133,8 +1177,8 @@ input, select, textarea { outline: none; }
 }
 .ns-hist-kcal {
   font-size: 14px;
-  font-weight: 700;
-  color: #000000;
+  font-weight: var(--ns-weight-heavy);
+  color: var(--ns-text-primary);
   margin-left: auto;
   white-space: nowrap;
   letter-spacing: -0.02em;
@@ -1166,20 +1210,20 @@ input, select, textarea { outline: none; }
   border: 0.5px solid var(--ns-border-subtle);
 }
 .ns-streak-day--done span:last-child {
-  background: #F0FDF4;
-  border-color: rgba(22,163,74,0.3);
-  color: #16A34A;
+  background: var(--ns-accent-bg);
+  border-color: rgba(45,143,94,0.25);
+  color: var(--ns-accent);
 }
 .ns-streak-day--today span:last-child {
-  background: #000000;
+  background: var(--ns-accent);
   color: #FFFFFF;
   border-color: transparent;
   font-weight: var(--ns-weight-bold);
 }
 .ns-streak-day--miss span:last-child {
-  background: #FEF2F2;
-  border-color: rgba(220,38,38,0.2);
-  color: #DC2626;
+  background: var(--ns-danger-bg);
+  border-color: rgba(196,57,28,0.2);
+  color: var(--ns-danger);
 }
 
 /* ── Ring Legend ── */
@@ -1213,7 +1257,7 @@ input, select, textarea { outline: none; }
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.03) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(27,58,45,0.03) 50%, transparent 100%);
   background-size: 200% 100%;
   animation: shimmer 2s ease infinite;
 }
@@ -1271,6 +1315,13 @@ input, select, textarea { outline: none; }
    20. iOS PREMIUM COMPONENTS
    ------------------------------------------------------------ */
 
+@keyframes ns-scan-line {
+  0%   { top: 10%; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { top: 90%; opacity: 0; }
+}
+
 /* ── iOS-style animations ── */
 @keyframes ns-fade-up {
   from { opacity: 0; transform: translateY(12px); }
@@ -1288,20 +1339,21 @@ input, select, textarea { outline: none; }
 .animate-spring      { animation: ns-spring-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
 .animate-slide-right { animation: ns-slide-from-right 0.3s ease both; }
 
-/* ── Glass card — Polar style ── */
+/* ── Glass card — Praxis style ── */
 .ns-glass-card {
   background: rgba(255,255,255,0.88);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 0.5px solid rgba(0,0,0,0.08);
+  border: 0.5px solid var(--ns-border);
   border-radius: 16px;
 }
 
-/* ── List group — Polar style ── */
+/* ── List group — iOS style ── */
 .ns-list-group {
-  background: #FFFFFF;
+  background: var(--ns-bg-card);
   border-radius: 16px;
-  border: 0.5px solid rgba(0,0,0,0.08);
+  border: 0.5px solid var(--ns-border);
+  box-shadow: var(--ns-shadow-sm);
   overflow: hidden;
 }
 .ns-list-row {
@@ -1314,13 +1366,13 @@ input, select, textarea { outline: none; }
   cursor: pointer;
   transition: background 0.1s ease;
 }
-.ns-list-row:active { background: #F0F0F0; }
+.ns-list-row:active { background: var(--ns-bg-hover); }
 .ns-list-row + .ns-list-row::before {
   content: '';
   position: absolute;
   top: 0; left: 56px; right: 0;
   height: 0.5px;
-  background: rgba(0,0,0,0.06);
+  background: var(--ns-sep);
 }
 .ns-list-icon {
   width: 32px; height: 32px;
@@ -1340,39 +1392,39 @@ input, select, textarea { outline: none; }
   font-weight: 600;
   letter-spacing: -0.01em;
 }
-.ns-pill-green  { background: #F0FDF4; color: #16A34A; }
-.ns-pill-black  { background: #000000; color: #FFFFFF; }
-.ns-pill-orange { background: #FFF7ED; color: #EA580C; }
-.ns-pill-blue   { background: #EFF6FF; color: #2563EB; }
-.ns-pill-red    { background: #FEF2F2; color: #DC2626; }
-.ns-pill-gray   { background: #F5F5F5; color: #6B6B6B; }
+.ns-pill-green  { background: var(--ns-success-bg); color: var(--ns-success); }
+.ns-pill-black  { background: var(--ns-text-primary); color: #FFFFFF; }
+.ns-pill-orange { background: var(--ns-orange-bg);   color: var(--ns-orange); }
+.ns-pill-blue   { background: var(--ns-blue-bg);     color: var(--ns-blue); }
+.ns-pill-red    { background: var(--ns-danger-bg);   color: var(--ns-danger); }
+.ns-pill-gray   { background: var(--ns-bg-elevated); color: var(--ns-text-muted); }
 
 /* ── Stat number big display ── */
 .ns-stat-number {
   font-size: 52px;
-  font-weight: 800;
+  font-weight: var(--ns-weight-heavy);
   letter-spacing: -0.05em;
   line-height: 1;
-  color: #000000;
+  color: var(--ns-text-primary);
 }
 .ns-stat-unit {
   font-size: 14px;
   font-weight: 500;
-  color: #6B6B6B;
+  color: var(--ns-text-muted);
   letter-spacing: -0.02em;
 }
 
-/* ── Section header — Polar style ── */
+/* ── Section header — iOS style ── */
 .ns-ios-section {
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  color: #000000;
+  font-size: 20px;
+  font-weight: var(--ns-weight-bold);
+  letter-spacing: -0.03em;
+  color: var(--ns-text-primary);
   margin-bottom: 12px;
 }
 .ns-ios-caption {
   font-size: 13px;
-  color: #6B6B6B;
+  color: var(--ns-text-muted);
   letter-spacing: -0.01em;
 }
 
@@ -1399,10 +1451,10 @@ input, select, textarea { outline: none; }
   -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
 
-/* ── Polar divider ── */
+/* ── Praxis divider ── */
 .ns-ios-divider {
   height: 0.5px;
-  background: rgba(0,0,0,0.06);
+  background: var(--ns-border-subtle);
   margin: 0;
 }
 
@@ -1420,15 +1472,15 @@ input, select, textarea { outline: none; }
   letter-spacing: 0;
 }
 
-/* ── Gradient text — Polar (verde sutil) ── */
+/* ── Gradient text ── */
 .ns-gradient-text-green {
-  background: linear-gradient(135deg, #16A34A, #15803D);
+  background: linear-gradient(135deg, var(--ns-accent), var(--ns-primary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 .ns-gradient-text-orange {
-  background: linear-gradient(135deg, #EA580C, #D97706);
+  background: linear-gradient(135deg, var(--ns-orange), #FF6B00);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1440,23 +1492,276 @@ input, select, textarea { outline: none; }
    ------------------------------------------------------------ */
 .ns-polar-divider {
   height: 0.5px;
-  background: rgba(0,0,0,0.06);
+  background: var(--ns-sep);
   margin: 0;
 }
 
 .ns-polar-section-title {
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  color: #000000;
+  font-size: 20px;
+  font-weight: var(--ns-weight-bold);
+  letter-spacing: -0.03em;
+  color: var(--ns-text-primary);
   margin-bottom: 14px;
 }
 
 .ns-polar-caption {
   font-size: 13px;
-  color: #6B6B6B;
+  color: var(--ns-text-muted);
   letter-spacing: -0.01em;
 }
 
-.ns-pill-gray { background: #F5F5F5; color: #6B6B6B; }
-.ns-pill-black { background: #000000; color: #FFFFFF; }
+
+/* ------------------------------------------------------------
+   22. COMPONENTES VISUAIS ADICIONAIS
+   ------------------------------------------------------------ */
+
+/* ── Page header — layout premium para topo de páginas ── */
+/*
+   Uso:
+     <header class="ns-page-header-block">
+       <h1 class="ns-page-title-lg">Histórico</h1>
+       <p class="ns-page-subtitle">Suas refeições registradas</p>
+     </header>
+
+   Nota: .ns-page-header e .ns-page-title já existem (seção 12).
+   Estas classes estendem para o padrão premium das páginas internas.
+*/
+.ns-page-header-block {
+  padding: 20px var(--ns-page-px) 16px;
+  background: var(--ns-bg-primary);
+}
+
+.ns-page-title-lg {
+  font-size: var(--ns-text-2xl);
+  font-weight: var(--ns-weight-heavy);
+  color: var(--ns-text-primary);
+  letter-spacing: var(--ns-tracking-tighter);
+  line-height: 1.1;
+  margin: 0;
+}
+
+.ns-page-subtitle {
+  font-size: var(--ns-text-sm);
+  color: var(--ns-text-muted);
+  margin: 6px 0 0;
+  line-height: 1.4;
+}
+
+
+/* ── Search input com ícone à esquerda ── */
+/*
+   Uso:
+     <div class="ns-search">
+       <svg class="ns-search-icon" .../>
+       <input class="ns-search-input" placeholder="Buscar..." />
+     </div>
+*/
+.ns-search {
+  position: relative;
+}
+
+.ns-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--ns-text-disabled);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+
+.ns-search-input {
+  width: 100%;
+  padding: 11px 14px 11px 40px;
+  background: var(--ns-bg-elevated);
+  border: 0.5px solid var(--ns-border);
+  border-radius: var(--ns-radius-full);
+  font-size: 15px;
+  color: var(--ns-text-primary);
+  font-family: var(--ns-font-base);
+  outline: none;
+  transition: border-color var(--ns-transition), box-shadow var(--ns-transition);
+}
+
+.ns-search-input:focus {
+  border-color: var(--ns-accent);
+  box-shadow: 0 0 0 3px var(--ns-accent-bg);
+}
+
+.ns-search-input::placeholder {
+  color: var(--ns-text-disabled);
+}
+
+
+/* ── Pill group — filtro segmentado (ex: Hoje / Semana / Mês) ── */
+/*
+   Uso:
+     <div class="ns-pill-group">
+       <button class="ns-pill-btn active">Hoje</button>
+       <button class="ns-pill-btn">Semana</button>
+       <button class="ns-pill-btn">Mês</button>
+     </div>
+
+   Nota: .ns-pill já existe como badge/chip inline (seção 20).
+   .ns-pill-group e .ns-pill-btn são o componente de filtro segmentado.
+*/
+.ns-pill-group {
+  display: flex;
+  gap: 0;
+  background: var(--ns-bg-elevated);
+  border-radius: var(--ns-radius-full);
+  padding: 3px;
+}
+
+.ns-pill-btn {
+  flex: 1;
+  padding: 8px 0;
+  border-radius: var(--ns-radius-full);
+  font-size: var(--ns-text-sm);
+  font-weight: var(--ns-weight-bold);
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  background: transparent;
+  color: var(--ns-text-muted);
+  transition: all var(--ns-transition);
+  font-family: var(--ns-font-base);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ns-pill-btn.active,
+.ns-pill-btn[aria-selected="true"] {
+  background: var(--ns-bg-card);
+  color: var(--ns-text-primary);
+  box-shadow: var(--ns-shadow-sm);
+}
+
+.ns-pill-btn:active:not(.active) {
+  background: var(--ns-bg-hover);
+}
+
+
+/* ── Divider de seção — separador pesado entre blocos de conteúdo ── */
+/*
+   Uso:
+     <div class="ns-divider-section" />   (separador de fundo elevado)
+
+   Nota: .ns-divider já existe (seção 4) como linha fina de 0.5px.
+   .ns-divider-section é o separador cinza de 8px entre seções de página (estilo iOS).
+*/
+.ns-divider-section {
+  height: 8px;
+  background: var(--ns-bg-elevated);
+  margin: 0 calc(-1 * var(--ns-page-px));
+}
+
+
+/* ── Badge de confiança da IA (resultado de scan) ── */
+/*
+   Uso:
+     <span class="ns-badge-confidence alta">Alta confiança</span>
+     <span class="ns-badge-confidence media">Média</span>
+     <span class="ns-badge-confidence baixa">Baixa</span>
+*/
+.ns-badge-confidence {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--ns-radius-full);
+  font-size: 11px;
+  font-weight: var(--ns-weight-bold);
+  letter-spacing: 0.02em;
+}
+
+.ns-badge-confidence.alta {
+  background: var(--ns-success-bg);
+  color: var(--ns-success);
+  border: 0.5px solid rgba(45,143,94,0.2);
+}
+
+.ns-badge-confidence.media {
+  background: var(--ns-warning-bg);
+  color: var(--ns-warning);
+  border: 0.5px solid rgba(212,136,12,0.2);
+}
+
+.ns-badge-confidence.baixa {
+  background: var(--ns-danger-bg);
+  color: var(--ns-danger);
+  border: 0.5px solid rgba(196,57,28,0.2);
+}
+
+
+/* ── Stat card — card de estatística com valor grande centralizado ── */
+/*
+   Uso:
+     <div class="ns-stat-card">
+       <div class="ns-stat-value">1.847</div>
+       <div class="ns-stat-label">KCAL</div>
+     </div>
+
+   Nota: .ns-stat-number e .ns-stat-unit já existem (seção 20) para displays grandes.
+   .ns-stat-card é o container compacto com label uppercase embaixo.
+*/
+.ns-stat-card {
+  background: var(--ns-bg-card);
+  border: 0.5px solid var(--ns-border);
+  border-radius: var(--ns-radius-md);
+  padding: 16px;
+  text-align: center;
+  box-shadow: var(--ns-shadow-sm);
+}
+
+.ns-stat-value {
+  font-size: var(--ns-text-lg);
+  font-weight: var(--ns-weight-heavy);
+  color: var(--ns-text-primary);
+  letter-spacing: var(--ns-tracking-tight);
+  line-height: 1;
+}
+
+.ns-stat-label {
+  font-size: 11px;
+  color: var(--ns-text-muted);
+  font-weight: var(--ns-weight-medium);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+
+/* ── Animação scale-in — entrada de modais, forms e cards ── */
+/*
+   Nota: .animate-scale-in já existe (linha 250) usando a keyframe scaleIn.
+   ns-scale-in é uma keyframe alternativa mais sutil (0.95 → 1, sem overshoot).
+   Use .animate-scale-in para o efeito existente ou adicione variante quando necessário.
+*/
+@keyframes ns-scale-in {
+  from { transform: scale(0.95); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+.animate-ns-scale-in {
+  animation: ns-scale-in 0.2s ease-out both;
+}
+
+
+/* ── Typing indicator — dots animados do Coach IA ── */
+/*
+   Keyframe alternativa com bounce vertical (diferente do typingDot existente que usa scale).
+   Use quando quiser movimento de Y em vez de escala.
+*/
+@keyframes ns-dot-bounce {
+  0%, 60%, 100% { transform: translateY(0);   opacity: 0.4; }
+  30%            { transform: translateY(-4px); opacity: 1;   }
+}
+
+.ns-typing-bounce {
+  display: inline-block;
+  animation: ns-dot-bounce 1.4s ease-in-out infinite;
+}
+
+.ns-typing-bounce:nth-child(2) { animation-delay: 0.16s; }
+.ns-typing-bounce:nth-child(3) { animation-delay: 0.32s; }
