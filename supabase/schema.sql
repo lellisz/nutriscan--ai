@@ -13,6 +13,9 @@ create table if not exists public.profiles (
   is_premium boolean not null default false,
   free_scans_used integer not null default 0,
   free_scans_limit integer not null default 2,
+  -- Conta de desenvolvedor: 'user' (padrão), 'dev', 'admin'
+  -- Role 'dev' bypassa paywall e rate limiting. Só pode ser definido via service_role.
+  role text not null default 'user' check (role in ('user', 'dev', 'admin')),
   --
   created_at timestamptz not null default timezone('utc', now()),
   updated_at timestamptz not null default timezone('utc', now())
@@ -142,6 +145,18 @@ create table if not exists public.rate_limit_hits (
 create index if not exists rate_limit_hits_user_id_timestamp_idx
   on public.rate_limit_hits (user_id, timestamp desc);
 
+-- RLS for rate_limit_hits
+-- Nota: esta tabela e gerenciada pelo backend via service_role,
+-- mas habilitamos RLS para garantir que clientes frontend nao possam
+-- ler ou manipular rate limits de outros usuarios.
+alter table public.rate_limit_hits enable row level security;
+
+create policy "rate_limit_hits_select_own"
+  on public.rate_limit_hits for select using (auth.uid() = user_id);
+
+create policy "rate_limit_hits_insert_own"
+  on public.rate_limit_hits for insert with check (auth.uid() = user_id);
+
 alter table public.profiles enable row level security;
 alter table public.daily_goals enable row level security;
 alter table public.scan_history enable row level security;
@@ -160,11 +175,26 @@ create policy "profiles_insert_own"
   for insert
   with check (auth.uid() = user_id);
 
+-- Policy de update protege campos críticos:
+-- O usuario pode atualizar seus proprios dados EXCETO is_premium, free_scans_limit e role,
+-- que sao gerenciados exclusivamente pelo backend via service_role.
 create policy "profiles_update_own"
   on public.profiles
   for update
   using (auth.uid() = user_id)
-  with check (auth.uid() = user_id);
+  with check (
+    auth.uid() = user_id
+    AND is_premium = (SELECT p.is_premium FROM public.profiles p WHERE p.user_id = auth.uid())
+    AND free_scans_limit = (SELECT p.free_scans_limit FROM public.profiles p WHERE p.user_id = auth.uid())
+    AND role = (SELECT p.role FROM public.profiles p WHERE p.user_id = auth.uid())
+  );
+
+-- Policy de DELETE para profiles: permite ao usuario deletar sua propria conta.
+-- O ON DELETE CASCADE no FK cuida de limpar as tabelas filhas.
+create policy "profiles_delete_own"
+  on public.profiles
+  for delete
+  using (auth.uid() = user_id);
 
 create policy "daily_goals_select_own"
   on public.daily_goals
@@ -182,6 +212,11 @@ create policy "daily_goals_update_own"
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
+create policy "daily_goals_delete_own"
+  on public.daily_goals
+  for delete
+  using (auth.uid() = user_id);
+
 create policy "scan_history_select_own"
   on public.scan_history
   for select
@@ -190,6 +225,12 @@ create policy "scan_history_select_own"
 create policy "scan_history_insert_own"
   on public.scan_history
   for insert
+  with check (auth.uid() = user_id);
+
+create policy "scan_history_update_own"
+  on public.scan_history
+  for update
+  using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
 
 create policy "scan_history_delete_own"
@@ -202,11 +243,21 @@ create policy "user_insights_select_own"
   for select
   using (auth.uid() = user_id);
 
+create policy "user_insights_insert_own"
+  on public.user_insights
+  for insert
+  with check (auth.uid() = user_id);
+
 create policy "user_insights_update_own"
   on public.user_insights
   for update
   using (auth.uid() = user_id)
   with check (auth.uid() = user_id);
+
+create policy "user_insights_delete_own"
+  on public.user_insights
+  for delete
+  using (auth.uid() = user_id);
 
 -- Weight logs policies
 create policy "weight_logs_select_own"
@@ -235,6 +286,8 @@ create policy "hydration_logs_insert_own"
   on public.hydration_logs for insert with check (auth.uid() = user_id);
 create policy "hydration_logs_update_own"
   on public.hydration_logs for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
+create policy "hydration_logs_delete_own"
+  on public.hydration_logs for delete using (auth.uid() = user_id);
 
 -- Fix security warning: Set search_path on handle_new_user function
 alter function if exists auth.handle_new_user() set search_path to public;
@@ -303,5 +356,31 @@ create policy "chat_messages_select_own"
 create policy "chat_messages_insert_own"
   on public.chat_messages for insert with check (auth.uid() = user_id);
 
+-- chat_messages nao tem policy de UPDATE: mensagens sao imutaveis apos criacao.
+-- Isso impede que um usuario edite mensagens do historico.
+
 create policy "chat_messages_delete_own"
   on public.chat_messages for delete using (auth.uid() = user_id);
+
+-- ==================== MEMORIA DE SESSAO (conversation_insights) ====================
+-- Insights extraidos ao fim de cada conversa via Gemini Flash Lite.
+-- Injetados no system prompt das proximas sessoes para personalizar o Praxi.
+
+create table if not exists public.conversation_insights (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references auth.users(id) on delete cascade,
+  insight text not null,
+  category text check (category in ('preference','difficulty','progress','restriction','context')),
+  created_at timestamptz default now()
+);
+
+alter table public.conversation_insights enable row level security;
+
+drop policy if exists "users_own_insights" on public.conversation_insights;
+create policy "users_own_insights"
+  on public.conversation_insights for all
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+create index if not exists conversation_insights_user_id_idx
+  on public.conversation_insights (user_id, created_at desc);
