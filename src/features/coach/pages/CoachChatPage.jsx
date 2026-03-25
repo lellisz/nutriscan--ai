@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
+import ReactMarkdown from "react-markdown";
 import { useAuth } from "../../auth/hooks/useAuth";
+import { getSupabaseClient } from "../../../lib/supabase";
 import * as db from "../../../lib/db";
 
 // ── SVG Icons ────────────────────────────────────────────────────────────────
@@ -7,9 +9,9 @@ import * as db from "../../../lib/db";
 function IconMenu() {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <line x1="3" y1="5.5" x2="17" y2="5.5" stroke="#000" strokeWidth="1.7" strokeLinecap="round" />
-      <line x1="3" y1="10" x2="17" y2="10" stroke="#000" strokeWidth="1.7" strokeLinecap="round" />
-      <line x1="3" y1="14.5" x2="17" y2="14.5" stroke="#000" strokeWidth="1.7" strokeLinecap="round" />
+      <line x1="3" y1="5.5" x2="17" y2="5.5" stroke="var(--ns-text-primary)" strokeWidth="1.7" strokeLinecap="round" />
+      <line x1="3" y1="10" x2="17" y2="10" stroke="var(--ns-text-primary)" strokeWidth="1.7" strokeLinecap="round" />
+      <line x1="3" y1="14.5" x2="17" y2="14.5" stroke="var(--ns-text-primary)" strokeWidth="1.7" strokeLinecap="round" />
     </svg>
   );
 }
@@ -17,8 +19,8 @@ function IconMenu() {
 function IconPlus() {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <line x1="10" y1="3" x2="10" y2="17" stroke="#000" strokeWidth="1.7" strokeLinecap="round" />
-      <line x1="3" y1="10" x2="17" y2="10" stroke="#000" strokeWidth="1.7" strokeLinecap="round" />
+      <line x1="10" y1="3" x2="10" y2="17" stroke="var(--ns-text-primary)" strokeWidth="1.7" strokeLinecap="round" />
+      <line x1="3" y1="10" x2="17" y2="10" stroke="var(--ns-text-primary)" strokeWidth="1.7" strokeLinecap="round" />
     </svg>
   );
 }
@@ -28,7 +30,7 @@ function IconChat() {
     <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M8 10C8 8.34 9.34 7 11 7H37C38.66 7 40 8.34 40 10V30C40 31.66 38.66 33 37 33H26L18 41V33H11C9.34 33 8 31.66 8 30V10Z"
-        stroke="#C0C0C0"
+        stroke="var(--ns-text-disabled)"
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -49,9 +51,9 @@ function IconArrowUp({ color = "#fff" }) {
 function IconTrash() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <line x1="2" y1="4" x2="14" y2="4" stroke="#C0C0C0" strokeWidth="1.7" strokeLinecap="round" />
-      <path d="M5 4V3C5 2.45 5.45 2 6 2H10C10.55 2 11 2.45 11 3V4" stroke="#C0C0C0" strokeWidth="1.7" strokeLinecap="round" />
-      <path d="M3 4L4 13C4 13.55 4.45 14 5 14H11C11.55 14 12 13.55 12 13L13 4" stroke="#C0C0C0" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+      <line x1="2" y1="4" x2="14" y2="4" stroke="var(--ns-text-disabled)" strokeWidth="1.7" strokeLinecap="round" />
+      <path d="M5 4V3C5 2.45 5.45 2 6 2H10C10.55 2 11 2.45 11 3V4" stroke="var(--ns-text-disabled)" strokeWidth="1.7" strokeLinecap="round" />
+      <path d="M3 4L4 13C4 13.55 4.45 14 5 14H11C11.55 14 12 13.55 12 13L13 4" stroke="var(--ns-text-disabled)" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -64,7 +66,7 @@ function TypingIndicator() {
       <div style={{
         padding: "14px 18px",
         borderRadius: "18px 18px 18px 4px",
-        background: "#F5F5F5",
+        background: "var(--ns-bg-elevated)",
         display: "flex",
         gap: 5,
         alignItems: "center",
@@ -83,7 +85,7 @@ function TypingIndicator() {
               width: 6,
               height: 6,
               borderRadius: "50%",
-              background: "#B0B0B0",
+              background: "var(--ns-text-disabled)",
               animation: `ns-dot-bounce 1.2s ease-in-out infinite`,
               animationDelay: `${i * 0.2}s`,
             }}
@@ -106,8 +108,11 @@ export default function CoachChatPage() {
   const [sending, setSending] = useState(false);
   const [showConversations, setShowConversations] = useState(false);
   const [sendError, setSendError] = useState(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const messagesEndRef = useRef(null);
+  const scrollContainerRef = useRef(null);
   const inputRef = useRef(null);
+  const isNearBottomRef = useRef(true);
 
   // Aguarda auth resolver antes de carregar conversas
   useEffect(() => {
@@ -195,6 +200,8 @@ export default function CoachChatPage() {
     setInputMessage("");
     setSending(true);
     setSendError(null);
+    // Reset textarea height
+    if (inputRef.current) inputRef.current.style.height = "auto";
 
     const optimisticMsg = {
       id: `temp-${Date.now()}`,
@@ -203,6 +210,8 @@ export default function CoachChatPage() {
       created_at: new Date().toISOString(),
     };
     setMessages(prev => [...prev, optimisticMsg]);
+    // Força scroll ao enviar mensagem própria
+    setTimeout(() => scrollToBottom(true), 50);
 
     try {
       const isValidUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -210,15 +219,34 @@ export default function CoachChatPage() {
         ? currentConversation.id
         : undefined;
 
+      // Obtem JWT para autenticar a requisicao no backend
+      let accessToken = null;
+      try {
+        const supabase = getSupabaseClient();
+        const { data: { session } } = await supabase.auth.getSession();
+        accessToken = session?.access_token || null;
+      } catch {
+        // Continua sem token — o backend retornara 401
+      }
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
+
       const response = await fetch("/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        },
         body: JSON.stringify({
           conversationId: convId,
           message: userMessage,
           userId: user.id,
         }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
@@ -241,7 +269,18 @@ export default function CoachChatPage() {
     } catch (err) {
       console.error("Erro ao enviar mensagem:", err);
       setMessages(prev => prev.filter(m => m.id !== optimisticMsg.id));
-      setSendError("Não consegui responder agora. Tente novamente.");
+      // Mensagens de erro amigáveis por tipo
+      let friendlyError = "Algo deu errado. Tente novamente.";
+      if (err.name === "AbortError") {
+        friendlyError = "O coach demorou para responder. Tente novamente.";
+      } else if (err instanceof TypeError || err.message?.includes("fetch")) {
+        friendlyError = "Sem conexao com a internet. Verifique sua rede.";
+      } else if (err.message?.includes("timeout") || err.message?.includes("abort")) {
+        friendlyError = "O coach demorou para responder. Tente novamente.";
+      } else if (err.message?.includes("429")) {
+        friendlyError = "Muitas mensagens seguidas. Aguarde um momento.";
+      }
+      setSendError(friendlyError);
       setInputMessage(userMessage);
     } finally {
       setSending(false);
@@ -268,7 +307,11 @@ export default function CoachChatPage() {
   }
 
   async function handleDeleteConversation(convId) {
-    if (!confirm("Deletar esta conversa?")) return;
+    if (confirmDeleteId !== convId) {
+      setConfirmDeleteId(convId);
+      return;
+    }
+    setConfirmDeleteId(null);
     // IDs temporários só existem localmente — remover da lista sem chamar o banco
     const isValidUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     if (!isValidUUID.test(convId)) {
@@ -293,8 +336,17 @@ export default function CoachChatPage() {
     }
   }
 
-  function scrollToBottom() {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  function scrollToBottom(force = false) {
+    if (force || isNearBottomRef.current) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }
+
+  function handleScrollContainer() {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const { scrollHeight, scrollTop, clientHeight } = el;
+    isNearBottomRef.current = scrollHeight - scrollTop - clientHeight < 80;
   }
 
   // Aguardando auth carregar
@@ -302,7 +354,7 @@ export default function CoachChatPage() {
     return (
       <div
         className="flex-center"
-        style={{ minHeight: "60vh", background: "#FFFFFF" }}
+        style={{ minHeight: "60vh", background: "var(--ns-bg-primary)" }}
       >
         <div className="ns-spinner ns-spinner-lg" />
       </div>
@@ -322,15 +374,15 @@ export default function CoachChatPage() {
           gap: 12,
           padding: "0 24px",
           textAlign: "center",
-          background: "#FFFFFF",
+          background: "var(--ns-bg-primary)",
         }}
       >
         <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-          <rect x="8" y="18" width="24" height="16" rx="3" stroke="#C0C0C0" strokeWidth="1.8" />
-          <path d="M13 18V13C13 9.13 16.13 6 20 6C23.87 6 27 9.13 27 13V18" stroke="#C0C0C0" strokeWidth="1.8" strokeLinecap="round" />
+          <rect x="8" y="18" width="24" height="16" rx="3" stroke="var(--ns-text-disabled)" strokeWidth="1.8" />
+          <path d="M13 18V13C13 9.13 16.13 6 20 6C23.87 6 27 9.13 27 13V18" stroke="var(--ns-text-disabled)" strokeWidth="1.8" strokeLinecap="round" />
         </svg>
-        <p style={{ color: "#9A9A9A", fontSize: 14, margin: 0 }}>
-          Faça login para acessar o NutriCoach.
+        <p style={{ color: "var(--ns-text-muted)", fontSize: 14, margin: 0 }}>
+          Faça login para acessar o Coach Praxis.
         </p>
       </div>
     );
@@ -343,7 +395,7 @@ export default function CoachChatPage() {
       display: "flex",
       flexDirection: "column",
       height: "calc(100dvh - var(--ns-nav-height, 72px))",
-      background: "#FFFFFF",
+      background: "var(--ns-bg-primary)",
       maxWidth: 480,
       margin: "0 auto",
     }}>
@@ -351,8 +403,8 @@ export default function CoachChatPage() {
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <div style={{
         padding: "14px 16px",
-        borderBottom: "1px solid rgba(0,0,0,0.06)",
-        background: "rgba(255,255,255,0.94)",
+        borderBottom: "1px solid var(--ns-border)",
+        background: "rgba(244,245,240,0.94)",
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
         display: "flex",
@@ -386,16 +438,16 @@ export default function CoachChatPage() {
             margin: 0,
             fontSize: 17,
             fontWeight: 700,
-            color: "#000000",
+            color: "var(--ns-text-primary)",
             lineHeight: 1.2,
             letterSpacing: "-0.3px",
           }}>
-            NutriCoach
+            Coach Praxis
           </div>
           <div style={{
             margin: 0,
             fontSize: 12,
-            color: "#9A9A9A",
+            color: "var(--ns-text-muted)",
             lineHeight: 1.3,
             marginTop: 1,
           }}>
@@ -429,7 +481,7 @@ export default function CoachChatPage() {
           style={{
             position: "fixed",
             inset: 0,
-            background: "rgba(0,0,0,0.3)",
+            background: "rgba(0,0,0,0.4)",
             zIndex: 200,
             display: "flex",
           }}
@@ -439,7 +491,7 @@ export default function CoachChatPage() {
             style={{
               width: "85%",
               maxWidth: 320,
-              background: "#FFFFFF",
+              background: "var(--ns-bg-card)",
               height: "100%",
               overflowY: "auto",
               padding: "24px 16px 24px 20px",
@@ -449,7 +501,7 @@ export default function CoachChatPage() {
             <div style={{
               fontSize: 20,
               fontWeight: 700,
-              color: "#000000",
+              color: "var(--ns-text-primary)",
               margin: "0 0 20px",
               letterSpacing: "-0.4px",
             }}>
@@ -457,7 +509,7 @@ export default function CoachChatPage() {
             </div>
 
             {conversations.length === 0 && (
-              <p style={{ color: "#9A9A9A", fontSize: 14, margin: 0 }}>
+              <p style={{ color: "var(--ns-text-muted)", fontSize: 14, margin: 0 }}>
                 Nenhuma conversa ainda.
               </p>
             )}
@@ -475,12 +527,12 @@ export default function CoachChatPage() {
                     padding: "12px 14px",
                     marginBottom: 8,
                     borderRadius: 12,
-                    background: isActive ? "#F0FDF4" : "#F5F5F5",
+                    background: isActive ? "var(--ns-accent-bg)" : "var(--ns-bg-elevated)",
                     cursor: "pointer",
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    borderLeft: isActive ? "3px solid #16A34A" : "3px solid transparent",
+                    borderLeft: isActive ? `3px solid var(--ns-accent)` : "3px solid transparent",
                     transition: "background 0.15s ease",
                   }}
                 >
@@ -488,7 +540,7 @@ export default function CoachChatPage() {
                     <div style={{
                       fontSize: 14,
                       fontWeight: 500,
-                      color: "#000000",
+                      color: "var(--ns-text-primary)",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
@@ -497,7 +549,7 @@ export default function CoachChatPage() {
                     </div>
                     <div style={{
                       fontSize: 12,
-                      color: "#9A9A9A",
+                      color: "var(--ns-text-muted)",
                       marginTop: 2,
                     }}>
                       {conv.message_count || 0} mensagens
@@ -508,21 +560,26 @@ export default function CoachChatPage() {
                       e.stopPropagation();
                       handleDeleteConversation(conv.id);
                     }}
-                    aria-label="Deletar conversa"
+                    onBlur={() => setConfirmDeleteId(null)}
+                    aria-label={confirmDeleteId === conv.id ? "Confirmar exclusão" : "Deletar conversa"}
                     style={{
-                      background: "none",
+                      background: confirmDeleteId === conv.id ? "var(--ns-danger-bg)" : "none",
                       border: "none",
                       cursor: "pointer",
-                      padding: 4,
+                      padding: "4px 6px",
                       borderRadius: 6,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       flexShrink: 0,
                       marginLeft: 8,
+                      fontSize: 10,
+                      fontWeight: 600,
+                      color: confirmDeleteId === conv.id ? "var(--ns-danger)" : undefined,
+                      fontFamily: "inherit",
                     }}
                   >
-                    <IconTrash />
+                    {confirmDeleteId === conv.id ? "Confirmar" : <IconTrash />}
                   </button>
                 </div>
               );
@@ -532,14 +589,19 @@ export default function CoachChatPage() {
       )}
 
       {/* ── Área de mensagens ───────────────────────────────────────────────── */}
-      <div style={{
-        flex: 1,
-        overflowY: "auto",
-        padding: "20px 16px",
-        display: "flex",
-        flexDirection: "column",
-        gap: 10,
-      }}>
+      <div
+        ref={scrollContainerRef}
+        onScroll={handleScrollContainer}
+        style={{
+          flex: 1,
+          overflowY: "auto",
+          padding: "20px 16px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 10,
+          WebkitOverflowScrolling: "touch",
+        }}
+      >
 
         {/* Empty state */}
         {messages.length === 0 && (
@@ -557,7 +619,7 @@ export default function CoachChatPage() {
             <div style={{
               fontSize: 22,
               fontWeight: 700,
-              color: "#000000",
+              color: "var(--ns-text-primary)",
               margin: "0 0 8px",
               letterSpacing: "-0.5px",
               lineHeight: 1.2,
@@ -566,7 +628,7 @@ export default function CoachChatPage() {
             </div>
             <p style={{
               fontSize: 14,
-              color: "#9A9A9A",
+              color: "var(--ns-text-muted)",
               margin: "0 0 28px",
               lineHeight: 1.5,
             }}>
@@ -580,20 +642,20 @@ export default function CoachChatPage() {
               maxWidth: 320,
             }}>
               {[
-                "O que devo comer hoje?",
-                "Como melhorar minha dieta?",
-                "Quais alimentos evitar?",
+                "O que devo comer antes do treino?",
+                "Analise meu dia de hoje",
+                "Como melhorar minha ingestão de proteína?",
               ].map(q => (
                 <button
                   key={q}
                   onClick={() => sendMessage(q)}
                   style={{
-                    background: "#F5F5F5",
-                    border: "1px solid rgba(0,0,0,0.06)",
+                    background: "var(--ns-bg-elevated)",
+                    border: "0.5px solid var(--ns-border)",
                     borderRadius: 20,
                     padding: "10px 16px",
                     fontSize: 14,
-                    color: "#000000",
+                    color: "var(--ns-text-primary)",
                     cursor: "pointer",
                     textAlign: "center",
                     transition: "background 0.15s ease",
@@ -622,14 +684,27 @@ export default function CoachChatPage() {
               borderRadius: msg.role === "user"
                 ? "18px 18px 4px 18px"
                 : "18px 18px 18px 4px",
-              background: msg.role === "user" ? "#000000" : "#F5F5F5",
-              color: msg.role === "user" ? "#FFFFFF" : "#000000",
+              background: msg.role === "user" ? "var(--ns-accent)" : "var(--ns-bg-elevated)",
+              color: msg.role === "user" ? "#FFFFFF" : "var(--ns-text-primary)",
               fontSize: 15,
               lineHeight: 1.55,
               wordBreak: "break-word",
-              whiteSpace: "pre-wrap",
             }}>
-              {msg.content}
+              {msg.role === "assistant" ? (
+                <ReactMarkdown
+                  components={{
+                    p: ({ children }) => <p style={{ margin: '0 0 6px', whiteSpace: 'pre-wrap' }}>{children}</p>,
+                    strong: ({ children }) => <strong style={{ fontWeight: 700 }}>{children}</strong>,
+                    ul: ({ children }) => <ul style={{ margin: '4px 0', paddingLeft: 18 }}>{children}</ul>,
+                    li: ({ children }) => <li style={{ marginBottom: 2 }}>{children}</li>,
+                    a: ({ href, children }) => <a href={href} style={{ color: 'var(--ns-accent)', textDecoration: 'underline' }}>{children}</a>,
+                  }}
+                >
+                  {msg.content}
+                </ReactMarkdown>
+              ) : (
+                <span style={{ whiteSpace: 'pre-wrap' }}>{msg.content}</span>
+              )}
             </div>
           </div>
         ))}
@@ -646,11 +721,11 @@ export default function CoachChatPage() {
           margin: "0 16px 8px",
           padding: "10px 14px",
           borderRadius: 12,
-          background: "#FEF2F2",
-          color: "#DC2626",
+          background: "var(--ns-danger-bg)",
+          color: "var(--ns-danger)",
           fontSize: 13,
           textAlign: "center",
-          border: "1px solid rgba(220,38,38,0.15)",
+          border: "0.5px solid rgba(255,59,48,0.2)",
         }}>
           {sendError}
         </div>
@@ -661,8 +736,8 @@ export default function CoachChatPage() {
         onSubmit={handleSendMessage}
         style={{
           padding: "10px 16px 12px",
-          borderTop: "1px solid rgba(0,0,0,0.06)",
-          background: "rgba(255,255,255,0.94)",
+          borderTop: "1px solid var(--ns-border)",
+          background: "rgba(244,245,240,0.94)",
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
           display: "flex",
@@ -671,22 +746,38 @@ export default function CoachChatPage() {
           flexShrink: 0,
         }}
       >
-        <input
+        <textarea
           ref={inputRef}
-          type="text"
           value={inputMessage}
-          onChange={e => setInputMessage(e.target.value)}
+          onChange={e => {
+            setInputMessage(e.target.value);
+            // Auto-expand
+            const el = e.target;
+            el.style.height = "auto";
+            el.style.height = Math.min(el.scrollHeight, 120) + "px";
+          }}
+          onKeyDown={e => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              if (canSend) handleSendMessage(e);
+            }
+          }}
           placeholder="Digite sua pergunta..."
+          rows={1}
           style={{
             flex: 1,
-            background: "#F5F5F5",
-            border: "none",
+            background: "var(--ns-bg-elevated)",
+            border: "0.5px solid var(--ns-border)",
             borderRadius: 22,
             padding: "11px 18px",
-            fontSize: 15,
-            color: "#000000",
+            fontSize: 16,
+            color: "var(--ns-text-primary)",
             outline: "none",
             fontFamily: "inherit",
+            resize: "none",
+            lineHeight: 1.4,
+            maxHeight: 120,
+            overflowY: "auto",
           }}
           disabled={sending}
           autoComplete="off"
@@ -699,7 +790,7 @@ export default function CoachChatPage() {
             width: 40,
             height: 40,
             borderRadius: "50%",
-            background: canSend ? "#000000" : "#E8E8E8",
+            background: canSend ? "var(--ns-accent)" : "var(--ns-bg-elevated)",
             border: "none",
             cursor: canSend ? "pointer" : "default",
             display: "flex",
@@ -709,7 +800,7 @@ export default function CoachChatPage() {
             transition: "background 0.15s ease",
           }}
         >
-          <IconArrowUp color={canSend ? "#fff" : "#B0B0B0"} />
+          <IconArrowUp color={canSend ? "#fff" : "var(--ns-text-disabled)"} />
         </button>
       </form>
     </div>
