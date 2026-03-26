@@ -3,11 +3,10 @@ import { useAuth } from "../../auth/hooks/useAuth";
 import * as db from "../../../lib/db";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
-function StatCard({ icon, value, label }) {
+function StatCard({ value, label }) {
   return (
     <div className="ns-card" style={{ padding: 16, textAlign: "center" }}>
-      <div style={{ fontSize: 24, marginBottom: 6 }}>{icon}</div>
-      <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: -0.5, color: "var(--ns-text-primary)" }}>
+      <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: -0.5, color: "var(--ns-text-primary)" }}>
         {value}
       </div>
       <div style={{ fontSize: 12, color: "var(--ns-text-muted)", fontWeight: 500, marginTop: 2 }}>
@@ -18,12 +17,12 @@ function StatCard({ icon, value, label }) {
 }
 
 const WORKOUT_TYPES = [
-  { value: "musculacao", label: "Musculacao", icon: "🏋️" },
-  { value: "cardio", label: "Cardio", icon: "🏃" },
-  { value: "hiit", label: "HIIT", icon: "⚡" },
-  { value: "funcional", label: "Funcional", icon: "🤸" },
-  { value: "esporte", label: "Esporte", icon: "⚽" },
-  { value: "outro", label: "Outro", icon: "🏅" },
+  { value: "musculacao", label: "Musculação", abbr: "MUS" },
+  { value: "cardio",     label: "Cardio",     abbr: "CAR" },
+  { value: "hiit",       label: "HIIT",       abbr: "HIT" },
+  { value: "funcional",  label: "Funcional",  abbr: "FUN" },
+  { value: "esporte",    label: "Esporte",    abbr: "ESP" },
+  { value: "outro",      label: "Outro",      abbr: "OUT" },
 ];
 
 const INTENSITY_OPTIONS = [
@@ -55,12 +54,16 @@ export default function InsightsPage() {
   const [workoutIntensity, setWorkoutIntensity] = useState("moderado");
   const [workoutNote, setWorkoutNote] = useState("");
   const [savingWorkout, setSavingWorkout] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(null);
+  const [confirmDeleteWorkoutId, setConfirmDeleteWorkoutId] = useState(null);
+  const [period, setPeriod] = useState("hoje");
 
   useEffect(() => {
-    loadProgressData();
-  }, []);
+    if (user?.id) loadProgressData();
+  }, [user?.id]);
 
   async function loadProgressData() {
+    if (!user?.id) return;
     try {
       const [goalsData, profileData, scansData, weightData, workoutData] = await Promise.all([
         db.getDailyGoals(user.id),
@@ -76,6 +79,7 @@ export default function InsightsPage() {
       setWorkoutLogs(workoutData || []);
     } catch (err) {
       console.error("Erro ao carregar progresso:", err);
+      setErrorMsg("Erro ao carregar dados. Tente novamente.");
     } finally {
       setLoading(false);
     }
@@ -148,11 +152,13 @@ export default function InsightsPage() {
   }, [workoutLogs]);
 
   // ========== Handlers ==========
+
   async function handleSaveWeight(e) {
     e.preventDefault();
     const w = parseFloat(weightInput);
     if (!w || w < 20 || w > 400) return;
     setSavingWeight(true);
+    setErrorMsg(null);
     try {
       const saved = await db.saveWeightLog(user.id, { weight: w, note: weightNote || null });
       setWeightLogs(prev => {
@@ -163,6 +169,7 @@ export default function InsightsPage() {
       setWeightNote("");
     } catch (err) {
       console.error("Erro ao salvar peso:", err);
+      setErrorMsg("Erro ao salvar peso. Tente novamente.");
     } finally {
       setSavingWeight(false);
     }
@@ -173,6 +180,7 @@ export default function InsightsPage() {
     const dur = parseInt(workoutDuration);
     if (!dur || dur < 1) return;
     setSavingWorkout(true);
+    setErrorMsg(null);
     try {
       const saved = await db.saveWorkoutLog(user.id, {
         workoutType,
@@ -188,40 +196,144 @@ export default function InsightsPage() {
       setWorkoutNote("");
     } catch (err) {
       console.error("Erro ao salvar treino:", err);
+      setErrorMsg("Erro ao salvar treino. Tente novamente.");
     } finally {
       setSavingWorkout(false);
     }
   }
 
   async function handleDeleteWorkout(id) {
+    if (confirmDeleteWorkoutId !== id) {
+      setConfirmDeleteWorkoutId(id);
+      return;
+    }
+    setConfirmDeleteWorkoutId(null);
+    setErrorMsg(null);
     try {
       await db.deleteWorkoutLog(id);
       setWorkoutLogs(prev => prev.filter(w => w.id !== id));
     } catch (err) {
       console.error("Erro ao deletar treino:", err);
+      setErrorMsg("Erro ao remover treino. Tente novamente.");
     }
   }
 
   const tabs = [
-    { id: "visao", label: "Visao geral" },
+    { id: "visao", label: "Visão geral" },
     { id: "peso", label: "Peso" },
     { id: "treino", label: "Treino" },
   ];
 
+  const PERIOD_OPTIONS = [
+    { id: "hoje",   label: "Hoje"   },
+    { id: "7dias",  label: "7 dias" },
+    { id: "30dias", label: "30 dias" },
+  ];
+
+  // Resumo rápido de acordo com o período selecionado
+  const periodSummary = (() => {
+    if (period === "hoje") {
+      return totalCalToday > 0
+        ? `${totalCalToday.toLocaleString("pt-BR")} kcal consumidas hoje`
+        : "Nenhum registro hoje";
+    }
+    if (period === "7dias") {
+      const weekScans = scans.filter(s => {
+        const d = new Date(s.scanned_at);
+        const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 7);
+        return d >= cutoff;
+      });
+      const total = weekScans.reduce((sum, s) => sum + (s.calories || 0), 0);
+      return `${total.toLocaleString("pt-BR")} kcal nos ultimos 7 dias`;
+    }
+    const monthScans = scans.filter(s => {
+      const d = new Date(s.scanned_at);
+      const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 30);
+      return d >= cutoff;
+    });
+    const total = monthScans.reduce((sum, s) => sum + (s.calories || 0), 0);
+    return `${total.toLocaleString("pt-BR")} kcal nos ultimos 30 dias`;
+  })();
+
+  const insightsHeader = (isLoading) => (
+    <header style={{ padding: '20px 20px 16px', background: 'var(--ns-bg-primary)' }} className="animate-fade-up">
+      <h1 style={{
+        fontSize: 28, fontWeight: 700,
+        color: 'var(--ns-text-primary)',
+        letterSpacing: '-0.03em',
+        margin: 0, lineHeight: 1.1,
+      }}>
+        Progresso
+      </h1>
+      <p style={{
+        fontSize: 14, color: 'var(--ns-text-muted)',
+        margin: '6px 0 12px', lineHeight: 1.4,
+      }}>
+        {isLoading ? 'Carregando dados...' : periodSummary}
+      </p>
+
+      {/* Seletor de periodo */}
+      <div style={{ display: 'flex', gap: 6 }}>
+        {PERIOD_OPTIONS.map(({ id, label }) => {
+          const active = period === id;
+          return (
+            <button
+              key={id}
+              onClick={() => setPeriod(id)}
+              style={{
+                padding: '6px 14px',
+                borderRadius: 100,
+                fontSize: 13, fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.18s cubic-bezier(0.4,0,0.2,1)',
+                WebkitTapHighlightColor: 'transparent',
+                border: active ? 'none' : '0.5px solid var(--ns-border)',
+                background: active ? 'var(--ns-accent)' : 'var(--ns-bg-card)',
+                color: active ? '#FFFFFF' : 'var(--ns-text-muted)',
+                boxShadow: active ? '0 2px 8px rgba(45,143,94,0.25)' : 'none',
+              }}
+            >
+              {label}
+            </button>
+          );
+        })}
+      </div>
+    </header>
+  );
+
   if (loading) {
     return (
-      <div className="ns-page flex-center" style={{ minHeight: "60vh" }}>
-        <div className="ns-spinner ns-spinner-lg" />
+      <div style={{ background: 'var(--ns-bg-primary)', minHeight: '100dvh', paddingBottom: 100 }}>
+        {insightsHeader(true)}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '40vh' }}>
+          <div className="ns-spinner ns-spinner-lg" />
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="ns-page">
-      {/* Header */}
-      <div className="ns-page-header animate-fade-up">
-        <h1 className="ns-page-title">Progresso</h1>
-      </div>
+    <div style={{ background: 'var(--ns-bg-primary)', minHeight: '100dvh', paddingBottom: 100 }}>
+
+      {insightsHeader(false)}
+
+      <div style={{ padding: '0 20px' }}>
+
+      {/* Error banner */}
+      {errorMsg && (
+        <div style={{
+          background: "var(--ns-danger-bg)", border: "0.5px solid rgba(196,57,28,0.2)",
+          borderRadius: 12, padding: "10px 14px", marginBottom: 12,
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+        }}>
+          <span style={{ fontSize: 13, color: "var(--ns-danger)" }}>{errorMsg}</span>
+          <button onClick={() => setErrorMsg(null)} style={{ background: "none", border: "none", fontSize: 16, color: "var(--ns-danger)", cursor: "pointer", padding: 4 }}>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M1 1l10 10M11 1L1 11" stroke="var(--ns-danger)" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+          </button>
+        </div>
+      )}
 
       {/* Tab bar */}
       <div className="animate-fade-up stagger-1" style={{
@@ -254,14 +366,13 @@ export default function InsightsPage() {
           <div className="animate-fade-up stagger-2" style={{
             display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 20,
           }}>
-            <StatCard icon="🔥" value={todayScans.length} label="Registros" />
+            <StatCard value={todayScans.length} label="Registros hoje" />
             <StatCard
-              icon="📉"
               value={weightChange !== null ? `${weightChange > 0 ? "+" : ""}${weightChange} kg` : "--"}
-              label="Variacao"
+              label="Variação de peso"
             />
-            <StatCard icon="⚡" value={`${deficit} kcal`} label="Deficit hoje" />
-            <StatCard icon="💪" value={`${totalBurned} kcal`} label="Queimado" />
+            <StatCard value={`${deficit} kcal`} label="Deficit hoje" />
+            <StatCard value={`${totalBurned} kcal`} label="Queimado hoje" />
           </div>
 
           <div className="ns-card animate-fade-up stagger-3" style={{ padding: 20 }}>
@@ -269,13 +380,13 @@ export default function InsightsPage() {
             <div style={{ width: "100%", height: 200 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData}>
-                  <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#555550" }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 11, fill: "#555550" }} axisLine={false} tickLine={false} width={40} />
+                  <XAxis dataKey="name" tick={{ fontSize: 11, fill: "var(--ns-text-muted)" }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 11, fill: "var(--ns-text-muted)" }} axisLine={false} tickLine={false} width={40} />
                   <Tooltip
-                    contentStyle={{ background: "#1a1a18", border: "1px solid #2a2a28", borderRadius: 8, fontSize: 12 }}
+                    contentStyle={{ background: "var(--ns-bg-card)", border: "0.5px solid var(--ns-border)", borderRadius: 8, fontSize: 12 }}
                     formatter={(value) => [`${value} kcal`, "Calorias"]}
                   />
-                  <Line type="monotone" dataKey="calorias" stroke="#e8e8e4" strokeWidth={2} dot={{ r: 4, fill: "#e8e8e4" }} activeDot={{ r: 6 }} />
+                  <Line type="monotone" dataKey="calorias" stroke="var(--ns-accent)" strokeWidth={2} dot={{ r: 4, fill: "var(--ns-accent)" }} activeDot={{ r: 6 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -331,20 +442,20 @@ export default function InsightsPage() {
             <div className="animate-fade-up stagger-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 16 }}>
               <div className="ns-card" style={{ padding: 12, textAlign: "center" }}>
                 <div style={{ fontSize: 11, color: "var(--ns-text-muted)", fontWeight: 600, marginBottom: 4 }}>ATUAL</div>
-                <div style={{ fontSize: 18, fontWeight: 800 }}>{Number(weightLogs[0]?.weight).toFixed(1)}</div>
+                <div style={{ fontSize: 18, fontWeight: 700 }}>{Number(weightLogs[0]?.weight).toFixed(1)}</div>
                 <div style={{ fontSize: 11, color: "var(--ns-text-muted)" }}>kg</div>
               </div>
               <div className="ns-card" style={{ padding: 12, textAlign: "center" }}>
                 <div style={{ fontSize: 11, color: "var(--ns-text-muted)", fontWeight: 600, marginBottom: 4 }}>INICIAL</div>
-                <div style={{ fontSize: 18, fontWeight: 800 }}>
+                <div style={{ fontSize: 18, fontWeight: 700 }}>
                   {Number([...weightLogs].sort((a, b) => a.logged_at.localeCompare(b.logged_at))[0]?.weight).toFixed(1)}
                 </div>
                 <div style={{ fontSize: 11, color: "var(--ns-text-muted)" }}>kg</div>
               </div>
               <div className="ns-card" style={{ padding: 12, textAlign: "center" }}>
-                <div style={{ fontSize: 11, color: "var(--ns-text-muted)", fontWeight: 600, marginBottom: 4 }}>VARIACAO</div>
+                <div style={{ fontSize: 11, color: "var(--ns-text-muted)", fontWeight: 600, marginBottom: 4 }}>VARIAÇÃO</div>
                 <div style={{
-                  fontSize: 18, fontWeight: 800,
+                  fontSize: 18, fontWeight: 700,
                   color: weightChange && parseFloat(weightChange) < 0 ? "var(--ns-success)" : weightChange && parseFloat(weightChange) > 0 ? "var(--ns-warning)" : "var(--ns-text-primary)",
                 }}>
                   {weightChange !== null ? `${weightChange > 0 ? "+" : ""}${weightChange}` : "--"}
@@ -357,18 +468,18 @@ export default function InsightsPage() {
           {/* Weight chart */}
           {weightChartData.length >= 2 ? (
             <div className="ns-card animate-fade-up stagger-3" style={{ padding: 20, marginBottom: 16 }}>
-              <p className="ns-label">EVOLUCAO DE PESO</p>
+              <p className="ns-label">EVOLUÇÃO DE PESO</p>
               <div style={{ width: "100%", height: 200 }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={weightChartData}>
-                    <XAxis dataKey="name" tick={{ fontSize: 10, fill: "#555550" }} axisLine={false} tickLine={false} />
+                    <XAxis dataKey="name" tick={{ fontSize: 10, fill: "var(--ns-text-muted)" }} axisLine={false} tickLine={false} />
                     <YAxis
-                      tick={{ fontSize: 11, fill: "#555550" }}
+                      tick={{ fontSize: 11, fill: "var(--ns-text-muted)" }}
                       axisLine={false} tickLine={false} width={40}
                       domain={["dataMin - 1", "dataMax + 1"]}
                     />
                     <Tooltip
-                      contentStyle={{ background: "#1a1a18", border: "1px solid #2a2a28", borderRadius: 8, fontSize: 12 }}
+                      contentStyle={{ background: "var(--ns-bg-card)", border: "0.5px solid var(--ns-border)", borderRadius: 8, fontSize: 12 }}
                       formatter={(value) => [`${value} kg`, "Peso"]}
                     />
                     <Line type="monotone" dataKey="peso" stroke="var(--ns-accent)" strokeWidth={2} dot={{ r: 4, fill: "var(--ns-accent)" }} activeDot={{ r: 6 }} />
@@ -379,7 +490,7 @@ export default function InsightsPage() {
           ) : weightLogs.length > 0 ? (
             <div className="ns-card animate-fade-up stagger-3" style={{ padding: 20, textAlign: "center", marginBottom: 16 }}>
               <div style={{ fontSize: 14, color: "var(--ns-text-muted)" }}>
-                Registre mais um peso para ver o grafico de evolucao.
+                Registre mais um peso para ver o gráfico de evolução.
               </div>
             </div>
           ) : null}
@@ -387,11 +498,11 @@ export default function InsightsPage() {
           {/* Recent weight entries */}
           {weightLogs.length > 0 && (
             <div className="ns-card animate-fade-up stagger-4" style={{ padding: 20 }}>
-              <p className="ns-label">HISTORICO RECENTE</p>
+              <p className="ns-label">HISTÓRICO RECENTE</p>
               {weightLogs.slice(0, 10).map(w => (
                 <div key={w.id} style={{
                   display: "flex", justifyContent: "space-between", alignItems: "center",
-                  padding: "10px 0", borderBottom: "1px solid var(--ns-border)",
+                  padding: "10px 0", borderBottom: "0.5px solid var(--ns-border)",
                 }}>
                   <div>
                     <div style={{ fontSize: 14, fontWeight: 600 }}>
@@ -399,7 +510,7 @@ export default function InsightsPage() {
                     </div>
                     {w.note && <div style={{ fontSize: 12, color: "var(--ns-text-muted)" }}>{w.note}</div>}
                   </div>
-                  <div style={{ fontSize: 18, fontWeight: 800 }}>{Number(w.weight).toFixed(1)} kg</div>
+                  <div style={{ fontSize: 18, fontWeight: 700 }}>{Number(w.weight).toFixed(1)} kg</div>
                 </div>
               ))}
             </div>
@@ -407,12 +518,18 @@ export default function InsightsPage() {
 
           {/* Empty state */}
           {weightLogs.length === 0 && (
-            <div className="ns-card animate-fade-up stagger-3" style={{ padding: 32, textAlign: "center" }}>
-              <div style={{ fontSize: 40, marginBottom: 12 }}>⚖️</div>
-              <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Nenhum registro de peso</div>
-              <div style={{ fontSize: 13, color: "var(--ns-text-muted)" }}>
-                Registre seu peso acima para acompanhar sua evolucao.
+            <div className="ns-card animate-fade-up stagger-3 ns-empty">
+              <div style={{
+                width: 48, height: 48, borderRadius: 14, background: 'var(--ns-bg-elevated)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 8,
+              }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 3a9 9 0 100 18A9 9 0 0012 3z" stroke="var(--ns-text-muted)" strokeWidth="1.6" />
+                  <path d="M8 12h4l2 2" stroke="var(--ns-text-muted)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               </div>
+              <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Nenhum registro de peso</div>
+              <p className="ns-empty-sub">Registre seu peso acima para acompanhar sua evolução.</p>
             </div>
           )}
         </>
@@ -423,8 +540,8 @@ export default function InsightsPage() {
         <>
           {/* Week summary */}
           <div className="animate-fade-up stagger-2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 16 }}>
-            <StatCard icon="🏋️" value={weekTotalWorkouts} label="Treinos (7 dias)" />
-            <StatCard icon="⏱️" value={`${weekTotalMin} min`} label="Tempo total" />
+            <StatCard value={weekTotalWorkouts} label="Treinos (7 dias)" />
+            <StatCard value={`${weekTotalMin} min`} label="Tempo total" />
           </div>
 
           {/* Week chart */}
@@ -433,13 +550,13 @@ export default function InsightsPage() {
             <div style={{ width: "100%", height: 160 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={workoutWeekData}>
-                  <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#555550" }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 11, fill: "#555550" }} axisLine={false} tickLine={false} width={32} />
+                  <XAxis dataKey="name" tick={{ fontSize: 11, fill: "var(--ns-text-muted)" }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 11, fill: "var(--ns-text-muted)" }} axisLine={false} tickLine={false} width={32} />
                   <Tooltip
-                    contentStyle={{ background: "#1a1a18", border: "1px solid #2a2a28", borderRadius: 8, fontSize: 12 }}
+                    contentStyle={{ background: "var(--ns-bg-card)", border: "0.5px solid var(--ns-border)", borderRadius: 8, fontSize: 12 }}
                     formatter={(value) => [`${value} min`, "Treino"]}
                   />
-                  <Line type="monotone" dataKey="minutos" stroke="#6ab87a" strokeWidth={2} dot={{ r: 4, fill: "#6ab87a" }} activeDot={{ r: 6 }} />
+                  <Line type="monotone" dataKey="minutos" stroke="var(--ns-accent)" strokeWidth={2} dot={{ r: 4, fill: "var(--ns-accent)" }} activeDot={{ r: 6 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -465,16 +582,18 @@ export default function InsightsPage() {
                     key={wt.value}
                     type="button"
                     onClick={() => setWorkoutType(wt.value)}
-                    className="ns-card-sm pressable"
+                    className="ns-card-sm"
                     style={{
                       padding: "10px 6px", textAlign: "center", border: "none", cursor: "pointer",
                       background: workoutType === wt.value ? "var(--ns-accent-bg)" : "var(--ns-bg-elevated)",
                       outline: workoutType === wt.value ? "2px solid var(--ns-accent)" : "none",
-                      borderRadius: "var(--radius-xs)",
+                      borderRadius: "var(--ns-radius-sm)",
                     }}
                   >
-                    <div style={{ fontSize: 20 }}>{wt.icon}</div>
-                    <div style={{ fontSize: 11, fontWeight: 600, marginTop: 4, color: workoutType === wt.value ? "var(--ns-accent)" : "var(--ns-text-muted)" }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.03em', color: workoutType === wt.value ? "var(--ns-accent)" : "var(--ns-text-muted)" }}>
+                      {wt.abbr}
+                    </div>
+                    <div style={{ fontSize: 10, fontWeight: 600, marginTop: 4, color: workoutType === wt.value ? "var(--ns-accent)" : "var(--ns-text-muted)" }}>
                       {wt.label}
                     </div>
                   </button>
@@ -484,7 +603,7 @@ export default function InsightsPage() {
               {/* Duration + Calories */}
               <div style={{ display: "flex", gap: 10, marginBottom: 12 }}>
                 <div style={{ flex: 1 }}>
-                  <label style={{ fontSize: 11, color: "var(--ns-text-muted)", fontWeight: 600, marginBottom: 4, display: "block" }}>DURACAO (min) *</label>
+                  <label style={{ fontSize: 11, color: "var(--ns-text-muted)", fontWeight: 600, marginBottom: 4, display: "block" }}>DURAÇÃO (min) *</label>
                   <input
                     type="number" min="1" max="600"
                     placeholder="Ex: 45"
@@ -567,21 +686,23 @@ export default function InsightsPage() {
           {/* Recent workouts */}
           {workoutLogs.length > 0 ? (
             <div className="ns-card animate-fade-up stagger-4" style={{ padding: 20 }}>
-              <p className="ns-label">HISTORICO DE TREINOS</p>
+              <p className="ns-label">HISTÓRICO DE TREINOS</p>
               {workoutLogs.slice(0, 15).map(w => {
                 const typeInfo = WORKOUT_TYPES.find(t => t.value === w.workout_type) || WORKOUT_TYPES[5];
                 return (
                   <div key={w.id} style={{
                     display: "flex", alignItems: "center", gap: 12,
-                    padding: "12px 0", borderBottom: "1px solid var(--ns-border)",
+                    padding: "12px 0", borderBottom: "0.5px solid var(--ns-border)",
                   }}>
                     <div style={{
                       width: 40, height: 40, borderRadius: 12,
                       background: "var(--ns-bg-elevated)",
                       display: "flex", alignItems: "center", justifyContent: "center",
-                      fontSize: 20, flexShrink: 0,
+                      flexShrink: 0,
                     }}>
-                      {typeInfo.icon}
+                      <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--ns-text-muted)', letterSpacing: '0.02em' }}>
+                        {typeInfo.abbr}
+                      </span>
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 14, fontWeight: 600 }}>{typeInfo.label}</div>
@@ -599,30 +720,50 @@ export default function InsightsPage() {
                     </div>
                     <button
                       onClick={() => handleDeleteWorkout(w.id)}
+                      onBlur={() => setConfirmDeleteWorkoutId(null)}
+                      aria-label={confirmDeleteWorkoutId === w.id ? "Confirmar remoção" : "Remover treino"}
                       style={{
-                        background: "none", border: "none", cursor: "pointer",
-                        fontSize: 16, color: "var(--ns-text-muted)", padding: 4, flexShrink: 0,
-                        opacity: 0.5,
+                        background: confirmDeleteWorkoutId === w.id ? "var(--ns-danger-bg)" : "none",
+                        border: "none", cursor: "pointer",
+                        padding: "4px 8px",
+                        borderRadius: 6,
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        fontSize: confirmDeleteWorkoutId === w.id ? 10 : 18,
+                        fontWeight: 600,
+                        color: confirmDeleteWorkoutId === w.id ? "var(--ns-danger)" : "var(--ns-text-muted)",
+                        fontFamily: "inherit",
+                        flexShrink: 0,
                       }}
-                      title="Remover"
                     >
-                      ×
+                      {confirmDeleteWorkoutId === w.id ? "Confirmar" : "×"}
                     </button>
                   </div>
                 );
               })}
             </div>
           ) : !showWorkoutForm && (
-            <div className="ns-card animate-fade-up stagger-4" style={{ padding: 32, textAlign: "center" }}>
-              <div style={{ fontSize: 40, marginBottom: 12 }}>🏋️</div>
-              <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Nenhum treino registrado</div>
-              <div style={{ fontSize: 13, color: "var(--ns-text-muted)" }}>
-                Registre seus treinos para acompanhar sua evolucao.
+            <div className="ns-card animate-fade-up stagger-4 ns-empty">
+              <div style={{
+                width: 48, height: 48, borderRadius: 14, background: 'var(--ns-bg-elevated)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 8,
+              }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                  <path d="M6.5 6.5l11 11M17.5 6.5l-11 11" stroke="var(--ns-text-muted)" strokeWidth="2" strokeLinecap="round" />
+                  <circle cx="3" cy="9" r="2" stroke="var(--ns-text-muted)" strokeWidth="1.6" />
+                  <circle cx="21" cy="9" r="2" stroke="var(--ns-text-muted)" strokeWidth="1.6" />
+                  <circle cx="3" cy="15" r="2" stroke="var(--ns-text-muted)" strokeWidth="1.6" />
+                  <circle cx="21" cy="15" r="2" stroke="var(--ns-text-muted)" strokeWidth="1.6" />
+                  <path d="M5 9h14M5 15h14" stroke="var(--ns-text-muted)" strokeWidth="1.6" strokeLinecap="round" />
+                </svg>
               </div>
+              <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>Nenhum treino registrado</div>
+              <p className="ns-empty-sub">Registre seus treinos para acompanhar sua evolução.</p>
             </div>
           )}
         </>
       )}
+
+      </div>
     </div>
   );
 }

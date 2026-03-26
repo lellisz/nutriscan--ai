@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS public.analytics_events (
 ALTER TABLE public.analytics_events ENABLE ROW LEVEL SECURITY;
 
 -- Usuarios so podem inserir seus proprios eventos
-CREATE POLICY IF NOT EXISTS "users_insert_own_events"
+DROP POLICY IF EXISTS "users_insert_own_events" ON public.analytics_events;
+CREATE POLICY "users_insert_own_events"
   ON public.analytics_events
   FOR INSERT
   WITH CHECK (auth.uid() = user_id);

@@ -5,10 +5,28 @@ import { getSupabaseClient } from "../supabase";
 const API_URL = import.meta.env.VITE_API_URL || "";
 
 class APIClient {
+  /**
+   * Retorna o access_token JWT da sessao atual do Supabase.
+   * Retorna null se nao houver sessao ativa (usuario nao autenticado).
+   */
+  async _getAccessToken() {
+    try {
+      const supabase = getSupabaseClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      return session?.access_token || null;
+    } catch {
+      return null;
+    }
+  }
+
   async fetch(endpoint, options = {}, timeoutMs = 30000) {
     const url = `${API_URL}${endpoint}`;
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+    // Injeta Authorization header com JWT do Supabase quando disponivel
+    const token = await this._getAccessToken();
+    const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
 
     let response;
     try {
@@ -17,6 +35,7 @@ class APIClient {
         signal: controller.signal,
         headers: {
           "Content-Type": "application/json",
+          ...authHeaders,
           ...options.headers,
         },
       });
@@ -76,8 +95,24 @@ class APIClient {
       body: JSON.stringify(payload),
     });
 
-    // Validar resposta
-    const validated = ScanResponseSchema.parse(data.result);
+    // Validar resposta — se o campo result estiver ausente, o erro deve ser claro
+    if (!data.result) {
+      logger.error("Scan response missing 'result' field", { data });
+      throw new Error("Resposta da IA incompleta. Tente novamente.");
+    }
+
+    let validated;
+    try {
+      validated = ScanResponseSchema.parse(data.result);
+    } catch (zodError) {
+      const issues = zodError.issues || zodError.errors || [];
+      logger.error("Scan response schema validation failed", {
+        issues: issues.map((e) => `${e.path.join(".")}: ${e.message}`),
+        raw: data.result,
+      });
+      throw new Error("Formato de resposta inesperado da IA. Tente novamente.");
+    }
+
     return {
       analysis: validated,
       savedScan: data.savedScan || null,

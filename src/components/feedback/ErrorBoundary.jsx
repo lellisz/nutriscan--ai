@@ -3,14 +3,14 @@ import { analytics } from "../../lib/analytics";
 import { logger } from "../../lib/logger";
 
 const T = {
-  bg: "#F2F2F7",
-  surface: "#FFFFFF",
-  border: "#E5E5EA",
-  text: "#1C1C1E",
-  red: "#FF3B30",
-  orange: "#FF9500",
-  shadow: "0 2px 24px rgba(0,0,0,0.07)",
-  r: "18px",
+  bg: "var(--ns-bg-primary)",
+  surface: "var(--ns-bg-card)",
+  border: "var(--ns-border)",
+  text: "var(--ns-text-primary)",
+  red: "var(--ns-danger)",
+  orange: "var(--ns-warning)",
+  shadow: "var(--ns-shadow-md)",
+  r: "var(--ns-radius-lg)",
 };
 
 class ErrorBoundary extends React.Component {
@@ -63,7 +63,11 @@ class ErrorBoundary extends React.Component {
               boxShadow: T.shadow,
             }}
           >
-            <div style={{ fontSize: "48px", marginBottom: "16px" }}>⚠️</div>
+            <div style={{ marginBottom: "16px" }}>
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke={T.red} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
             <h1 style={{ margin: "0 0 12px 0", color: T.red }}>Algo deu errado</h1>
             <p style={{ color: "#636366", marginBottom: "20px" }}>
               Desculpe, encontramos um erro inesperado. Tente recarregar a página.

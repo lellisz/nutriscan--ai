@@ -3,17 +3,17 @@ import React, { createContext, useContext, useCallback } from "react";
 const ToastContext = createContext(null);
 
 const T = {
-  surface: "#FFFFFF",
-  border: "#E5E5EA",
-  text: "#1C1C1E",
-  text2: "#636366",
-  text3: "#AEAEB2",
-  blue: "#007AFF",
-  green: "#34C759",
-  orange: "#FF9500",
-  red: "#FF3B30",
-  shadow: "0 2px 24px rgba(0,0,0,0.07)",
-  r: "18px",
+  surface: "var(--ns-bg-card)",
+  border: "var(--ns-border)",
+  text: "var(--ns-text-primary)",
+  text2: "var(--ns-text-secondary)",
+  text3: "var(--ns-text-muted)",
+  blue: "var(--ns-info)",
+  green: "var(--ns-accent)",
+  orange: "var(--ns-warning)",
+  red: "var(--ns-danger)",
+  shadow: "var(--ns-shadow-md)",
+  r: "var(--ns-radius-lg)",
 };
 
 export function ToastProvider({ children }) {

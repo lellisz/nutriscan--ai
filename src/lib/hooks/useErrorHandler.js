@@ -54,7 +54,7 @@ export function useErrorHandler() {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         const result = await fn();
-        toast.success("Pronto!");
+        // Nao exibe toast de sucesso aqui — cada chamador decide o feedback adequado
         return result;
       } catch (error) {
         // Don't retry on 402 (payment required) - user must upgrade

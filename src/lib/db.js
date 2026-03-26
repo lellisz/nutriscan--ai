@@ -4,6 +4,15 @@ function supabase() {
   return getSupabaseClient();
 }
 
+async function ensureSession() {
+  const client = supabase();
+  const { data: { session } } = await client.auth.getSession();
+  if (!session) {
+    throw new Error("Sessao expirada. Faca login novamente.");
+  }
+  return session;
+}
+
 export async function getCurrentUser() {
   const client = supabase();
   const { data, error } = await client.auth.getUser();
@@ -68,6 +77,7 @@ export async function getProfile(userId) {
 }
 
 export async function saveProfile(userId, profile) {
+  await ensureSession();
   const client = supabase();
   const payload = {
     user_id: userId,
@@ -110,6 +120,7 @@ export async function getDailyGoals(userId) {
 }
 
 export async function saveDailyGoals(userId, goals) {
+  await ensureSession();
   const client = supabase();
   const payload = {
     user_id: userId,
@@ -135,7 +146,14 @@ export async function saveDailyGoals(userId, goals) {
   return data;
 }
 
+/**
+ * @deprecated NAO USE NO FRONTEND. O campo is_premium e protegido por RLS policy
+ * que impede o usuario de alterar via token anonimo. Esta funcao so funciona quando
+ * chamada pelo backend com service_role. Mantida apenas para compatibilidade;
+ * em producao, o upgrade premium deve ser feito via webhook do payment provider.
+ */
 export async function updatePremiumStatus(userId, isPremium) {
+  console.warn("[SECURITY] updatePremiumStatus chamada no frontend — operacao bloqueada por RLS");
   const client = supabase();
   const { data, error } = await client
     .from("profiles")
@@ -164,9 +182,65 @@ export async function listScanHistory(userId, limit = 20) {
   return data;
 }
 
-export async function updateScanHistory(scanId, updates) {
+/**
+ * Lista todos os scans do usuario no dia atual (fuso horario local do servidor, ISO date).
+ * Util para calcular totais de macros do dia e construir o contexto do veredicto.
+ *
+ * @param {string} userId
+ * @param {string} [date] - Data no formato YYYY-MM-DD. Padrao: hoje.
+ * @returns {Promise<Array>}
+ */
+export async function listScansToday(userId, date = null) {
   const client = supabase();
+  const targetDate = date || new Date().toISOString().split("T")[0];
+
   const { data, error } = await client
+    .from("scan_history")
+    .select("id, food_name, calories, protein, carbs, fat, fiber, sugar, sodium, portion, category, confidence, scanned_at")
+    .eq("user_id", userId)
+    .gte("scanned_at", `${targetDate}T00:00:00.000Z`)
+    .lt("scanned_at", `${targetDate}T23:59:59.999Z`)
+    .order("scanned_at", { ascending: true });
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+/**
+ * Calcula os totais nutricionais do usuario para o dia especificado.
+ * Retorna zeros quando nao ha scans registrados.
+ *
+ * @param {string} userId
+ * @param {string} [date] - Data no formato YYYY-MM-DD. Padrao: hoje.
+ * @returns {Promise<{ calories: number, protein: number, carbs: number, fat: number, fiber: number, sugar: number, sodium: number, meals: number }>}
+ */
+export async function getTodayNutritionTotals(userId, date = null) {
+  const scans = await listScansToday(userId, date);
+
+  const totals = scans.reduce(
+    (acc, scan) => ({
+      calories: acc.calories + (scan.calories || 0),
+      protein: acc.protein + (scan.protein || 0),
+      carbs: acc.carbs + (scan.carbs || 0),
+      fat: acc.fat + (scan.fat || 0),
+      fiber: acc.fiber + (scan.fiber || 0),
+      sugar: acc.sugar + (scan.sugar || 0),
+      sodium: acc.sodium + (scan.sodium || 0),
+    }),
+    { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0, sugar: 0, sodium: 0 }
+  );
+
+  return { ...totals, meals: scans.length };
+}
+
+export async function updateScanHistory(scanId, updates, userId = null) {
+  const client = supabase();
+  // Defesa em profundidade: filtrar por user_id alem do id do scan
+  // Mesmo com RLS ativo, isso previne IDOR se o RLS falhar
+  let query = client
     .from("scan_history")
     .update({
       food_name: updates.food_name,
@@ -181,17 +255,21 @@ export async function updateScanHistory(scanId, updates) {
       status: "verified",
       user_notes: updates.user_notes || null,
     })
-    .eq("id", scanId)
-    .select()
-    .single();
+    .eq("id", scanId);
 
+  if (userId) query = query.eq("user_id", userId);
+
+  const { data, error } = await query.select().single();
   if (error) throw error;
   return data;
 }
 
-export async function deleteScanHistory(scanId) {
+export async function deleteScanHistory(scanId, userId = null) {
   const client = supabase();
-  const { error } = await client.from("scan_history").delete().eq("id", scanId);
+  // Defesa em profundidade: filtrar por user_id alem do id do scan
+  let query = client.from("scan_history").delete().eq("id", scanId);
+  if (userId) query = query.eq("user_id", userId);
+  const { error } = await query;
   if (error) throw error;
 }
 
@@ -268,9 +346,12 @@ export async function saveWeightLog(userId, { weight, note = null, loggedAt = nu
   return data;
 }
 
-export async function deleteWeightLog(id) {
+export async function deleteWeightLog(id, userId = null) {
   const client = supabase();
-  const { error } = await client.from("weight_logs").delete().eq("id", id);
+  // Defesa em profundidade: filtrar por user_id alem do id
+  let query = client.from("weight_logs").delete().eq("id", id);
+  if (userId) query = query.eq("user_id", userId);
+  const { error } = await query;
   if (error) throw error;
 }
 
@@ -309,9 +390,12 @@ export async function saveWorkoutLog(userId, { workoutType, durationMin, calorie
   return data;
 }
 
-export async function deleteWorkoutLog(id) {
+export async function deleteWorkoutLog(id, userId = null) {
   const client = supabase();
-  const { error } = await client.from("workout_logs").delete().eq("id", id);
+  // Defesa em profundidade: filtrar por user_id alem do id
+  let query = client.from("workout_logs").delete().eq("id", id);
+  if (userId) query = query.eq("user_id", userId);
+  const { error } = await query;
   if (error) throw error;
 }
 
@@ -409,17 +493,18 @@ export async function createChatConversation(userId, title = null) {
 /**
  * Atualiza uma conversa (título, resumo, contadores)
  */
-export async function updateChatConversation(conversationId, updates) {
+export async function updateChatConversation(conversationId, updates, userId = null) {
   const client = supabase();
-  const { data, error } = await client
+  // Defesa em profundidade: filtrar por user_id alem do id
+  let query = client
     .from("chat_conversations")
     .update({
       ...updates,
       updated_at: new Date().toISOString(),
     })
-    .eq("id", conversationId)
-    .select()
-    .single();
+    .eq("id", conversationId);
+  if (userId) query = query.eq("user_id", userId);
+  const { data, error } = await query.select().single();
 
   if (error) throw error;
   return data;
@@ -428,13 +513,12 @@ export async function updateChatConversation(conversationId, updates) {
 /**
  * Deleta uma conversa (cascade delete nas mensagens)
  */
-export async function deleteChatConversation(conversationId) {
+export async function deleteChatConversation(conversationId, userId = null) {
   const client = supabase();
-  const { error } = await client
-    .from("chat_conversations")
-    .delete()
-    .eq("id", conversationId);
-
+  // Defesa em profundidade: filtrar por user_id alem do id
+  let query = client.from("chat_conversations").delete().eq("id", conversationId);
+  if (userId) query = query.eq("user_id", userId);
+  const { error } = await query;
   if (error) throw error;
 }
 
