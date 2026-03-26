@@ -114,12 +114,15 @@ const QUICK_ACTIONS = [
   "Estou ansioso com comida",
 ];
 
-// ── Modo Respira (5.4) ────────────────────────────────────────────────────────
+// ── Modo Respira (8.1) ────────────────────────────────────────────────────────
 
 const ANXIETY_KEYWORDS = [
-  'ansioso', 'ansiosa', 'culpa', 'culpado', 'culpada', 'errei', 'falhei',
-  'me sinto mal', 'comi demais', 'exagerei', 'vergonha', 'frustrado',
-  'frustrada', 'decepcionado', 'fracassei', 'descontrolei',
+  'culpado', 'culpada', 'estraguei', 'não devia', 'me odeio', 'horrível',
+  'fracassei', 'falhei', 'me sinto mal',
+  // keywords extras mantidas
+  'ansioso', 'ansiosa', 'culpa', 'errei',
+  'comi demais', 'exagerei', 'vergonha', 'frustrado',
+  'frustrada', 'decepcionado', 'descontrolei',
 ];
 
 function hasAnxietyKeywords(text) {
@@ -129,40 +132,72 @@ function hasAnxietyKeywords(text) {
 
 const BREATHE_MARKER = '__BREATHE__';
 
-function BreatheCard() {
+function BreatheCard({ onDismiss }) {
   return (
     <div style={{
-      background: "linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%)",
-      border: "1px solid rgba(76,175,80,0.25)",
-      borderRadius: "18px 18px 18px 4px",
-      padding: "16px 18px",
+      margin: '0',
+      background: '#E8F5EC',
+      borderRadius: 16,
+      padding: '16px',
+      border: '1px solid rgba(26,127,86,0.2)',
       maxWidth: "85%",
     }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
-        <PraxiAvatar state="worried" size="sm" />
-        <span style={{ fontSize: 14, fontWeight: 700, color: "#2e7d32" }}>Modo Respira</span>
+      <div style={{ fontSize: 15, fontWeight: 700, color: '#1A7F56', marginBottom: 4 }}>
+        Ei, tá tudo bem
       </div>
-      <p style={{ margin: "0 0 10px", fontSize: 14, color: "#388e3c", lineHeight: 1.5 }}>
-        Respira fundo. Um momento difícil não define sua jornada.
-        Cada dia é uma nova página.
+      <p style={{ margin: "0 0 10px", fontSize: 14, color: '#2D5F3F', lineHeight: 1.5 }}>
+        Comer é necessário e não é o inimigo. Todos temos dias diferentes.
       </p>
-      <div style={{
-        display: "flex",
-        gap: 6,
-        flexWrap: "wrap",
-      }}>
+      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 12 }}>
         {["Inspira 4s", "Segura 4s", "Expira 6s"].map((step, i) => (
           <span key={step} style={{
             padding: "4px 10px",
             borderRadius: 20,
-            background: "rgba(76,175,80,0.15)",
+            background: "rgba(26,127,86,0.12)",
             fontSize: 12,
-            color: "#2e7d32",
+            color: '#1A7F56',
             fontWeight: 500,
           }}>
             {i + 1}. {step}
           </span>
         ))}
+      </div>
+      <div style={{ display: 'flex', gap: 8 }}>
+        <button
+          onClick={onDismiss}
+          style={{
+            flex: 1, padding: '8px 12px', borderRadius: 10,
+            background: '#1A7F56', border: 'none',
+            color: '#FFF', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+            fontFamily: 'inherit',
+          }}
+        >
+          Quero conversar
+        </button>
+        <a
+          href="tel:188"
+          style={{
+            flex: 1, padding: '8px 12px', borderRadius: 10,
+            background: 'rgba(26,127,86,0.1)', border: '1px solid rgba(26,127,86,0.3)',
+            color: '#1A7F56', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+            textDecoration: 'none', display: 'flex', alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          CVV 188
+        </a>
+        <button
+          onClick={onDismiss}
+          aria-label="Fechar"
+          style={{
+            padding: '8px 12px', borderRadius: 10,
+            background: 'transparent', border: 'none',
+            color: 'var(--ns-text-muted)', fontSize: 13, cursor: 'pointer',
+            fontFamily: 'inherit',
+          }}
+        >
+          ✕
+        </button>
       </div>
     </div>
   );
@@ -769,7 +804,7 @@ export default function CoachChatPage() {
           if (msg.content === BREATHE_MARKER) {
             return (
               <div key={msg.id || idx} style={{ display: "flex", justifyContent: "flex-start" }}>
-                <BreatheCard />
+                <BreatheCard onDismiss={() => setMessages(prev => prev.filter(m => m.id !== msg.id))} />
               </div>
             );
           }

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import { StatusBar } from '../../../app/AppShell';
@@ -11,6 +11,7 @@ import {
   listWeightLogs,
   saveScanHistory,
 } from '../../../lib/db';
+import { useTrack } from '../../../lib/hooks/useTrack';
 
 // ── Praxi: estado reativo baseado nos dados do dia ────────────────────────────
 function getPraxiState({ caloriesPercent, proteinPercent, waterPercent, streak, hour }) {
@@ -203,6 +204,8 @@ function SkeletonBlock({ width = '100%', height = 16, radius = 6, style = {} }) 
 export default function DashboardPage() {
   const { user, profile } = useAuth();
   const navigate = useNavigate();
+  const { track } = useTrack();
+  const appOpenedTracked = useRef(false);
 
   const firstName = profile?.full_name?.split(' ')[0] ?? user?.email?.split('@')[0] ?? 'Usuário';
 
@@ -355,6 +358,13 @@ export default function DashboardPage() {
     loadData();
   }, [loadData]);
 
+  // Rastreia abertura do app — apenas 1x por sessao de navegacao
+  useEffect(() => {
+    if (!user?.id || appOpenedTracked.current) return;
+    appOpenedTracked.current = true;
+    track('app_opened');
+  }, [user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const handleAddWater = async () => {
     if (savingWater || !user?.id) return;
     const currentGlasses = Math.round(waterMl / 250);
@@ -434,6 +444,7 @@ export default function DashboardPage() {
         },
         scannedAt: new Date().toISOString(),
       });
+      track('quick_register', { food_name: food.name });
       await loadData();
     } catch (err) {
       console.error('[Dashboard] Erro ao registrar alimento rápido:', err);
