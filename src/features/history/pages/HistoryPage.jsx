@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from 'motion/react';
 import { StatusBar } from '../../../app/AppShell';
 import { useAuth } from '../../auth/hooks/useAuth';
 import * as db from '../../../lib/db';
+import PraxiAvatar from '../../../components/praxi/PraxiAvatar';
 
 const FILTERS = [
   { id: 'Todos',  label: 'Todos' },
@@ -404,9 +405,13 @@ export default function HistoryPage() {
       {/* Estado vazio */}
       {filtered.length === 0 && (
         <div className="ns-empty" style={{ marginTop: 40 }}>
+          <div style={{ marginBottom: 8 }}>
+            <PraxiAvatar state="waving" size="lg" />
+          </div>
           <div style={{
             width: 56, height: 56, borderRadius: 16,
             background: 'var(--ns-bg-elevated)',
+            display: 'none',
             border: '0.5px solid var(--ns-border)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             marginBottom: 12,

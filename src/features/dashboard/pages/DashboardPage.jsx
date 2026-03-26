@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import { StatusBar } from '../../../app/AppShell';
 import { useAuth } from '../../auth/hooks/useAuth';
+import PraxiAvatar from '../../../components/praxi/PraxiAvatar';
 import { haptic } from '../../../lib/haptics';
 import {
   listScanHistory,
@@ -735,19 +736,8 @@ export default function DashboardPage() {
             width: '100%', textAlign: 'left',
             boxShadow: 'var(--ns-shadow-sm)',
           }}>
-          <div style={{
-            width: 42, height: 42, borderRadius: 12,
-            background: 'var(--ns-accent)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            flexShrink: 0,
-          }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M4 9V5h4" stroke="#FFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M20 9V5h-4" stroke="#FFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M4 15v4h4" stroke="#FFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M20 15v4h-4" stroke="#FFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              <circle cx="12" cy="12" r="3" stroke="#FFF" strokeWidth="1.8" />
-            </svg>
+          <div style={{ flexShrink: 0 }}>
+            <PraxiAvatar state={loading ? 'thinking' : praxiState} size="sm" />
           </div>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 11, color: 'var(--ns-accent)', fontWeight: 600, letterSpacing: '-0.01em', marginBottom: 2 }}>
