@@ -23,13 +23,14 @@
 
 ## Status Atual
 
-**Fase:** 2 de 3 — Reliability & Features
+**Fase:** 2 de 3 — Reliability & Features (quase completa)
+**Ultima sessao:** 2026-03-25 — Mega-prompt 8 etapas completo
 **Bloqueador:** Nenhum
 
 ### Fase 1 — COMPLETA
 Auth, onboarding, scan IA, dashboard, historico, router, design system.
 
-### Fase 2 — EM ANDAMENTO
+### Fase 2 — QUASE COMPLETA (2026-03-25)
 - [x] Coach IA conversacional ("Coach Praxis")
 - [x] Sentry frontend
 - [x] Rate limiting + Zod validation
@@ -48,29 +49,37 @@ Auth, onboarding, scan IA, dashboard, historico, router, design system.
 - [x] RLS completo com policies para todas tabelas/operacoes
 - [x] Rate limiting (scan + chat) com fallback por IP
 - [x] CORS blindado (sem wildcard, ALLOWED_ORIGIN obrigatoria)
-- [x] Security headers (CSP, HSTS, X-Frame-Options, X-Content-Type-Options)
+- [x] Security headers (CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Permissions-Policy)
 - [x] Premium escalation bloqueado via RLS subquery
 - [x] Documentacao de seguranca completa (docs/security/)
 - [x] Chaves Groq e Gemini rotacionadas (2026-03-22)
 - [x] Gemini adicionado como fallback no Coach IA (4 providers)
 - [x] Frontend do chat melhorado (auto-scroll, textarea, timeout, erros amigaveis)
-- [x] InsightsPage conectada a dados reais (confirmado 2026-03-22)
-- [x] Fix retry 401 no Anthropic (nao retenta em auth error)
-- [x] Fix `system_instruction` camelCase no Gemini scan (causava 502)
-- [x] Fix Zod v4 `err.errors` → `err.issues` no chat
-- [x] Fix retry auth engolido no scan (3 providers)
-- [x] Fix botao onboarding sobre navbar
+- [x] InsightsPage conectada a dados reais
 - [x] Login social (Google + Apple) nas telas de signin/signup
 - [x] Dev account (role dev/admin bypassa paywall + rate limit)
-- [ ] Rotacionar Supabase service_role_key (exposta no git history)
-- [ ] Adicionar creditos na conta Anthropic (saldo zerado)
+- [x] **Intent Router**: LLaMA 8B classifica intents em 7 categorias (~10ms) (2026-03-25)
+- [x] **Session Memory**: Gemini Flash Lite extrai insights por sessao, injeta no system prompt (2026-03-25)
+- [x] **Fallback automatico** Groq/Gemini bidirecional (2026-03-25)
+- [x] **Mascote Praxi SVG**: 8 estados emocionais (waving, thinking, celebrating, worried, etc.) (2026-03-25)
+- [x] **Design System v2**: CSS vars v2, Google Fonts, novos keyframes (2026-03-25)
+- [x] **Quick Actions chips** no chat (horizontalmente scrollaveis) (2026-03-25)
+- [x] **Categorizacao de refeicoes** por horario no scan (auto-detect + seletor) (2026-03-25)
+- [x] **Onboarding 3 telas**: welcome flow (Praxi waving → objetivo → CTA scan) (2026-03-25)
+- [x] **Modo Respira**: detecta ansiedade/culpa alimentar, exibe card de respiracao (2026-03-25)
+- [x] **Nutri Score** semanal (gauge 0-100 baseado em 4 metricas) (2026-03-25)
+- [x] **Recap Semanal**: card com highlights da semana (aparece com 3+ dias) (2026-03-25)
+- [x] **Desafios Semanais**: 3 desafios rotativos com checkboxes (localStorage) (2026-03-25)
+- [x] **Security hardening**: CSP, Permissions-Policy, MIME validation 7MB (2026-03-25)
+- [ ] Rotacionar Supabase service_role_key (exposta no git history) — PRIORIDADE
 - [ ] Integrar gateway de pagamento (SubscriptionPage bloqueada)
-- [ ] Migrar rate limiter para Redis/Upstash
-- [ ] Ciclos semanais de 7 dias
-- [ ] Testes + CI/CD
+- [ ] Migrar rate limiter para Redis/Upstash (in-memory nao persiste entre cold starts)
+- [ ] Ciclos semanais de 7 dias com reset
+- [ ] Testes automatizados + CI/CD
+- [ ] Push notifications
 
 ### Fase 3 — FUTURA
-Insights semanais, recommendation engine, premium features.
+Recommendation engine, premium features, expansao global.
 
 ---
 
@@ -78,6 +87,8 @@ Insights semanais, recommendation engine, premium features.
 
 | Decisao | Link |
 |---------|------|
+| Motor IA Praxis (intent router + dual-provider) | [[decisao-motor-ia-praxis]] |
+| Mascote Praxi (abacate SVG 8 estados) | [[decisao-praxi-mascote]] |
 | Gemini no Coach IA (chat fallback) | [[decisao-gemini-chat-fallback]] |
 | Modelo de IA com fallback | [[decisao-modelo-ia-fallback]] |
 | Supabase + RLS | [[decisao-supabase-schema]] |
@@ -186,6 +197,7 @@ Insights semanais, recommendation engine, premium features.
 
 | Data | Resumo | Link |
 |------|--------|------|
+| 2026-03-25 | Mega-prompt 8 etapas — engine IA, Praxi mascote, features P1+P2, security | [[2026-03-25-mega-prompt-completo]] |
 | 2026-03-23 | Documentacao — README Praxis Nutri com stack, IA, seguranca | [[2026-03-23-documentacao-readme]] |
 | 2026-03-22 | Debug IA (3 bugs) + login social + dev account + mega-prompt | [[2026-03-22-bugs-ia-login-social]] |
 | 2026-03-22 | Evolucao Coach IA — Gemini fallback, frontend UX, rotacao de chaves | [[2026-03-22-coach-ia-evolution]] |

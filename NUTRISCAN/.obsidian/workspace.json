@@ -1,0 +1,246 @@
+{
+  "main": {
+    "id": "e9a8ef8aa8327a4f",
+    "type": "split",
+    "children": [
+      {
+        "id": "ec5ff49e857014ae",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "ff8e0e6c4ade5d9e",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Visualização em gráfico"
+            }
+          },
+          {
+            "id": "9aa9000fc27bdf8c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Templates/Template-Sessao.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Template-Sessao"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "ad71d20746207720",
+    "type": "split",
+    "children": [
+      {
+        "id": "24981e5986d9de44",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "29292b00f83d7882",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Explorador de arquivos"
+            }
+          },
+          {
+            "id": "ed6931a7ad7f7854",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Procurar"
+            }
+          },
+          {
+            "id": "cd212e3638e87329",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Marcadores"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 200
+  },
+  "right": {
+    "id": "4d422d3f7d4d0f1b",
+    "type": "split",
+    "children": [
+      {
+        "id": "3e0888ba33fc82f0",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "1c159f1d1b8f40ab",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Sem título 1.base",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Links inversos para Sem título 1"
+            }
+          },
+          {
+            "id": "e58b8697c48e0bad",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Sem título 1.base",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Links de saída para Sem título 1"
+            }
+          },
+          {
+            "id": "fd1956bf2375a179",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Etiquetas"
+            }
+          },
+          {
+            "id": "94b36f0e2d795d1c",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "Todas as propriedades"
+            }
+          },
+          {
+            "id": "877ec1db65314ccc",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Sem título 1.base",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Sumário de Sem título 1"
+            }
+          },
+          {
+            "id": "6d079b0e40027505",
+            "type": "leaf",
+            "state": {
+              "type": "file-properties",
+              "state": {},
+              "icon": "lucide-info",
+              "title": "Propriedades dos arquivos"
+            }
+          }
+        ],
+        "currentTab": 5
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Abrir a troca rápida": false,
+      "graph:Abrir visualização em gráfico": false,
+      "canvas:Criar novo canvas": false,
+      "daily-notes:Abrir a nota de hoje": false,
+      "templates:Inserir modelo": false,
+      "command-palette:Abrir paleta de comandos": false,
+      "bases:Criar nova base": false
+    }
+  },
+  "active": "ff8e0e6c4ade5d9e",
+  "lastOpenFiles": [
+    "decisoes/decisao-praxi-mascote.md",
+    "decisoes/decisao-motor-ia-praxis.md",
+    "sessoes/2026-03-25-mega-prompt-completo.md",
+    "bugs/bug-request-timeout-infinito.md",
+    "roadmap/mega-prompt-evolucao.md",
+    "estudo/estudo-auto-scroll-react.md",
+    "sessoes/2026-03-22-bugs-ia-login-social.md",
+    "roadmap",
+    "Coach Nutri.md.tmp.1652.1774230132609",
+    "bugs/bug-onboarding-botao-sobre-navbar.md",
+    "bugs/bug-retry-auth-scan-engolido.md",
+    "bugs/bug-zod-v4-err-errors-chat.md",
+    "bugs/bug-gemini-system-instruction-camelcase.md",
+    "sessoes/2026-03-22-security-hardening.md",
+    "sessoes/2026-03-22-revisao-documentacao.md",
+    "Sem título.canvas",
+    "Sessao-{{date}}.md",
+    "Coach Nutri.md",
+    "sessoes/2026-03-21-agentes.md",
+    "estudo/estudo-env-vars-lifecycle.md",
+    "estudo/estudo-abort-controller.md",
+    "bugs/bug-api-provider-unico-falha.md",
+    "bugs/bug-approuter-imports-quebrados.md",
+    "bugs/bug-netlify-build-command.md",
+    "estudo/estudo-cascata-fallback.md",
+    "Coach Nutri.md.tmp.22300.1774213481411",
+    "estudo/estudo-retry-http-errors.md",
+    "estudo/README.md",
+    "estudo",
+    "Coach Nutri.md.tmp.22300.1774213321795",
+    "Coach Nutri.md.tmp.22300.1774213301968",
+    "Coach Nutri.md.tmp.22300.1774213296110",
+    "Coach Nutri.md.tmp.22300.1774213288008",
+    "decisoes/decisao-gemini-chat-fallback.md",
+    "bugs/bug-chat-sem-gemini-fallback.md",
+    "bugs/bug-rate-limiting-spam.md.tmp.9936.1774124360143",
+    "referencias"
+  ]
+}
