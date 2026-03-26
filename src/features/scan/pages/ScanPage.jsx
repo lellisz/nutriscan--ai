@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import { useAuth } from "../../auth/hooks/useAuth";
 import { useErrorHandler } from "../../../lib/hooks/useErrorHandler";
 import { apiClient } from "../../../lib/api/client";
@@ -62,6 +63,7 @@ function detectMealType() {
 export default function ScanPage() {
   const { user } = useAuth();
   const { handleError, handleRetry } = useErrorHandler();
+  const shouldReduce = useReducedMotion();
   const [preview, setPreview]           = useState(null);
   const [loading, setLoading]           = useState(false);
   const [result, setResult]             = useState(null);
@@ -336,27 +338,31 @@ export default function ScanPage() {
             </div>
 
             {/* CTA */}
-            <button style={{
-              background: "var(--ns-accent)",
-              color: "#FFFFFF",
-              borderRadius: 14,
-              height: 52,
-              width: "100%",
-              maxWidth: 320,
-              fontSize: 16, fontWeight: 600,
-              letterSpacing: "-0.01em",
-              border: "none",
-              cursor: "pointer",
-              WebkitTapHighlightColor: "transparent",
-              display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-            }}>
+            <motion.button
+              whileTap={{ scale: shouldReduce ? 1 : 0.95 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              style={{
+                background: "var(--ns-accent)",
+                color: "#FFFFFF",
+                borderRadius: 14,
+                height: 52,
+                width: "100%",
+                maxWidth: 320,
+                fontSize: 16, fontWeight: 600,
+                letterSpacing: "-0.01em",
+                border: "none",
+                cursor: "pointer",
+                WebkitTapHighlightColor: "transparent",
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+              }}
+            >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                 <rect x="2" y="7" width="20" height="14" rx="3" stroke="#FFF" strokeWidth="1.7" />
                 <circle cx="12" cy="14" r="3.5" stroke="#FFF" strokeWidth="1.7" />
                 <path d="M8 7l2-3h4l2 3" stroke="#FFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               Analisar Alimento
-            </button>
+            </motion.button>
 
             <p style={{ marginTop: 12, fontSize: 12, color: "var(--ns-text-muted)", letterSpacing: "-0.01em" }}>
               JPG, PNG · até 10MB

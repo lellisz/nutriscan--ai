@@ -1,4 +1,5 @@
 import React from "react";
+import { motion, useReducedMotion } from "motion/react";
 
 // ── Dimensões por tamanho ─────────────────────────────────────────────────────
 
@@ -248,20 +249,27 @@ const EXPRESSIONS = {
 export default function PraxiAvatar({ state = "happy", size = "md" }) {
   const px = SIZES[size] ?? SIZES.md;
   const Expression = EXPRESSIONS[state] ?? EXPRESSIONS.happy;
+  const shouldReduce = useReducedMotion();
 
   return (
-    <svg
-      width={px}
-      height={px}
-      viewBox="0 0 100 120"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-label={`Praxi — estado ${state}`}
-      role="img"
+    <motion.div
+      animate={shouldReduce ? {} : { y: [0, -6, 0] }}
+      transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+      style={{ display: "inline-flex", flexShrink: 0 }}
     >
-      <PraxiBody />
-      <PraxiGlasses />
-      <Expression />
-    </svg>
+      <svg
+        width={px}
+        height={px}
+        viewBox="0 0 100 120"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-label={`Praxi — estado ${state}`}
+        role="img"
+      >
+        <PraxiBody />
+        <PraxiGlasses />
+        <Expression />
+      </svg>
+    </motion.div>
   );
 }

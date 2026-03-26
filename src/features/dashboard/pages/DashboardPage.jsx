@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { motion, useReducedMotion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import { StatusBar } from '../../../app/AppShell';
 import { useAuth } from '../../auth/hooks/useAuth';
@@ -133,6 +134,7 @@ export default function DashboardPage() {
 
   const firstName = profile?.full_name?.split(' ')[0] ?? user?.email?.split('@')[0] ?? 'Usuário';
 
+  const shouldReduce = useReducedMotion();
   const [loading, setLoading]       = useState(true);
   const [todayData, setTodayData]   = useState({ calories: 0, protein: 0, carbs: 0, fat: 0 });
   const [weekData, setWeekData]     = useState([0, 0, 0, 0, 0, 0, 0]);
@@ -518,8 +520,10 @@ export default function DashboardPage() {
         </div>
 
         {/* ── Scan CTA ── */}
-        <button
+        <motion.button
           onClick={() => navigate('/scan')}
+          whileTap={{ scale: shouldReduce ? 1 : 0.95 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 17 }}
           style={{
             marginBottom: 12,
             background: 'var(--ns-bg-card)',
@@ -561,7 +565,7 @@ export default function DashboardPage() {
               <path d="M4 2.5l4 3.5-4 3.5" stroke="var(--ns-text-muted)" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
-        </button>
+        </motion.button>
 
         {/* ── Seção: Esta semana ── */}
         <div style={{ marginBottom: 12 }}>
@@ -684,19 +688,19 @@ export default function DashboardPage() {
                     const filled = i < waterFilledCount;
                     const isNextToFill = i === waterFilledCount;
                     return (
-                      <div
+                      <motion.div
                         key={i}
                         onClick={!savingWater && isNextToFill ? handleAddWater : undefined}
+                        whileTap={{ scale: shouldReduce ? 1 : (isNextToFill && !savingWater ? 1.2 : 1) }}
+                        animate={{ backgroundColor: filled ? 'var(--ns-blue)' : 'var(--ns-bg-elevated)' }}
+                        transition={{ type: 'spring', stiffness: 500, damping: 25 }}
                         style={{
                           flex: 1, height: 42, borderRadius: 12,
-                          background: filled ? 'var(--ns-blue)' : 'var(--ns-bg-elevated)',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                           cursor: (savingWater || !isNextToFill) ? 'default' : 'pointer',
                           border: filled ? 'none' : isNextToFill ? '1.5px dashed var(--ns-blue)' : '0.5px solid var(--ns-border)',
-                          transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)',
                           WebkitTapHighlightColor: 'transparent',
                           opacity: savingWater ? 0.7 : 1,
-                          transform: isNextToFill && !savingWater ? 'scale(1)' : 'scale(1)',
                         }}
                       >
                         <svg width="14" height="18" viewBox="0 0 10 13" fill="none">
@@ -705,7 +709,7 @@ export default function DashboardPage() {
                             stroke={filled ? '#FFFFFF' : isNextToFill ? 'var(--ns-blue)' : 'var(--ns-text-disabled)'}
                             strokeWidth={filled ? '0' : '1.2'} />
                         </svg>
-                      </div>
+                      </motion.div>
                     );
                   })}
                 </div>

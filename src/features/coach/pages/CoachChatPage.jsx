@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import ReactMarkdown from "react-markdown";
 import { useAuth } from "../../auth/hooks/useAuth";
 import { getSupabaseClient } from "../../../lib/supabase";
@@ -184,6 +185,7 @@ export default function CoachChatPage() {
   const scrollContainerRef = useRef(null);
   const inputRef = useRef(null);
   const isNearBottomRef = useRef(true);
+  const shouldReduce = useReducedMotion();
 
   // Aguarda auth resolver antes de carregar conversas
   useEffect(() => {
@@ -921,10 +923,12 @@ export default function CoachChatPage() {
           disabled={sending}
           autoComplete="off"
         />
-        <button
+        <motion.button
           type="submit"
           disabled={!canSend}
           aria-label="Enviar mensagem"
+          whileTap={{ scale: shouldReduce ? 1 : 0.95 }}
+          transition={{ type: "spring", stiffness: 400, damping: 17 }}
           style={{
             width: 40,
             height: 40,
@@ -940,7 +944,7 @@ export default function CoachChatPage() {
           }}
         >
           <IconArrowUp color={canSend ? "#fff" : "var(--ns-text-disabled)"} />
-        </button>
+        </motion.button>
       </form>
     </div>
   );

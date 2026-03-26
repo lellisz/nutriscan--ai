@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { motion, useReducedMotion } from 'motion/react';
 import { StatusBar } from '../../../app/AppShell';
 import { useAuth } from '../../auth/hooks/useAuth';
 import * as db from '../../../lib/db';
@@ -146,6 +147,7 @@ function HistItem({ item, onDelete }) {
 
 export default function HistoryPage() {
   const { user } = useAuth();
+  const shouldReduce = useReducedMotion();
   const [filter, setFilter] = useState('Todos');
   const [searchQuery, setSearchQuery] = useState('');
   const [scans, setScans] = useState([]);
@@ -440,17 +442,32 @@ export default function HistoryPage() {
                 {groupKcal.toLocaleString('pt-BR')} kcal
               </span>
             </div>
-            <div style={{
-              background: 'var(--ns-bg-card)', borderRadius: 16, overflow: 'hidden',
-              border: '0.5px solid var(--ns-border)', margin: '0 16px',
-              boxShadow: 'var(--ns-shadow-sm)',
-            }}>
+            <motion.div
+              variants={shouldReduce ? {} : {
+                hidden: { opacity: 0 },
+                visible: { opacity: 1, transition: { staggerChildren: 0.06 } },
+              }}
+              initial={shouldReduce ? false : 'hidden'}
+              animate={shouldReduce ? false : 'visible'}
+              style={{
+                background: 'var(--ns-bg-card)', borderRadius: 16, overflow: 'hidden',
+                border: '0.5px solid var(--ns-border)', margin: '0 16px',
+                boxShadow: 'var(--ns-shadow-sm)',
+              }}
+            >
               {items.map((item, i) => (
-                <div key={item.id} style={{ borderTop: i > 0 ? '0.5px solid var(--ns-sep)' : 'none' }}>
+                <motion.div
+                  key={item.id}
+                  variants={shouldReduce ? {} : {
+                    hidden: { opacity: 0, y: 12 },
+                    visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } },
+                  }}
+                  style={{ borderTop: i > 0 ? '0.5px solid var(--ns-sep)' : 'none' }}
+                >
                   <HistItem item={item} onDelete={handleDelete} />
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         );
       })}
