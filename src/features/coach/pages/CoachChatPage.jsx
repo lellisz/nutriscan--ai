@@ -100,6 +100,73 @@ function TypingIndicator() {
   );
 }
 
+// ── Quick Actions chips ───────────────────────────────────────────────────────
+
+const QUICK_ACTIONS = [
+  "Analisar meu dia",
+  "O que comer agora?",
+  "Receita proteica fácil",
+  "Pré-treino ideal",
+  "Como emagrecer sem culpa",
+  "Mais fibras na dieta",
+  "Substituto saudável",
+  "Estou ansioso com comida",
+];
+
+// ── Modo Respira (5.4) ────────────────────────────────────────────────────────
+
+const ANXIETY_KEYWORDS = [
+  'ansioso', 'ansiosa', 'culpa', 'culpado', 'culpada', 'errei', 'falhei',
+  'me sinto mal', 'comi demais', 'exagerei', 'vergonha', 'frustrado',
+  'frustrada', 'decepcionado', 'fracassei', 'descontrolei',
+];
+
+function hasAnxietyKeywords(text) {
+  const lower = text.toLowerCase();
+  return ANXIETY_KEYWORDS.some(k => lower.includes(k));
+}
+
+const BREATHE_MARKER = '__BREATHE__';
+
+function BreatheCard() {
+  return (
+    <div style={{
+      background: "linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%)",
+      border: "1px solid rgba(76,175,80,0.25)",
+      borderRadius: "18px 18px 18px 4px",
+      padding: "16px 18px",
+      maxWidth: "85%",
+    }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+        <PraxiAvatar state="worried" size="sm" />
+        <span style={{ fontSize: 14, fontWeight: 700, color: "#2e7d32" }}>Modo Respira</span>
+      </div>
+      <p style={{ margin: "0 0 10px", fontSize: 14, color: "#388e3c", lineHeight: 1.5 }}>
+        Respira fundo. Um momento difícil não define sua jornada.
+        Cada dia é uma nova página.
+      </p>
+      <div style={{
+        display: "flex",
+        gap: 6,
+        flexWrap: "wrap",
+      }}>
+        {["Inspira 4s", "Segura 4s", "Expira 6s"].map((step, i) => (
+          <span key={step} style={{
+            padding: "4px 10px",
+            borderRadius: 20,
+            background: "rgba(76,175,80,0.15)",
+            fontSize: 12,
+            color: "#2e7d32",
+            fontWeight: 500,
+          }}>
+            {i + 1}. {step}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ── Main Component ────────────────────────────────────────────────────────────
 
 export default function CoachChatPage() {
@@ -213,7 +280,20 @@ export default function CoachChatPage() {
       content: userMessage,
       created_at: new Date().toISOString(),
     };
-    setMessages(prev => [...prev, optimisticMsg]);
+
+    // 5.4 — Modo Respira: detecta ansiedade/culpa alimentar
+    const anxious = hasAnxietyKeywords(userMessage);
+    const breatheMsg = anxious ? {
+      id: `breathe-${Date.now()}`,
+      role: "assistant",
+      content: BREATHE_MARKER,
+      created_at: new Date().toISOString(),
+    } : null;
+
+    setMessages(prev => anxious
+      ? [...prev, optimisticMsg, breatheMsg]
+      : [...prev, optimisticMsg]
+    );
     // Força scroll ao enviar mensagem própria
     setTimeout(() => scrollToBottom(true), 50);
 
@@ -683,44 +763,53 @@ export default function CoachChatPage() {
         )}
 
         {/* Mensagens */}
-        {messages.map((msg, idx) => (
-          <div
-            key={msg.id || idx}
-            style={{
-              display: "flex",
-              justifyContent: msg.role === "user" ? "flex-end" : "flex-start",
-            }}
-          >
-            <div style={{
-              maxWidth: "78%",
-              padding: "11px 15px",
-              borderRadius: msg.role === "user"
-                ? "18px 18px 4px 18px"
-                : "18px 18px 18px 4px",
-              background: msg.role === "user" ? "var(--ns-accent)" : "var(--ns-bg-elevated)",
-              color: msg.role === "user" ? "#FFFFFF" : "var(--ns-text-primary)",
-              fontSize: 15,
-              lineHeight: 1.55,
-              wordBreak: "break-word",
-            }}>
-              {msg.role === "assistant" ? (
-                <ReactMarkdown
-                  components={{
-                    p: ({ children }) => <p style={{ margin: '0 0 6px', whiteSpace: 'pre-wrap' }}>{children}</p>,
-                    strong: ({ children }) => <strong style={{ fontWeight: 700 }}>{children}</strong>,
-                    ul: ({ children }) => <ul style={{ margin: '4px 0', paddingLeft: 18 }}>{children}</ul>,
-                    li: ({ children }) => <li style={{ marginBottom: 2 }}>{children}</li>,
-                    a: ({ href, children }) => <a href={href} style={{ color: 'var(--ns-accent)', textDecoration: 'underline' }}>{children}</a>,
-                  }}
-                >
-                  {msg.content}
-                </ReactMarkdown>
-              ) : (
-                <span style={{ whiteSpace: 'pre-wrap' }}>{msg.content}</span>
-              )}
+        {messages.map((msg, idx) => {
+          if (msg.content === BREATHE_MARKER) {
+            return (
+              <div key={msg.id || idx} style={{ display: "flex", justifyContent: "flex-start" }}>
+                <BreatheCard />
+              </div>
+            );
+          }
+          return (
+            <div
+              key={msg.id || idx}
+              style={{
+                display: "flex",
+                justifyContent: msg.role === "user" ? "flex-end" : "flex-start",
+              }}
+            >
+              <div style={{
+                maxWidth: "78%",
+                padding: "11px 15px",
+                borderRadius: msg.role === "user"
+                  ? "18px 18px 4px 18px"
+                  : "18px 18px 18px 4px",
+                background: msg.role === "user" ? "var(--ns-accent)" : "var(--ns-bg-elevated)",
+                color: msg.role === "user" ? "#FFFFFF" : "var(--ns-text-primary)",
+                fontSize: 15,
+                lineHeight: 1.55,
+                wordBreak: "break-word",
+              }}>
+                {msg.role === "assistant" ? (
+                  <ReactMarkdown
+                    components={{
+                      p: ({ children }) => <p style={{ margin: '0 0 6px', whiteSpace: 'pre-wrap' }}>{children}</p>,
+                      strong: ({ children }) => <strong style={{ fontWeight: 700 }}>{children}</strong>,
+                      ul: ({ children }) => <ul style={{ margin: '4px 0', paddingLeft: 18 }}>{children}</ul>,
+                      li: ({ children }) => <li style={{ marginBottom: 2 }}>{children}</li>,
+                      a: ({ href, children }) => <a href={href} style={{ color: 'var(--ns-accent)', textDecoration: 'underline' }}>{children}</a>,
+                    }}
+                  >
+                    {msg.content}
+                  </ReactMarkdown>
+                ) : (
+                  <span style={{ whiteSpace: 'pre-wrap' }}>{msg.content}</span>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
         {/* Typing indicator */}
         {sending && <TypingIndicator />}
@@ -741,6 +830,43 @@ export default function CoachChatPage() {
           border: "0.5px solid rgba(255,59,48,0.2)",
         }}>
           {sendError}
+        </div>
+      )}
+
+      {/* ── Quick Actions chips (5.1) ───────────────────────────────────────── */}
+      {messages.length > 0 && !sending && inputMessage.length === 0 && (
+        <div style={{
+          overflowX: "auto",
+          padding: "6px 16px 2px",
+          display: "flex",
+          gap: 8,
+          flexShrink: 0,
+          scrollbarWidth: "none",
+          WebkitOverflowScrolling: "touch",
+        }}>
+          <style>{`.ns-chips-row::-webkit-scrollbar { display: none; }`}</style>
+          {QUICK_ACTIONS.map(action => (
+            <button
+              key={action}
+              onClick={() => sendMessage(action)}
+              type="button"
+              style={{
+                flexShrink: 0,
+                whiteSpace: "nowrap",
+                padding: "7px 14px",
+                borderRadius: 20,
+                background: "var(--ns-bg-elevated)",
+                border: "0.5px solid var(--ns-border)",
+                fontSize: 13,
+                color: "var(--ns-text-primary)",
+                cursor: "pointer",
+                fontFamily: "inherit",
+                transition: "background 0.15s ease",
+              }}
+            >
+              {action}
+            </button>
+          ))}
         </div>
       )}
 
