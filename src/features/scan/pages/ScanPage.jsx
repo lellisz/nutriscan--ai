@@ -9,6 +9,7 @@ import * as db from "../../../lib/db";
 import ScanCorrectionModal from "../../../components/ScanCorrectionModal";
 import { useVoiceInput } from "../../../lib/hooks/useVoiceInput";
 import VoicePreviewModal from "../components/VoicePreviewModal";
+import { haptic } from "../../../lib/haptics";
 
 function compressImage(dataUrl, maxSize = 800, quality = 0.82) {
   return new Promise((resolve) => {
@@ -113,6 +114,7 @@ export default function ScanPage() {
       setResult(res.analysis || res);
       setSavedScanId(res.savedScan?.id || null);
       setRetryCount(0);
+      haptic('medium');
       analytics.trackScanSuccess(res.analysis || res);
       logger.info("Scan completed", { userId: user?.id, food: res.analysis?.food_name || res.food_name });
     } catch (err) {

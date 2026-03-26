@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import OfflineIndicator from '../components/OfflineIndicator';
 
 // ── SVG Icons — Polar Theme ─────────────────────────────
 const IconHome = ({ active }) => (
@@ -127,7 +128,7 @@ export function BottomNav({ onScanPress }) {
               aria-label="Escanear refeição"
               style={{ WebkitTapHighlightColor: 'transparent', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
             >
-              <div className="ns-fab">
+              <div className="ns-fab scan-btn-glow">
                 <IconScan />
               </div>
             </button>
@@ -185,6 +186,7 @@ export function BottomNav({ onScanPress }) {
 export default function AppShell({ children, onScanPress }) {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--ns-bg-primary)' }}>
+      <OfflineIndicator />
       {children}
       <BottomNav onScanPress={onScanPress} />
     </div>

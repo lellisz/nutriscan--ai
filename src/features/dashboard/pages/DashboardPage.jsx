@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import { StatusBar } from '../../../app/AppShell';
 import { useAuth } from '../../auth/hooks/useAuth';
+import { haptic } from '../../../lib/haptics';
 import {
   listScanHistory,
   getDailyGoals,
@@ -371,7 +372,9 @@ export default function DashboardPage() {
     const maxGlasses = Math.round(goals.water / 250);
     if (currentGlasses >= maxGlasses) return;
 
+    haptic('light');
     const newGlasses = currentGlasses + 1;
+    if (newGlasses >= maxGlasses) haptic('success');
     setWaterMl(newGlasses * 250);
     setSavingWater(true);
     try {

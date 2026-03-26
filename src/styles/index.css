@@ -1813,6 +1813,15 @@ h1, h2, h3 { font-family: 'Nunito', sans-serif; }
 }
 .scan-btn-glow { animation: scan-glow 3s ease-in-out infinite; }
 
+/* ── Scroll snap no histórico ── */
+.history-scroll-container {
+  scroll-snap-type: y proximity;
+  overflow-y: auto;
+}
+.history-day-group {
+  scroll-snap-align: start;
+}
+
 /* ── Reduced motion — acessibilidade ── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
