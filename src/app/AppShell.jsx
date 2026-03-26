@@ -124,7 +124,7 @@ export function BottomNav({ onScanPress }) {
               key="fab"
               className="ns-nav-item"
               onClick={onScanPress}
-              aria-label="Escanear alimento"
+              aria-label="Escanear refeição"
               style={{ WebkitTapHighlightColor: 'transparent', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
             >
               <div className="ns-fab">

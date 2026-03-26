@@ -546,10 +546,10 @@ export default function DashboardPage() {
           </div>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 11, color: 'var(--ns-accent)', fontWeight: 600, letterSpacing: '-0.01em', marginBottom: 2 }}>
-              IA Pronta
+              Praxi pronto
             </div>
             <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--ns-text-primary)', letterSpacing: '-0.02em' }}>
-              Escanear alimento
+              Escanear refeição
             </div>
           </div>
           <div style={{

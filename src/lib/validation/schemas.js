@@ -26,10 +26,10 @@ export const ProfileSchema = z.object({
 
 export const ScanRequestSchema = z.object({
   // Limite de 7MB base64 (~5MB binario real) para prevenir envio de payloads enormes
-  imageBase64: z.string().min(1, "Imagem obrigatoria").max(7 * 1024 * 1024, "Imagem muito grande (maximo 5MB)"),
+  imageBase64: z.string().min(1, "Imagem obrigatória").max(7 * 1024 * 1024, "Imagem muito grande (máximo 5MB)"),
   mediaType: z.enum(
     ["image/jpeg", "image/png", "image/webp", "image/gif", "image/heic", "image/heif"],
-    { errorMap: () => ({ message: "Tipo de imagem nao suportado. Use JPEG, PNG, WebP ou GIF." }) }
+    { errorMap: () => ({ message: "Tipo de imagem não suportado. Use JPEG, PNG, WebP ou GIF." }) }
   ),
   userId: z.string().uuid().optional().nullable(),
   imageUrl: z.string().url().optional().nullable(),

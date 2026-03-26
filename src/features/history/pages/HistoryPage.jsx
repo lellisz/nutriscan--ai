@@ -242,7 +242,7 @@ export default function HistoryPage() {
         letterSpacing: '-0.03em',
         margin: 0, lineHeight: 1.1,
       }}>
-        Historico
+        Histórico
       </h1>
       <p style={{
         fontSize: 14, color: 'var(--ns-text-muted)',
@@ -419,7 +419,7 @@ export default function HistoryPage() {
             {filter === 'Todos' ? 'Nenhum registro ainda' : `Nenhum registro (${filter.toLowerCase()})`}
           </div>
           <p className="ns-empty-sub">
-            Escaneie alimentos para registrar sua alimentação.
+            Escaneie refeições para registrar sua alimentação.
           </p>
         </div>
       )}

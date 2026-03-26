@@ -113,8 +113,8 @@ export default function ScanPage() {
     } catch (err) {
       logger.error("Scan failed", { userId: user?.id, error: err.message });
       analytics.trackScanError(err, retryCount);
-      handleError(err, { title: "Erro ao analisar alimento" });
-      setScanError(err.message || "Erro ao analisar o alimento. Tente novamente.");
+      handleError(err, { title: "Erro ao analisar refeição" });
+      setScanError(err.message || "Erro ao analisar a refeição. Tente novamente.");
       setRetryCount((prev) => prev + 1);
     } finally {
       setLoading(false);
@@ -252,7 +252,7 @@ export default function ScanPage() {
             letterSpacing: '-0.03em',
             margin: 0, lineHeight: 1.1,
           }}>
-            Escanear alimento
+            Escanear refeição
           </h1>
           <p style={{
             fontSize: 14, color: 'var(--ns-text-muted)',

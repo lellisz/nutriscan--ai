@@ -110,7 +110,7 @@ const ACTIVITIES = [
 
 const GOALS = [
   { id: "cutting",  label: "Perder gordura", Icon: IconScissors, desc: "Deficit calorico",   color: "var(--ns-danger)"  },
-  { id: "maintain", label: "Manutencao",     Icon: IconScale,    desc: "Manter peso",        color: "var(--ns-accent)"  },
+  { id: "maintain", label: "Manutenção",     Icon: IconScale,    desc: "Manter peso",        color: "var(--ns-accent)"  },
   { id: "bulking",  label: "Ganhar massa",   Icon: IconMuscle,   desc: "Superavit calorico", color: "var(--ns-success)" },
 ];
 
@@ -281,7 +281,7 @@ export default function OnboardingPage() {
           margin: "0 0 36px", maxWidth: 280,
         }}>
           Objetivo: <strong style={{ color: "var(--ns-accent)" }}>{selectedGoal?.label}</strong>.<br />
-          Agora escaneia seu primeiro alimento para começarmos!
+          Agora escaneia sua primeira refeição para começarmos!
         </p>
         <button
           onClick={() => navigate("/scan")}
@@ -293,7 +293,7 @@ export default function OnboardingPage() {
             fontFamily: "inherit", marginBottom: 12,
           }}
         >
-          Escanear primeiro alimento
+          Escanear primeira refeição
         </button>
         <button
           onClick={() => setPhase('form')}
@@ -371,7 +371,7 @@ export default function OnboardingPage() {
         );
         setStep(targetStep >= 0 ? targetStep : 0);
       } else if (err.message?.includes("does not exist") || err.message?.includes("schema cache")) {
-        setGeneralError("Erro de configuracao do banco de dados. Entre em contato com o suporte.");
+        setGeneralError("Erro de configuração do banco de dados. Entre em contato com o suporte.");
         logger.error("Database schema error", { error: err.message });
       } else {
         setGeneralError(err.message);
@@ -433,10 +433,10 @@ export default function OnboardingPage() {
                 <IconWave />
               </div>
               <h1 style={{ margin: "0 0 6px", fontSize: 26, fontWeight: 700, letterSpacing: -0.5, color: "var(--ns-text-primary)" }}>
-                Vamos comecar!
+                Vamos começar!
               </h1>
               <p style={{ margin: 0, fontSize: 14, color: "var(--ns-text-muted)" }}>
-                Suas informacoes basicas
+                Suas informações básicas
               </p>
             </div>
 
@@ -467,7 +467,7 @@ export default function OnboardingPage() {
                 {errors.age && <div className="ns-error-text">{errors.age}</div>}
               </div>
               <div>
-                <label htmlFor="ob-gender" className="ns-label">Genero</label>
+                <label htmlFor="ob-gender" className="ns-label">Gênero</label>
                 <select
                   id="ob-gender"
                   value={formData.gender}
@@ -516,10 +516,10 @@ export default function OnboardingPage() {
                 <IconActivity />
               </div>
               <h1 style={{ margin: "0 0 6px", fontSize: 26, fontWeight: 700, letterSpacing: -0.5, color: "var(--ns-text-primary)" }}>
-                Nivel de atividade
+                Nível de atividade
               </h1>
               <p style={{ margin: 0, fontSize: 14, color: "var(--ns-text-muted)" }}>
-                Com que frequencia voce se exercita?
+                Com que frequência você se exercita?
               </p>
             </div>
 
@@ -623,7 +623,7 @@ export default function OnboardingPage() {
               <div className="ns-spinner ns-spinner-sm" style={{ borderColor: "rgba(255,255,255,0.3)", borderTopColor: "white" }} />
               Salvando...
             </>
-          ) : step < totalSteps - 1 ? "Proximo" : "Comecar"}
+          ) : step < totalSteps - 1 ? "Próximo" : "Começar"}
         </button>
       </div>
     </div>
