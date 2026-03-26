@@ -7,6 +7,8 @@ import { analytics } from "../../../lib/analytics";
 import { logger } from "../../../lib/logger";
 import * as db from "../../../lib/db";
 import ScanCorrectionModal from "../../../components/ScanCorrectionModal";
+import { useVoiceInput } from "../../../lib/hooks/useVoiceInput";
+import VoicePreviewModal from "../components/VoicePreviewModal";
 
 function compressImage(dataUrl, maxSize = 800, quality = 0.82) {
   return new Promise((resolve) => {
@@ -74,6 +76,7 @@ export default function ScanPage() {
   const [retryCount, setRetryCount]     = useState(0);
   const [mealType, setMealType]         = useState(detectMealType);
   const maxRetries = 3;
+  const voice = useVoiceInput();
 
   function handleImageSelect(e) {
     const file = e.target.files?.[0];
@@ -369,6 +372,68 @@ export default function ScanPage() {
             </p>
           </div>
         </label>
+
+        {/* Botão de voz */}
+        {voice.isSupported && (
+          <div style={{ padding: "0 20px 20px", display: "flex", justifyContent: "center" }}>
+            <motion.button
+              onClick={(e) => { e.stopPropagation(); voice.isListening ? voice.stop() : voice.start(); }}
+              whileTap={{ scale: shouldReduce ? 1 : 0.92 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              animate={voice.isListening ? { scale: [1, 1.05, 1] } : { scale: 1 }}
+              style={{
+                display: "flex", alignItems: "center", gap: 8,
+                padding: "10px 20px", borderRadius: 12,
+                background: voice.isListening ? "var(--ns-accent)" : "var(--ns-bg-card)",
+                border: `1.5px solid ${voice.isListening ? "var(--ns-accent)" : "var(--ns-border)"}`,
+                color: voice.isListening ? "#FFF" : "var(--ns-text-primary)",
+                fontSize: 14, fontWeight: 600, cursor: "pointer",
+                WebkitTapHighlightColor: "transparent",
+                boxShadow: voice.isListening ? "0 0 0 4px rgba(26,127,86,0.2)" : "none",
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <rect x="9" y="2" width="6" height="11" rx="3"
+                  stroke={voice.isListening ? "#FFF" : "var(--ns-accent)"}
+                  strokeWidth="1.7" />
+                <path d="M5 11a7 7 0 0014 0" stroke={voice.isListening ? "#FFF" : "var(--ns-accent)"}
+                  strokeWidth="1.7" strokeLinecap="round" />
+                <line x1="12" y1="18" x2="12" y2="22" stroke={voice.isListening ? "#FFF" : "var(--ns-accent)"}
+                  strokeWidth="1.7" strokeLinecap="round" />
+              </svg>
+              {voice.isListening ? "Ouvindo..." : voice.isProcessing ? "Processando..." : "Registrar por voz"}
+            </motion.button>
+          </div>
+        )}
+        {/* Modal de preview de voz */}
+        {voice.hasResult && (
+          <VoicePreviewModal
+            foods={voice.foods}
+            transcript={voice.transcript}
+            onConfirm={async () => {
+              for (const food of voice.foods) {
+                try {
+                  await db.insertScanHistory({
+                    user_id: user?.id,
+                    food_name: food.name,
+                    calories: food.kcal,
+                    protein: food.protein_g,
+                    carbs: food.carb_g,
+                    fat: food.fat_g,
+                    meal_type: mealType,
+                    portion_size: food.quantity_g,
+                    confidence: "media",
+                    ai_tip: "Registrado por voz",
+                  });
+                } catch (err) {
+                  console.error("Erro ao salvar alimento por voz:", err);
+                }
+              }
+              voice.reset();
+            }}
+            onCancel={voice.reset}
+          />
+        )}
       </div>
     );
   }
