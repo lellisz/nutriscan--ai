@@ -714,6 +714,185 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        {/* ── ETAPA 7.2 — Nutri Score ─────────────────────────────────────── */}
+        {!loading && (() => {
+          const daysLogged = weekData.filter(v => v > 0).length;
+          const avgCal = daysLogged > 0
+            ? weekData.reduce((a, b) => a + b, 0) / daysLogged
+            : 0;
+          const calScore = avgCal > 0
+            ? Math.max(0, 100 - Math.abs((avgCal - goalCal) / goalCal) * 100)
+            : 0;
+          const daysScore = (daysLogged / 7) * 40;
+          const proteinScore = Math.min((todayData.protein / goals.protein) * 30, 30);
+          const streakScore = Math.min(streakCount * 5, 30);
+          const nutriScore = Math.round(daysScore * 0.4 + calScore * 0.3 + proteinScore * 0.2 + streakScore * 0.1);
+          const scoreColor = nutriScore >= 75 ? 'var(--ns-accent)' : nutriScore >= 50 ? 'var(--ns-orange)' : 'var(--ns-danger)';
+          const scoreLabel = nutriScore >= 75 ? 'Excelente semana!' : nutriScore >= 50 ? 'Boa semana' : 'Continue assim';
+          const circ = 2 * Math.PI * 30;
+
+          return (
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ fontSize: 17, fontWeight: 600, color: 'var(--ns-text-primary)', letterSpacing: '-0.02em', marginBottom: 10 }}>
+                Nutri Score semanal
+              </div>
+              <div style={{
+                padding: '18px 20px', background: 'var(--ns-bg-card)',
+                border: '0.5px solid var(--ns-border)', borderRadius: 16,
+                boxShadow: 'var(--ns-shadow-sm)', display: 'flex', alignItems: 'center', gap: 16,
+              }}>
+                <div style={{ position: 'relative', width: 72, height: 72, flexShrink: 0 }}>
+                  <svg width="72" height="72" viewBox="0 0 72 72">
+                    <circle cx="36" cy="36" r="30" fill="none" stroke="var(--ns-ring-track)" strokeWidth="6" />
+                    <circle cx="36" cy="36" r="30" fill="none" stroke={scoreColor} strokeWidth="6"
+                      strokeDasharray={`${(nutriScore / 100) * circ} ${circ}`}
+                      strokeLinecap="round" strokeDashoffset={circ * 0.25}
+                      style={{ transition: 'stroke-dasharray 1s cubic-bezier(0.4,0,0.2,1)' }}
+                    />
+                  </svg>
+                  <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--ns-text-primary)', lineHeight: 1, letterSpacing: '-0.04em' }}>{nutriScore}</div>
+                    <div style={{ fontSize: 8, color: 'var(--ns-text-muted)', marginTop: 1 }}>/100</div>
+                  </div>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: scoreColor, marginBottom: 8 }}>{scoreLabel}</div>
+                  {[
+                    { label: 'Dias registrados', value: `${daysLogged}/7` },
+                    { label: 'Streak', value: `${streakCount} dias` },
+                    { label: 'Proteína hoje', value: `${Math.round((todayData.protein / goals.protein) * 100)}%` },
+                  ].map(({ label, value }) => (
+                    <div key={label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--ns-text-muted)', marginBottom: 4 }}>
+                      <span>{label}</span>
+                      <span style={{ fontWeight: 600, color: 'var(--ns-text-primary)' }}>{value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* ── ETAPA 7.1 — Recap Semanal ───────────────────────────────────── */}
+        {!loading && weekData.filter(v => v > 0).length >= 3 && (() => {
+          const daysLogged = weekData.filter(v => v > 0).length;
+          const avgCal = Math.round(weekData.reduce((a, b) => a + b, 0) / daysLogged);
+          const bestDay = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'][weekData.indexOf(Math.max(...weekData))];
+          return (
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ fontSize: 17, fontWeight: 600, color: 'var(--ns-text-primary)', letterSpacing: '-0.02em', marginBottom: 10 }}>
+                Recap da semana
+              </div>
+              <div style={{
+                background: 'linear-gradient(135deg, var(--ns-accent-bg) 0%, var(--ns-bg-card) 100%)',
+                border: '0.5px solid rgba(45,143,94,0.25)', borderRadius: 16, padding: '16px 18px',
+                boxShadow: 'var(--ns-shadow-sm)',
+              }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  {[
+                    { emoji: '📅', label: 'Dias ativos',    value: `${daysLogged} de 7` },
+                    { emoji: '🔥', label: 'Média kcal/dia', value: avgCal.toLocaleString('pt-BR') },
+                    { emoji: '⚡', label: 'Melhor dia',     value: bestDay },
+                    { emoji: '💪', label: 'Streak atual',   value: `${streakCount} dias` },
+                  ].map(({ emoji, label, value }) => (
+                    <div key={label} style={{ background: 'var(--ns-bg-card)', borderRadius: 12, padding: '10px 12px' }}>
+                      <div style={{ fontSize: 20, marginBottom: 4 }}>{emoji}</div>
+                      <div style={{ fontSize: 11, color: 'var(--ns-text-muted)', marginBottom: 2 }}>{label}</div>
+                      <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--ns-text-primary)', letterSpacing: '-0.02em' }}>{value}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* ── ETAPA 7.3 — Desafios Semanais ───────────────────────────────── */}
+        {!loading && <WeeklyChallenges />}
+
+      </div>
+    </div>
+  );
+}
+
+// ── Weekly Challenges (7.3) ─────────────────────────────────────────────────
+
+const CHALLENGES_POOL = [
+  { id: 'agua',     emoji: '💧', title: '8 copos de água',      desc: 'Complete a meta de hidratação hoje' },
+  { id: 'streak',   emoji: '🔥', title: '5 dias consecutivos',  desc: 'Registre refeições por 5 dias seguidos' },
+  { id: 'proteina', emoji: '💪', title: 'Meta de proteína',     desc: 'Atinja 100% da proteína hoje' },
+  { id: 'scan3',    emoji: '📷', title: '3 scans no dia',       desc: 'Escaneie café, almoço e jantar' },
+  { id: 'novo',     emoji: '🌱', title: 'Alimento novo',        desc: 'Experimente algo que nunca escaneou' },
+];
+
+function WeeklyChallenges() {
+  const weekNum = Math.ceil(new Date().getDate() / 7);
+  const challenges = [0, 1, 2].map(i => CHALLENGES_POOL[(weekNum + i) % CHALLENGES_POOL.length]);
+  const storageKey = `ns_challenges_${new Date().toLocaleDateString('fr-CA').slice(0, 7)}`;
+  const [done, setDone] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(storageKey) || '{}'); }
+    catch { return {}; }
+  });
+
+  function toggle(id) {
+    const next = { ...done, [id]: !done[id] };
+    setDone(next);
+    try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch {}
+  }
+
+  const completedCount = challenges.filter(c => done[c.id]).length;
+
+  return (
+    <div style={{ marginBottom: 20 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+        <div style={{ fontSize: 17, fontWeight: 600, color: 'var(--ns-text-primary)', letterSpacing: '-0.02em' }}>
+          Desafios da semana
+        </div>
+        <div style={{ fontSize: 12, color: 'var(--ns-text-muted)' }}>{completedCount}/{challenges.length}</div>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {challenges.map(({ id, emoji, title, desc }) => {
+          const isDone = !!done[id];
+          return (
+            <button
+              key={id}
+              onClick={() => toggle(id)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 14,
+                padding: '14px 16px', borderRadius: 14,
+                background: isDone ? 'var(--ns-accent-bg)' : 'var(--ns-bg-card)',
+                border: isDone ? '0.5px solid rgba(45,143,94,0.3)' : '0.5px solid var(--ns-border)',
+                cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit',
+                boxShadow: 'var(--ns-shadow-sm)', WebkitTapHighlightColor: 'transparent',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              <span style={{ fontSize: 26, lineHeight: 1 }}>{emoji}</span>
+              <div style={{ flex: 1 }}>
+                <div style={{
+                  fontSize: 14, fontWeight: 600, color: 'var(--ns-text-primary)',
+                  letterSpacing: '-0.01em',
+                  textDecoration: isDone ? 'line-through' : 'none',
+                  opacity: isDone ? 0.5 : 1,
+                }}>{title}</div>
+                <div style={{ fontSize: 12, color: 'var(--ns-text-muted)', marginTop: 2 }}>{desc}</div>
+              </div>
+              <div style={{
+                width: 24, height: 24, borderRadius: '50%', flexShrink: 0,
+                background: isDone ? 'var(--ns-accent)' : 'var(--ns-bg-elevated)',
+                border: isDone ? 'none' : '1.5px solid var(--ns-border)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                transition: 'all 0.2s ease',
+              }}>
+                {isDone && (
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <polyline points="2,6 5,9 10,3" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                )}
+              </div>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
