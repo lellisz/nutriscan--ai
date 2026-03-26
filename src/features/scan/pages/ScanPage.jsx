@@ -415,17 +415,18 @@ export default function ScanPage() {
             onConfirm={async () => {
               for (const food of voice.foods) {
                 try {
-                  await db.insertScanHistory({
-                    user_id: user?.id,
-                    food_name: food.name,
-                    calories: food.kcal,
-                    protein: food.protein_g,
-                    carbs: food.carb_g,
-                    fat: food.fat_g,
-                    meal_type: mealType,
-                    portion_size: food.quantity_g,
-                    confidence: "media",
-                    ai_tip: "Registrado por voz",
+                  await db.saveScanHistory({
+                    userId: user?.id,
+                    analysis: {
+                      food_name:  food.name,
+                      calories:   food.kcal,
+                      protein:    food.protein_g,
+                      carbs:      food.carb_g,
+                      fat:        food.fat_g,
+                      confidence: "media",
+                      ai_tip:     "Registrado por voz",
+                      meal_type:  mealType,
+                    },
                   });
                 } catch (err) {
                   console.error("Erro ao salvar alimento por voz:", err);

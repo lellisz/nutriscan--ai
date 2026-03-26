@@ -25,6 +25,7 @@ export function useVoiceInput() {
   const [foods, setFoods] = useState([]);
   const [error, setError] = useState(null);
   const recognitionRef = useRef(null);
+  const transcriptRef = useRef(""); // ref para evitar race condition no onend
 
   const SpeechRecognition =
     typeof window !== "undefined"
@@ -43,6 +44,7 @@ export function useVoiceInput() {
     setError(null);
     setFoods([]);
     setTranscript("");
+    transcriptRef.current = "";
     setState(STATES.LISTENING);
 
     const recognition = new SpeechRecognition();
@@ -56,6 +58,7 @@ export function useVoiceInput() {
       const current = Array.from(event.results)
         .map((r) => r[0].transcript)
         .join(" ");
+      transcriptRef.current = current; // atualiza ref sincronicamente
       setTranscript(current);
     };
 
@@ -71,7 +74,7 @@ export function useVoiceInput() {
     };
 
     recognition.onend = async () => {
-      const finalTranscript = recognitionRef.current?._finalTranscript || transcript;
+      const finalTranscript = transcriptRef.current; // usa ref, sem race condition
       recognitionRef.current = null;
 
       if (!finalTranscript.trim()) {
@@ -101,22 +104,14 @@ export function useVoiceInput() {
       }
     };
 
-    // Guardar referência para o transcript final
-    recognition.onspeechend = () => {
-      if (recognitionRef.current) {
-        recognitionRef.current._finalTranscript = transcript;
-      }
-    };
-
     recognition.start();
-  }, [isSupported, SpeechRecognition, transcript]);
+  }, [isSupported, SpeechRecognition]);
 
   const stop = useCallback(() => {
     if (recognitionRef.current) {
-      recognitionRef.current._finalTranscript = transcript;
       recognitionRef.current.stop();
     }
-  }, [transcript]);
+  }, []);
 
   const reset = useCallback(() => {
     if (recognitionRef.current) {

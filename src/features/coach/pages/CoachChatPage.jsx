@@ -389,7 +389,9 @@ export default function CoachChatPage() {
       loadConversations().catch(() => {});
     } catch (err) {
       console.error("Erro ao enviar mensagem:", err);
-      setMessages(prev => prev.filter(m => m.id !== optimisticMsg.id));
+      setMessages(prev => prev.filter(m =>
+        m.id !== optimisticMsg.id && (!breatheMsg || m.id !== breatheMsg.id)
+      ));
       // Mensagens de erro amigáveis por tipo
       let friendlyError = "Algo deu errado. Tente novamente.";
       if (err.name === "AbortError") {

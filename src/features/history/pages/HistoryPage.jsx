@@ -408,20 +408,6 @@ export default function HistoryPage() {
           <div style={{ marginBottom: 8 }}>
             <PraxiAvatar state="waving" size="lg" />
           </div>
-          <div style={{
-            width: 56, height: 56, borderRadius: 16,
-            background: 'var(--ns-bg-elevated)',
-            display: 'none',
-            border: '0.5px solid var(--ns-border)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            marginBottom: 12,
-          }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <rect x="2" y="7" width="20" height="14" rx="3" stroke="var(--ns-text-disabled)" strokeWidth="1.7" />
-              <circle cx="12" cy="14" r="3.5" stroke="var(--ns-text-disabled)" strokeWidth="1.7" />
-              <path d="M8 7l2-3h4l2 3" stroke="var(--ns-text-disabled)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </div>
           <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--ns-text-primary)', marginBottom: 4 }}>
             {filter === 'Todos' ? 'Nenhum registro ainda' : `Nenhum registro (${filter.toLowerCase()})`}
           </div>
