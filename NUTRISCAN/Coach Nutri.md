@@ -24,8 +24,9 @@
 ## Status Atual
 
 **Fase:** 2 de 3 — Reliability & Features (quase completa)
-**Ultima sessao:** 2026-03-25 — Mega-prompt 8 etapas completo
+**Ultima sessao:** 2026-03-26 — Mega-prompt 10 etapas (acentuação, motion, PWA, voz, haptics, Praxi)
 **Bloqueador:** Nenhum
+**Proxima prioridade:** Deploy Edge Function (`supabase functions deploy chat`) + gateway de pagamento
 
 ### Fase 1 — COMPLETA
 Auth, onboarding, scan IA, dashboard, historico, router, design system.
@@ -66,13 +67,29 @@ Auth, onboarding, scan IA, dashboard, historico, router, design system.
 - [x] **Quick Actions chips** no chat (horizontalmente scrollaveis) (2026-03-25)
 - [x] **Categorizacao de refeicoes** por horario no scan (auto-detect + seletor) (2026-03-25)
 - [x] **Onboarding 3 telas**: welcome flow (Praxi waving → objetivo → CTA scan) (2026-03-25)
-- [x] **Modo Respira**: detecta ansiedade/culpa alimentar, exibe card de respiracao (2026-03-25)
+- [x] **Modo Respira v2**: triggers atualizados, CVV 188, botao fechar, onDismiss (2026-03-26)
+- [x] **hook useTrack**: analytics proprio fire-and-forget para Supabase (2026-03-26)
+- [x] **analytics_events**: tabela + RLS + indices no Supabase (migration) (2026-03-26)
+- [x] **track('app_opened')**: 1x por sessao no Dashboard (2026-03-26)
+- [x] **track('quick_register')**: ao registrar via chip no Dashboard (2026-03-26)
 - [x] **Nutri Score** semanal (gauge 0-100 baseado em 4 metricas) (2026-03-25)
 - [x] **Recap Semanal**: card com highlights da semana (aparece com 3+ dias) (2026-03-25)
 - [x] **Desafios Semanais**: 3 desafios rotativos com checkboxes (localStorage) (2026-03-25)
 - [x] **Security hardening**: CSP, Permissions-Policy, MIME validation 7MB (2026-03-25)
-- [ ] Rotacionar Supabase service_role_key (exposta no git history) — PRIORIDADE
-- [ ] Integrar gateway de pagamento (SubscriptionPage bloqueada)
+- [x] **Acentuação PT-BR**: Histórico, Proteína, Hidratação, labels sentence case (2026-03-26)
+- [x] **Framer Motion spring physics**: PraxiAvatar float, stagger cards, whileTap scale (2026-03-26)
+- [x] **Design System v2**: Nunito + DM Sans + Space Grotesk, .glass, .mono-num, .skeleton (2026-03-26)
+- [x] **Supabase Edge Function chat**: TypeScript/Deno, intent routing, session memory (código pronto) (2026-03-26)
+- [x] **PWA offline-first**: vite-plugin-pwa, Workbox NetworkFirst/CacheFirst, IndexedDB queue (2026-03-26)
+- [x] **Registro por voz**: api/voice.js, useVoiceInput.js, VoicePreviewModal, pt-BR (2026-03-26)
+- [x] **Hook Model + Crononutrição**: Praxi Reacts, quick actions dinâmicas, top 5 chips, Chrono Score (2026-03-26)
+- [x] **Haptics**: haptics.js light/medium/success via navigator.vibrate (2026-03-26)
+- [x] **Praxi integrado na UI completa**: DashboardPage reativo, HistoryPage empty state (2026-03-26)
+- [ ] **DEPLOY Edge Function**: `supabase functions deploy chat` — PRIORIDADE
+- [ ] **Migrations pendentes**: analytics_events + conversation_insights
+- [ ] **Ícones PWA**: pwa-192x192.png e pwa-512x512.png reais
+- [ ] Rotacionar Supabase service_role_key (exposta no git history)
+- [ ] Integrar gateway de pagamento (RevenueCat ou Stripe)
 - [ ] Migrar rate limiter para Redis/Upstash (in-memory nao persiste entre cold starts)
 - [ ] Ciclos semanais de 7 dias com reset
 - [ ] Testes automatizados + CI/CD
@@ -197,6 +214,8 @@ Recommendation engine, premium features, expansao global.
 
 | Data | Resumo | Link |
 |------|--------|------|
+| 2026-03-26 | Mega-prompt 10 etapas — acentuação, motion, PWA, voz, haptics, Praxi full | [[2026-03-26-mega-prompt-10-etapas]] |
+| 2026-03-26 | Etapa 8 retencao — Modo Respira v2, useTrack, analytics_events | [[2026-03-26-etapa8-retencao]] |
 | 2026-03-25 | Mega-prompt 8 etapas — engine IA, Praxi mascote, features P1+P2, security | [[2026-03-25-mega-prompt-completo]] |
 | 2026-03-23 | Documentacao — README Praxis Nutri com stack, IA, seguranca | [[2026-03-23-documentacao-readme]] |
 | 2026-03-22 | Debug IA (3 bugs) + login social + dev account + mega-prompt | [[2026-03-22-bugs-ia-login-social]] |
