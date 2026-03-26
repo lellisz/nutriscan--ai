@@ -340,41 +340,31 @@ export default function CoachChatPage() {
         ? currentConversation.id
         : undefined;
 
-      // Obtem JWT para autenticar a requisicao no backend
-      let accessToken = null;
-      try {
-        const supabase = getSupabaseClient();
-        const { data: { session } } = await supabase.auth.getSession();
-        accessToken = session?.access_token || null;
-      } catch {
-        // Continua sem token — o backend retornara 401
-      }
+      const supabase = getSupabaseClient();
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000);
 
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-        },
-        body: JSON.stringify({
-          conversationId: convId,
-          message: userMessage,
-          userId: user.id,
-        }),
-        signal: controller.signal,
-      });
+      let data;
+      try {
+        const { data: fnData, error: fnError } = await supabase.functions.invoke("chat", {
+          body: {
+            conversationId: convId,
+            message: userMessage,
+            userId: user.id,
+          },
+        });
 
-      clearTimeout(timeoutId);
+        clearTimeout(timeoutId);
 
-      if (!response.ok) {
-        const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.message || errData.error || `Erro ${response.status}`);
+        if (fnError) {
+          throw new Error(fnError.message || "Erro na Edge Function");
+        }
+        data = fnData;
+      } catch (invokeErr) {
+        clearTimeout(timeoutId);
+        throw invokeErr;
       }
-
-      const data = await response.json();
 
       const aiMsg = {
         id: `ai-${Date.now()}`,
