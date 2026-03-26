@@ -34,7 +34,7 @@ function CalorieRing({ calories = 0, goal = 2000 }) {
         display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center',
       }}>
-        <div style={{ fontSize: 26, fontWeight: 700, color: 'var(--ns-text-primary)', letterSpacing: '-0.04em', lineHeight: 1 }}>
+        <div className="mono-num" style={{ fontSize: 26, fontWeight: 700, color: 'var(--ns-text-primary)', letterSpacing: '-0.04em', lineHeight: 1 }}>
           {calories}
         </div>
         <div style={{ fontSize: 10, color: 'var(--ns-text-muted)', marginTop: 2 }}>kcal</div>
@@ -70,14 +70,14 @@ function MacroCard({ label, value, goal, unit = 'g' }) {
       }}>
         {label}
       </div>
-      <div style={{
+      <div className="mono-num" style={{
         fontSize: 22, fontWeight: 700, color: 'var(--ns-text-primary)',
         letterSpacing: '-0.03em', marginTop: 4, lineHeight: 1,
       }}>
         {value}<span style={{ fontSize: 11, fontWeight: 500, color: 'var(--ns-text-muted)' }}>{unit}</span>
       </div>
       <div style={{ fontSize: 11, color: 'var(--ns-text-muted)', marginTop: 2 }}>de {goal}{unit}</div>
-      <div style={{ height: 8, background: 'var(--ns-ring-track)', borderRadius: 4, marginTop: 8, overflow: 'hidden' }}>
+      <div style={{ height: 7, background: 'var(--ns-ring-track)', borderRadius: 4, marginTop: 8, overflow: 'hidden' }}>
         <div style={{
           height: '100%', background: color, borderRadius: 4,
           width: `${pct}%`,
@@ -590,7 +590,7 @@ export default function DashboardPage() {
                 boxShadow: 'var(--ns-shadow-sm)',
               }}>
                 <div style={{ fontSize: 12, color: 'var(--ns-text-muted)', fontWeight: 500, marginBottom: 8 }}>Média 7 dias</div>
-                <div style={{
+                <div className="mono-num" style={{
                   fontSize: 26, fontWeight: 700, color: 'var(--ns-text-primary)',
                   letterSpacing: '-0.04em', lineHeight: 1,
                 }}>
@@ -612,7 +612,7 @@ export default function DashboardPage() {
                 boxShadow: 'var(--ns-shadow-sm)',
               }}>
                 <div style={{ fontSize: 12, color: 'var(--ns-text-muted)', fontWeight: 500, marginBottom: 8 }}>Restante</div>
-                <div style={{
+                <div className="mono-num" style={{
                   fontSize: 26, fontWeight: 700, color: 'var(--ns-text-primary)',
                   letterSpacing: '-0.04em', lineHeight: 1,
                 }}>
@@ -669,7 +669,7 @@ export default function DashboardPage() {
               <>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
-                    <span style={{ fontSize: 26, fontWeight: 700, color: 'var(--ns-text-primary)', letterSpacing: '-0.04em', lineHeight: 1 }}>
+                    <span className="mono-num" style={{ fontSize: 26, fontWeight: 700, color: 'var(--ns-text-primary)', letterSpacing: '-0.04em', lineHeight: 1 }}>
                       {waterMl}
                     </span>
                     <span style={{ fontSize: 12, color: 'var(--ns-text-muted)' }}>ml</span>

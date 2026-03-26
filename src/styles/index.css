@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700&family=DM+Sans:wght@400;500&family=Space+Grotesk:wght@700&display=swap');
+/* Fontes carregadas via <link> no index.html — mantido como fallback para ambientes sem HTML shell */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Space+Grotesk:wght@500;700&display=swap');
 
 /* ============================================================
    Praxis Nutri — Design System
@@ -64,14 +65,14 @@
   --ns-t-6:       #D0D6D2;
 
   /* ── Macros — cores científicas distintas por nutriente ── */
-  --ns-macro-protein:  #2563EB;   /* Azul ciência */
-  --ns-macro-carb:     #D97706;   /* Âmbar energia */
-  --ns-macro-fat:      #7C3AED;   /* Roxo profundo */
-  --ns-macro-water:    #2563EB;
+  --ns-macro-protein:  #3B82F6;   /* Azul ciência v2 */
+  --ns-macro-carb:     #F59E0B;   /* Âmbar energia v2 */
+  --ns-macro-fat:      #8B5CF6;   /* Roxo profundo v2 */
+  --ns-macro-water:    #3B82F6;
 
   /* Aliases curtos usados nos componentes */
-  --ns-macro-prot:  #2563EB;
-  --ns-macro-carbs: #D97706;
+  --ns-macro-prot:  #3B82F6;
+  --ns-macro-carbs: #F59E0B;
 
   /* ── Rings do Dashboard ── */
   --ns-ring-cal:        #2D8F5E;
@@ -177,18 +178,18 @@ html, body, #root {
 
 html, body {
   margin: 0; padding: 0;
-  background: var(--ns-bg-primary);
+  background: var(--bg-warm);
   color: var(--ns-text-primary);
-  font-family: var(--ns-font-base);
+  font-family: 'DM Sans', var(--ns-font-base);
   font-size: var(--ns-text-base);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background-color: var(--ns-bg-primary);
+  background-color: var(--bg-warm);
   color: var(--ns-text-primary);
-  font-family: var(--ns-font-base);
+  font-family: 'DM Sans', var(--ns-font-base);
   font-size: var(--ns-text-base);
   font-weight: var(--ns-weight-normal);
   line-height: 1.5;
@@ -300,8 +301,12 @@ input, select, textarea { outline: none; }
   background: var(--ns-bg-card);
   border-radius: 16px;
   border: 0.5px solid var(--ns-border);
-  box-shadow: var(--ns-shadow-sm);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
   overflow: hidden;
+}
+
+.ns-card-padded {
+  padding: 16px;
 }
 
 .ns-card-sm {
@@ -483,9 +488,9 @@ input, select, textarea { outline: none; }
   position: fixed;
   bottom: 0; left: 0; right: 0;
   height: calc(var(--ns-nav-height) + var(--ns-safe-bottom));
-  background: rgba(244,245,240,0.94);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(250, 248, 245, 0.88);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
   border-top: 0.5px solid rgba(27,58,45,0.10);
   display: flex;
   align-items: flex-start;
@@ -1765,3 +1770,53 @@ input, select, textarea { outline: none; }
 
 .ns-typing-bounce:nth-child(2) { animation-delay: 0.16s; }
 .ns-typing-bounce:nth-child(3) { animation-delay: 0.32s; }
+
+
+/* ============================================================
+   Design System v2 — Classes utilitárias Praxis Nutri
+   ============================================================ */
+
+/* ── Tipografia hierárquica ── */
+h1, h2, h3 { font-family: 'Nunito', sans-serif; }
+.mono-num {
+  font-family: 'Space Grotesk', monospace;
+  font-feature-settings: 'tnum';
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Altura dinâmica do viewport ── */
+.full-height { height: 100dvh; }
+.min-full-height { min-height: 100dvh; }
+
+/* ── Glass effect para header e tab bar ── */
+.glass {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(250, 248, 245, 0.88);
+}
+
+/* ── Skeleton loading ── */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.skeleton {
+  background: #E8E4DE;
+  border-radius: 8px;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+/* ── Glow pulse para botão scan ── */
+@keyframes scan-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(26, 127, 86, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(26, 127, 86, 0); }
+}
+.scan-btn-glow { animation: scan-glow 3s ease-in-out infinite; }
+
+/* ── Reduced motion — acessibilidade ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

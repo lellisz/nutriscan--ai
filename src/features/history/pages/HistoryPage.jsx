@@ -105,21 +105,21 @@ function HistItem({ item, onDelete }) {
           )}
         </div>
         {/* Barras de macro — cores distintas por nutriente */}
-        <div style={{ display: 'flex', gap: 2, height: 8, borderRadius: 4, overflow: 'hidden' }}>
+        <div style={{ display: 'flex', gap: 2, height: 7, borderRadius: 4, overflow: 'hidden' }}>
           <div style={{ width: `${((item.protein || 0) / macroTotal) * 100}%`, background: 'var(--ns-macro-protein)', borderRadius: 4 }} />
           <div style={{ width: `${((item.carbs || 0) / macroTotal) * 100}%`, background: 'var(--ns-macro-carbs)', borderRadius: 4 }} />
           <div style={{ width: `${((item.fat || 0) / macroTotal) * 100}%`, background: 'var(--ns-macro-fat)', borderRadius: 4 }} />
         </div>
         <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
-          <span style={{ fontSize: 10, color: 'var(--ns-text-muted)', fontWeight: 500 }}>P {item.protein || 0}g</span>
-          <span style={{ fontSize: 10, color: 'var(--ns-text-muted)', fontWeight: 500 }}>C {item.carbs || 0}g</span>
-          <span style={{ fontSize: 10, color: 'var(--ns-text-muted)', fontWeight: 500 }}>G {item.fat || 0}g</span>
+          <span className="mono-num" style={{ fontSize: 10, color: 'var(--ns-text-muted)', fontWeight: 500 }}>P {item.protein || 0}g</span>
+          <span className="mono-num" style={{ fontSize: 10, color: 'var(--ns-text-muted)', fontWeight: 500 }}>C {item.carbs || 0}g</span>
+          <span className="mono-num" style={{ fontSize: 10, color: 'var(--ns-text-muted)', fontWeight: 500 }}>G {item.fat || 0}g</span>
         </div>
       </div>
 
       {/* Calorias */}
       <div style={{ flexShrink: 0, textAlign: 'right' }}>
-        <div style={{
+        <div className="mono-num" style={{
           fontSize: 15, fontWeight: 700, color: 'var(--ns-text-primary)',
           letterSpacing: '-0.02em', lineHeight: 1,
         }}>
