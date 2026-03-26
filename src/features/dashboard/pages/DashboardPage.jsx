@@ -9,7 +9,79 @@ import {
   getHydrationToday,
   saveHydration,
   listWeightLogs,
+  saveScanHistory,
 } from '../../../lib/db';
+
+// ── Praxi: estado reativo baseado nos dados do dia ────────────────────────────
+function getPraxiState({ caloriesPercent, proteinPercent, waterPercent, streak, hour }) {
+  if (caloriesPercent === 0 && hour < 12) return 'waving';
+  if (caloriesPercent === 0 && hour >= 12) return 'sleeping';
+  if (proteinPercent >= 80) return 'proud';
+  if (waterPercent < 30) return 'worried';
+  if (caloriesPercent >= 95) return 'celebrating';
+  return 'happy';
+}
+
+const PRAXI_STATE_LABELS = {
+  waving:      'Bom dia! Pronto pra começar',
+  sleeping:    'Ei, ainda não registrou nada?',
+  proud:       'Proteína no ponto! Ótimo dia',
+  worried:     'Beba água! Você está desidratado',
+  celebrating: 'Meta de calorias quase atingida!',
+  happy:       'Praxi pronto',
+};
+
+// ── Quick Actions dinâmicas do Coach ─────────────────────────────────────────
+function getQuickActions({ caloriesPercent, hour, hasLogs }) {
+  if (!hasLogs) return [
+    { label: 'O que comer agora?', icon: '🍽️' },
+    { label: 'Registrar refeição', icon: '📝' },
+    { label: 'Meta de hoje', icon: '🎯' },
+  ];
+  if (hour >= 20) return [
+    { label: 'Fechar o dia', icon: '🌙' },
+    { label: 'Plano pra amanhã', icon: '📋' },
+    { label: 'Resumo da semana', icon: '📊' },
+  ];
+  if (caloriesPercent >= 85) return [
+    { label: 'Posso comer sobremesa?', icon: '🍰' },
+    { label: 'Quanto falta?', icon: '📏' },
+    { label: 'Resumo', icon: '✅' },
+  ];
+  return [
+    { label: 'Quanto falta?', icon: '📏' },
+    { label: 'Sugerir lanche', icon: '🍎' },
+    { label: 'Dica do Praxi', icon: '💡' },
+  ];
+}
+
+// ── Chrono Score ──────────────────────────────────────────────────────────────
+function calcChronoScore(todayScansWithTime) {
+  if (!todayScansWithTime || todayScansWithTime.length < 2) return null;
+
+  const hours = todayScansWithTime
+    .map(s => s.scanned_at ? new Date(s.scanned_at).getHours() + new Date(s.scanned_at).getMinutes() / 60 : null)
+    .filter(h => h !== null);
+
+  if (hours.length < 2) return null;
+
+  const minHour = Math.min(...hours);
+  const maxHour = Math.max(...hours);
+  const windowHours = maxHour - minHour;
+
+  // 40%: refeições antes das 15h
+  const hasMorningMeals = hours.some(h => h < 15);
+  const morningScore = hasMorningMeals ? 40 : 0;
+
+  // 30%: ausência de refeições após as 22h
+  const hasLateEating = hours.some(h => h >= 22);
+  const lateScore = hasLateEating ? 0 : 30;
+
+  // 30%: janela alimentar <= 12h
+  const windowScore = windowHours <= 12 ? 30 : Math.max(0, 30 - (windowHours - 12) * 5);
+
+  return Math.round(morningScore + lateScore + windowScore);
+}
 
 // ── Progress Ring (calorias) ───────────────────────────────
 function CalorieRing({ calories = 0, goal = 2000 }) {
@@ -144,6 +216,9 @@ export default function DashboardPage() {
   const [waterMl, setWaterMl]       = useState(0);
   const [savingWater, setSavingWater] = useState(false);
   const [errorMsg, setErrorMsg]     = useState(null);
+  const [todayScans, setTodayScans] = useState([]);
+  const [frequentFoods, setFrequentFoods] = useState([]);
+  const [quickRegisterLoading, setQuickRegisterLoading] = useState(null);
 
   // Índice do dia de hoje na semana (0=Seg ... 6=Dom)
   const todayWeekIndex = (() => {
@@ -206,6 +281,27 @@ export default function DashboardPage() {
         carbs:    Math.round(todayTotals.carbs),
         fat:      Math.round(todayTotals.fat),
       });
+
+      // Guardar scans de hoje com horário (para Chrono Score)
+      setTodayScans(todayScans);
+
+      // Top 5 alimentos frequentes dos últimos 30 dias
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      const recentScans = allScans.filter(s => s.scanned_at && new Date(s.scanned_at) >= thirtyDaysAgo);
+      const foodCount = {};
+      recentScans.forEach(s => {
+        if (!s.food_name) return;
+        const key = s.food_name.trim().toLowerCase();
+        if (!foodCount[key]) {
+          foodCount[key] = { name: s.food_name, count: 0, calories: s.calories, protein: s.protein, carbs: s.carbs, fat: s.fat };
+        }
+        foodCount[key].count += 1;
+      });
+      const top5 = Object.values(foodCount)
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 5);
+      setFrequentFoods(top5);
 
       // Semana: últimos 7 dias (Seg-Dom da semana atual)
       const weekCalories = [0, 0, 0, 0, 0, 0, 0];
@@ -301,6 +397,51 @@ export default function DashboardPage() {
 
   const hasAnyData = todayData.calories > 0;
 
+  // ── Praxi State ───────────────────────────────────────────────────────────
+  const currentHour = new Date().getHours();
+  const proteinPct  = goals.protein > 0 ? Math.round((todayData.protein / goals.protein) * 100) : 0;
+  const praxiState  = getPraxiState({
+    caloriesPercent: calPct,
+    proteinPercent:  proteinPct,
+    waterPercent:    waterPct,
+    streak:          streakCount,
+    hour:            currentHour,
+  });
+
+  // ── Quick Actions ─────────────────────────────────────────────────────────
+  const quickActions = getQuickActions({
+    caloriesPercent: calPct,
+    hour:            currentHour,
+    hasLogs:         hasAnyData,
+  });
+
+  // ── Chrono Score ──────────────────────────────────────────────────────────
+  const chronoScore = calcChronoScore(todayScans);
+
+  // ── Quick Register ────────────────────────────────────────────────────────
+  const handleQuickRegister = async (food) => {
+    if (!user?.id || quickRegisterLoading) return;
+    setQuickRegisterLoading(food.name);
+    try {
+      await saveScanHistory({
+        userId: user.id,
+        analysis: {
+          food_name: food.name,
+          calories:  food.calories,
+          protein:   food.protein,
+          carbs:     food.carbs,
+          fat:       food.fat,
+        },
+        scannedAt: new Date().toISOString(),
+      });
+      await loadData();
+    } catch (err) {
+      console.error('[Dashboard] Erro ao registrar alimento rápido:', err);
+    } finally {
+      setQuickRegisterLoading(null);
+    }
+  };
+
   return (
     <div style={{ background: 'var(--ns-bg-primary)', minHeight: '100dvh', paddingBottom: 100 }}>
       <StatusBar />
@@ -393,13 +534,23 @@ export default function DashboardPage() {
                     de {goalCal.toLocaleString('pt-BR')} kcal
                   </div>
 
-                  <div style={{
-                    display: 'inline-flex', alignItems: 'center',
-                    background: 'var(--ns-accent-bg)', borderRadius: 20,
-                    padding: '4px 10px', marginTop: 10,
-                  }}>
-                    <div style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--ns-accent)', marginRight: 6 }} />
-                    <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--ns-accent)' }}>{calPct}% consumido</span>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 10 }}>
+                    <div style={{
+                      display: 'inline-flex', alignItems: 'center',
+                      background: 'var(--ns-accent-bg)', borderRadius: 20,
+                      padding: '4px 10px',
+                    }}>
+                      <div style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--ns-accent)', marginRight: 6 }} />
+                      <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--ns-accent)' }}>{calPct}% consumido</span>
+                    </div>
+                    <div style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 4,
+                      padding: '4px 10px', borderRadius: 20,
+                      background: 'rgba(26,127,86,0.08)',
+                      fontSize: 12, fontWeight: 600, color: 'var(--ns-accent)',
+                    }}>
+                      ⏰ Chrono {chronoScore ?? '--'}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -461,6 +612,42 @@ export default function DashboardPage() {
             </>
           )}
         </div>
+
+        {/* ── Refeições frequentes ── */}
+        {!loading && frequentFoods.length > 0 && (
+          <div style={{ marginBottom: 12 }}>
+            <div style={{
+              fontSize: 13, fontWeight: 600, color: 'var(--ns-text-muted)',
+              letterSpacing: '0.02em', textTransform: 'uppercase',
+              marginBottom: 8, paddingLeft: 2,
+            }}>
+              Registrar novamente
+            </div>
+            <div style={{ overflowX: 'auto', display: 'flex', gap: 8, paddingBottom: 4, scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+              {frequentFoods.map(food => (
+                <button
+                  key={food.name}
+                  onClick={() => handleQuickRegister(food)}
+                  disabled={!!quickRegisterLoading}
+                  style={{
+                    flexShrink: 0, padding: '8px 14px', borderRadius: 20,
+                    background: quickRegisterLoading === food.name ? 'var(--ns-accent-bg)' : 'var(--ns-bg-card)',
+                    border: quickRegisterLoading === food.name
+                      ? '1px solid var(--ns-accent)'
+                      : '1px solid var(--ns-border)',
+                    fontSize: 13, fontWeight: 500, color: 'var(--ns-text-primary)',
+                    cursor: quickRegisterLoading ? 'default' : 'pointer',
+                    whiteSpace: 'nowrap', opacity: quickRegisterLoading && quickRegisterLoading !== food.name ? 0.5 : 1,
+                    transition: 'all 0.15s ease',
+                    WebkitTapHighlightColor: 'transparent',
+                  }}
+                >
+                  {quickRegisterLoading === food.name ? '...' : food.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* ── Empty state ── */}
         {!loading && !hasAnyData && !errorMsg && (
@@ -550,7 +737,7 @@ export default function DashboardPage() {
           </div>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 11, color: 'var(--ns-accent)', fontWeight: 600, letterSpacing: '-0.01em', marginBottom: 2 }}>
-              Praxi pronto
+              {loading ? 'Praxi pronto' : PRAXI_STATE_LABELS[praxiState]}
             </div>
             <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--ns-text-primary)', letterSpacing: '-0.02em' }}>
               Escanear refeição
@@ -566,6 +753,41 @@ export default function DashboardPage() {
             </svg>
           </div>
         </motion.button>
+
+        {/* ── Quick Actions do Coach ── */}
+        {!loading && (
+          <div style={{ marginBottom: 12 }}>
+            <div style={{
+              fontSize: 13, fontWeight: 600, color: 'var(--ns-text-muted)',
+              letterSpacing: '0.02em', textTransform: 'uppercase',
+              marginBottom: 8, paddingLeft: 2,
+            }}>
+              Pergunte ao Praxi
+            </div>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {quickActions.map(action => (
+                <button
+                  key={action.label}
+                  onClick={() => navigate('/coach', { state: { initialMessage: action.label } })}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 6,
+                    padding: '9px 14px', borderRadius: 20,
+                    background: 'var(--ns-bg-card)',
+                    border: '0.5px solid var(--ns-border)',
+                    fontSize: 13, fontWeight: 500, color: 'var(--ns-text-primary)',
+                    cursor: 'pointer', whiteSpace: 'nowrap',
+                    boxShadow: 'var(--ns-shadow-sm)',
+                    WebkitTapHighlightColor: 'transparent',
+                    transition: 'background 0.15s ease',
+                  }}
+                >
+                  <span>{action.icon}</span>
+                  <span>{action.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* ── Seção: Esta semana ── */}
         <div style={{ marginBottom: 12 }}>
