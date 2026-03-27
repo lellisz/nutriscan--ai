@@ -130,7 +130,7 @@ function MacroCard({ label, value, goal, unit = 'g' }) {
   const color = MACRO_COLORS[label] || 'var(--ns-accent)';
 
   return (
-    <div style={{
+    <div className="ns-card-interactive" style={{
       background: 'var(--ns-bg-card)',
       border: '0.5px solid var(--ns-border)',
       borderRadius: 14,
@@ -458,7 +458,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div style={{ background: 'var(--ns-bg-primary)', minHeight: '100dvh', paddingBottom: 100 }}>
+    <div className="ns-aurora-bg" style={{ background: 'transparent', minHeight: '100dvh', paddingBottom: 100 }}>
       <StatusBar />
 
       {/* ── Header premium ── */}
@@ -514,7 +514,7 @@ export default function DashboardPage() {
         )}
 
         {/* ── Hero Card de Calorias ── */}
-        <div style={{
+        <div className="ns-hero-border" style={{
           background: 'var(--ns-bg-card)',
           border: '0.5px solid var(--ns-border)',
           borderRadius: 20,
@@ -642,6 +642,7 @@ export default function DashboardPage() {
               {frequentFoods.map(food => (
                 <button
                   key={food.name}
+                  className="ns-card-interactive"
                   onClick={() => handleQuickRegister(food)}
                   disabled={!!quickRegisterLoading}
                   style={{
@@ -723,6 +724,7 @@ export default function DashboardPage() {
 
         {/* ── Scan CTA ── */}
         <motion.button
+          className="ns-card-interactive ns-hero-border"
           onClick={() => navigate('/scan')}
           whileTap={{ scale: shouldReduce ? 1 : 0.95 }}
           transition={{ type: 'spring', stiffness: 400, damping: 17 }}
@@ -772,6 +774,7 @@ export default function DashboardPage() {
               {quickActions.map(action => (
                 <button
                   key={action.label}
+                  className="ns-card-interactive"
                   onClick={() => navigate('/coach', { state: { initialMessage: action.label } })}
                   style={{
                     display: 'inline-flex', alignItems: 'center', gap: 6,

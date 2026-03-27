@@ -1594,9 +1594,215 @@ input, select, textarea { outline: none; }
   box-shadow: 0 0 0 3px var(--ns-accent-bg);
 }
 
-.ns-search-input::placeholder {
-  color: var(--ns-text-disabled);
+/* ------------------------------------------------------------
+   23. PREMIUM POLISH CLASSES
+   ------------------------------------------------------------ */
+
+/* ── Aurora Background ── */
+@keyframes ns-aurora-drift {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  50% { transform: translate(40px, -30px) rotate(180deg); }
+  100% { transform: translate(0, 0) rotate(360deg); }
 }
+
+.ns-aurora-bg {
+  position: relative;
+  z-index: 1;
+}
+
+.ns-aurora-bg::before,
+.ns-aurora-bg::after {
+  content: '';
+  position: fixed;
+  width: 800px; height: 800px;
+  border-radius: 50%;
+  filter: blur(140px);
+  opacity: 0.25;
+  pointer-events: none;
+  z-index: -1;
+}
+.ns-aurora-bg::before {
+  background: radial-gradient(circle, #2D8F5E, transparent 70%);
+  top: -15%; right: -10%;
+  animation: ns-aurora-drift 25s ease-in-out infinite;
+}
+.ns-aurora-bg::after {
+  background: radial-gradient(circle, #3B82F6, transparent 70%);
+  bottom: -15%; left: -10%;
+  animation: ns-aurora-drift 25s ease-in-out infinite reverse;
+}
+
+/* ── Floating Labels ── */
+.ns-float-group { position: relative; margin-bottom: 16px; width: 100%; }
+.ns-float-input {
+  width: 100%;
+  padding: 20px 16px 8px;
+  background: rgba(234,235,230,0.5);
+  border: 1.5px solid transparent;
+  border-radius: 14px;
+  color: var(--ns-text-primary);
+  font-size: 16px;
+  transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+  outline: none;
+}
+.ns-float-input:focus {
+  background: var(--ns-bg-card);
+  border-color: var(--ns-accent);
+  box-shadow: 0 0 0 4px rgba(45,143,94,0.1);
+}
+.ns-float-label {
+  position: absolute;
+  left: 16px; top: 50%; transform: translateY(-50%);
+  font-size: 15px; color: var(--ns-text-disabled);
+  pointer-events: none;
+  transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+}
+.ns-float-input:focus ~ .ns-float-label,
+.ns-float-input:not(:placeholder-shown) ~ .ns-float-label {
+  top: 10px; transform: none;
+  font-size: 11px; font-weight: 600;
+  color: var(--ns-accent); letter-spacing: 0.04em;
+}
+
+/* ── Glass Card Premium ── */
+.ns-card-glass {
+  background: rgba(255,255,255,0.72);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.5);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(27,58,45,0.06),
+              inset 0 1px 0 rgba(255,255,255,0.5);
+  padding: 24px;
+}
+
+/* ── Gradient Button ── */
+.ns-btn-gradient {
+  background: linear-gradient(135deg, #34A068 0%, #1A7F56 100%);
+  color: #FFF;
+  border: none;
+  border-radius: 14px;
+  padding: 16px 24px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  box-shadow: 0 4px 20px rgba(45,143,94,0.30),
+              inset 0 1px 0 rgba(255,255,255,0.15);
+  transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.ns-btn-gradient:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(45,143,94,0.40),
+              inset 0 1px 0 rgba(255,255,255,0.2);
+}
+.ns-btn-gradient:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+.ns-btn-gradient:disabled {
+  opacity: 0.5; cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ── Hero Card Gradient Border ── */
+.ns-hero-border {
+  position: relative; border-radius: 20px;
+  z-index: 0;
+}
+.ns-hero-border::before {
+  content: '';
+  position: absolute; inset: -1.5px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, 
+    rgba(45,143,94,0.35), 
+    rgba(59,130,246,0.25), 
+    rgba(139,92,246,0.15));
+  z-index: -1;
+}
+
+/* ── FAB Pulse Ring ── */
+@keyframes ns-fab-pulse-ring {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.4); opacity: 0; }
+}
+.ns-fab-aura {
+  position: absolute; inset: -8px;
+  border-radius: 50%;
+  border: 2px solid var(--ns-accent);
+  animation: ns-fab-pulse-ring 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ── Card Hover Effect ── */
+.ns-card-interactive {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+}
+.ns-card-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(27,58,45,0.10);
+}
+.ns-card-interactive:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* ── Password Strength Meter ── */
+.ns-password-meter {
+  height: 3px; border-radius: 2px;
+  background: var(--ns-bg-elevated);
+  margin-top: 8px; overflow: hidden;
+  width: 100%;
+}
+.ns-password-meter-fill {
+  height: 100%; border-radius: 2px;
+  transition: width 0.3s ease, background 0.3s ease;
+  width: 0%;
+}
+.ns-password-meter-fill[data-strength="weak"] { width: 33%; background: var(--ns-danger); }
+.ns-password-meter-fill[data-strength="medium"] { width: 66%; background: var(--attention-gentle); }
+.ns-password-meter-fill[data-strength="strong"] { width: 100%; background: var(--ns-accent); }
+
+/* ── Hydration Fluid Bar ── */
+@keyframes ns-water-flow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+.ns-water-bar {
+  background: linear-gradient(90deg, var(--ns-blue) 0%, #60A5FA 50%, var(--ns-blue) 100%);
+  background-size: 200% 100%;
+  animation: ns-water-flow 3s linear infinite;
+  border-radius: 4px;
+  min-height: 100%;
+}
+
+/* ── Dark Glass Chat Bubbles ── */
+.ns-chat-bubble-user {
+  background: rgba(26,46,35,0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #FFFFFF;
+  border: 0.5px solid rgba(255,255,255,0.15);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+.ns-chat-input-pill {
+  background: var(--ns-bg-card);
+  border-radius: 24px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+  border: 1px solid var(--ns-border);
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.ns-chat-input-pill:focus-within {
+  box-shadow: 0 10px 40px rgba(45,143,94,0.15);
+  border-color: var(--ns-accent);
+}
+
 
 
 /* ── Pill group — filtro segmentado (ex: Hoje / Semana / Mês) ── */

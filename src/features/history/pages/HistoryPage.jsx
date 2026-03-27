@@ -71,7 +71,7 @@ function HistItem({ item, onDelete }) {
   }
 
   return (
-    <div style={{
+    <div className="ns-card-interactive" style={{
       display: 'flex',
       alignItems: 'center',
       gap: 12,
@@ -260,7 +260,7 @@ export default function HistoryPage() {
 
   if (loading) {
     return (
-      <div style={{ background: 'var(--ns-bg-primary)', minHeight: '100dvh', paddingBottom: 100 }}>
+      <div className="ns-aurora-bg" style={{ background: 'transparent', minHeight: '100dvh', paddingBottom: 100 }}>
         <StatusBar />
         {pageHeader(0)}
         <div style={{ padding: '8px 20px' }}>
@@ -278,7 +278,7 @@ export default function HistoryPage() {
   }
 
   return (
-    <div style={{ background: 'var(--ns-bg-primary)', minHeight: '100dvh', paddingBottom: 100 }}>
+    <div className="ns-aurora-bg" style={{ background: 'transparent', minHeight: '100dvh', paddingBottom: 100 }}>
       <StatusBar />
 
       {pageHeader(scans.length)}
@@ -344,7 +344,7 @@ export default function HistoryPage() {
             { v: yesterdayKcal.toLocaleString('pt-BR'),   l: 'kcal ontem' },
             { v: scans.length,                            l: 'registros'  },
           ].map(({ v, l }) => (
-            <div key={l} style={{
+            <div key={l} className="ns-card-interactive" style={{
               flex: 1, padding: '12px',
               background: 'var(--ns-bg-card)',
               border: '0.5px solid var(--ns-border)',
@@ -360,45 +360,38 @@ export default function HistoryPage() {
         </div>
 
         {/* Pill filters com contagem */}
-        <div className="animate-fade-up stagger-3" style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 2, scrollbarWidth: 'none' }}>
-          {FILTERS.map(({ id, label }) => {
-            const active = filter === id;
-            const count = filterCounts[id] ?? 0;
-            return (
-              <button
-                key={id}
-                onClick={() => setFilter(id)}
-                style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 5,
-                  padding: '7px 14px',
-                  borderRadius: 100,
-                  fontSize: 13, fontWeight: 600, letterSpacing: '-0.01em',
-                  cursor: 'pointer',
-                  transition: 'all 0.18s cubic-bezier(0.4,0,0.2,1)',
-                  WebkitTapHighlightColor: 'transparent',
-                  border: active ? 'none' : '0.5px solid var(--ns-border)',
-                  background: active ? 'var(--ns-accent)' : 'var(--ns-bg-card)',
-                  color: active ? '#FFFFFF' : 'var(--ns-text-muted)',
-                  flexShrink: 0,
-                  boxShadow: active ? '0 2px 8px rgba(45,143,94,0.25)' : 'none',
-                }}
-              >
-                {label}
-                {count > 0 && (
-                  <span style={{
-                    fontSize: 10, fontWeight: 700,
-                    background: active ? 'rgba(255,255,255,0.25)' : 'var(--ns-bg-elevated)',
-                    color: active ? '#FFF' : 'var(--ns-text-muted)',
-                    borderRadius: 100,
-                    padding: '1px 6px',
-                    lineHeight: 1.5,
-                  }}>
-                    {count}
-                  </span>
-                )}
-              </button>
-            );
-          })}
+        <div className="animate-fade-up stagger-3" style={{ display: 'flex', overflowX: 'auto', paddingBottom: 2, scrollbarWidth: 'none' }}>
+          <div className="ns-pill-group" style={{ display: 'inline-flex', flexShrink: 0 }}>
+            {FILTERS.map(({ id, label }) => {
+              const active = filter === id;
+              const count = filterCounts[id] ?? 0;
+              return (
+                <button
+                  key={id}
+                  className={`ns-pill-btn ${active ? 'active' : ''}`}
+                  onClick={() => setFilter(id)}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 5, padding: '8px 16px'
+                  }}
+                >
+                  {label}
+                  {count > 0 && (
+                    <span style={{
+                      fontSize: 10, fontWeight: 700,
+                      background: active ? 'var(--ns-accent-bg)' : 'var(--ns-bg-elevated)',
+                      color: active ? 'var(--ns-accent)' : 'var(--ns-text-muted)',
+                      borderRadius: 100,
+                      padding: '1px 6px',
+                      lineHeight: 1.5,
+                      border: active ? '0.5px solid rgba(45,143,94,0.2)' : 'none',
+                    }}>
+                      {count}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -440,10 +433,11 @@ export default function HistoryPage() {
               }}
               initial={shouldReduce ? false : 'hidden'}
               animate={shouldReduce ? false : 'visible'}
+              className="ns-card-glass"
               style={{
-                background: 'var(--ns-bg-card)', borderRadius: 16, overflow: 'hidden',
-                border: '0.5px solid var(--ns-border)', margin: '0 16px',
-                boxShadow: 'var(--ns-shadow-sm)',
+                borderRadius: 16, overflow: 'hidden',
+                margin: '0 16px',
+                padding: 0,
               }}
             >
               {items.map((item, i) => (

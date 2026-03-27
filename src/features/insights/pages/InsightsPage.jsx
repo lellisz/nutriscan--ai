@@ -303,7 +303,7 @@ export default function InsightsPage() {
 
   if (loading) {
     return (
-      <div style={{ background: 'var(--ns-bg-primary)', minHeight: '100dvh', paddingBottom: 100 }}>
+      <div className="ns-aurora-bg" style={{ background: 'transparent', minHeight: '100dvh', paddingBottom: 100 }}>
         {insightsHeader(true)}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '40vh' }}>
           <div className="ns-spinner ns-spinner-lg" />
@@ -313,7 +313,7 @@ export default function InsightsPage() {
   }
 
   return (
-    <div style={{ background: 'var(--ns-bg-primary)', minHeight: '100dvh', paddingBottom: 100 }}>
+    <div className="ns-aurora-bg" style={{ background: 'transparent', minHeight: '100dvh', paddingBottom: 100 }}>
 
       {insightsHeader(false)}
 

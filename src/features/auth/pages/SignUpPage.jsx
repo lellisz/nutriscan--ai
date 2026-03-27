@@ -65,6 +65,19 @@ export default function SignUpPage() {
   const [generalError, setGeneralError] = useState("");
   const [oauthLoading, setOauthLoading] = useState(null); // 'google' | 'apple' | null
 
+  function getPasswordStrength(password) {
+    if (!password) return "";
+    if (password.length < 6) return "weak";
+    let score = 0;
+    if (password.length > 8) score++;
+    if (/[A-Z]/.test(password)) score++;
+    if (/[0-9]/.test(password)) score++;
+    if (/[^A-Za-z0-9]/.test(password)) score++;
+    if (score < 2) return "weak";
+    if (score < 3) return "medium";
+    return "strong";
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setErrors({});
@@ -120,7 +133,7 @@ export default function SignUpPage() {
   }
 
   return (
-    <div style={{
+    <div className="ns-aurora-bg" style={{
       padding: "20px",
       maxWidth: "420px",
       margin: "0 auto",
@@ -128,9 +141,9 @@ export default function SignUpPage() {
       display: "flex",
       flexDirection: "column",
       justifyContent: "center",
+      position: "relative",
     }}>
-      {/* Logo & App Name */}
-      <div className="animate-fade-up" style={{ textAlign: "center", marginBottom: 40 }}>
+      <div className="ns-card-glass animate-fade-up">
         <div style={{
           width: 72,
           height: 72,
@@ -165,52 +178,61 @@ export default function SignUpPage() {
       )}
 
       <form onSubmit={handleSubmit} className="animate-fade-up stagger-2">
-        <div style={{ marginBottom: 16 }}>
-          <label htmlFor="signup-email" className="ns-label-field">Email</label>
+        <div className="ns-float-group">
           <input
             id="signup-email"
             type="email"
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className={`ns-input ${errors.email ? "ns-input-error" : ""}`}
-            placeholder="seu@email.com"
+            className={`ns-float-input ${errors.email ? "ns-input-error" : ""}`}
+            placeholder=" "
             autoComplete="email"
           />
-          {errors.email && <div className="ns-error-text">{errors.email}</div>}
+          <label htmlFor="signup-email" className="ns-float-label">Email</label>
+          {errors.email && <div className="ns-error-text" style={{ paddingLeft: 16 }}>{errors.email}</div>}
         </div>
 
-        <div style={{ marginBottom: 16 }}>
-          <label htmlFor="signup-password" className="ns-label-field">Senha</label>
+        <div className="ns-float-group" style={{ marginBottom: 24 }}>
           <input
             id="signup-password"
             type="password"
             value={formData.password}
             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            className={`ns-input ${errors.password ? "ns-input-error" : ""}`}
-            placeholder="Minimo 6 caracteres"
+            className={`ns-float-input ${errors.password ? "ns-input-error" : ""}`}
+            placeholder=" "
             autoComplete="new-password"
           />
-          {errors.password && <div className="ns-error-text">{errors.password}</div>}
+          <label htmlFor="signup-password" className="ns-float-label">Senha</label>
+          {errors.password && <div className="ns-error-text" style={{ paddingLeft: 16 }}>{errors.password}</div>}
+          
+          {formData.password && (
+            <div className="ns-password-meter">
+              <div 
+                className="ns-password-meter-fill" 
+                data-strength={getPasswordStrength(formData.password)} 
+              />
+            </div>
+          )}
         </div>
 
-        <div style={{ marginBottom: 28 }}>
-          <label htmlFor="signup-confirm" className="ns-label-field">Confirmar Senha</label>
+        <div className="ns-float-group" style={{ marginBottom: 28 }}>
           <input
             id="signup-confirm"
             type="password"
             value={formData.confirmPassword}
             onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-            className={`ns-input ${errors.confirmPassword ? "ns-input-error" : ""}`}
-            placeholder="Repita a senha"
+            className={`ns-float-input ${errors.confirmPassword ? "ns-input-error" : ""}`}
+            placeholder=" "
             autoComplete="new-password"
           />
-          {errors.confirmPassword && <div className="ns-error-text">{errors.confirmPassword}</div>}
+          <label htmlFor="signup-confirm" className="ns-float-label">Confirmar Senha</label>
+          {errors.confirmPassword && <div className="ns-error-text" style={{ paddingLeft: 16 }}>{errors.confirmPassword}</div>}
         </div>
 
-        <button type="submit" disabled={loading} className="ns-btn ns-btn-primary">
+        <button type="submit" disabled={loading} className="ns-btn-gradient">
           {loading ? (
             <>
-              <div className="ns-spinner" />
+              <div className="ns-spinner" style={{ borderColor: 'rgba(255,255,255,0.3)', borderTopColor: '#FFF' }} />
               Criando...
             </>
           ) : "Criar Conta"}
@@ -238,6 +260,7 @@ export default function SignUpPage() {
           type="button"
           onClick={() => handleOAuthSignUp("google")}
           disabled={oauthLoading !== null || loading}
+          className="ns-card-interactive"
           style={{
             display: "flex",
             alignItems: "center",
@@ -246,14 +269,14 @@ export default function SignUpPage() {
             width: "100%",
             padding: "13px 20px",
             border: "1.5px solid var(--ns-border-strong)",
-            borderRadius: "var(--ns-radius)",
+            borderRadius: "14px",
             background: "#FFFFFF",
             color: "#1A2E23",
             fontSize: 15,
             fontWeight: 600,
             cursor: oauthLoading !== null || loading ? "not-allowed" : "pointer",
             opacity: oauthLoading !== null || loading ? 0.6 : 1,
-            transition: "opacity 0.15s, background 0.15s",
+            transition: "all 0.2s",
             fontFamily: "var(--ns-font-base)",
           }}
           aria-label="Cadastrar com Google"
@@ -271,6 +294,7 @@ export default function SignUpPage() {
           type="button"
           onClick={() => handleOAuthSignUp("apple")}
           disabled={oauthLoading !== null || loading}
+          className="ns-card-interactive"
           style={{
             display: "flex",
             alignItems: "center",
@@ -279,14 +303,14 @@ export default function SignUpPage() {
             width: "100%",
             padding: "13px 20px",
             border: "1.5px solid #000000",
-            borderRadius: "var(--ns-radius)",
+            borderRadius: "14px",
             background: "#000000",
             color: "#FFFFFF",
             fontSize: 15,
             fontWeight: 600,
             cursor: oauthLoading !== null || loading ? "not-allowed" : "pointer",
             opacity: oauthLoading !== null || loading ? 0.6 : 1,
-            transition: "opacity 0.15s",
+            transition: "all 0.2s",
             fontFamily: "var(--ns-font-base)",
           }}
           aria-label="Cadastrar com Apple"

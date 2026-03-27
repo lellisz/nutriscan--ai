@@ -117,7 +117,7 @@ export default function SignInPage() {
   }
 
   return (
-    <div style={{
+    <div className="ns-aurora-bg" style={{
       padding: "20px",
       maxWidth: "420px",
       margin: "0 auto",
@@ -125,8 +125,9 @@ export default function SignInPage() {
       display: "flex",
       flexDirection: "column",
       justifyContent: "center",
+      position: "relative",
     }}>
-      {/* Logo & App Name */}
+      <div className="ns-card-glass animate-fade-up">
       <div className="animate-fade-up" style={{ textAlign: "center", marginBottom: 40 }}>
         <div style={{
           width: 72,
@@ -162,38 +163,38 @@ export default function SignInPage() {
       )}
 
       <form onSubmit={handleSubmit} className="animate-fade-up stagger-2">
-        <div style={{ marginBottom: 16 }}>
-          <label htmlFor="signin-email" className="ns-label-field">Email</label>
+        <div className="ns-float-group">
           <input
             id="signin-email"
             type="email"
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className={`ns-input ${errors.email ? "ns-input-error" : ""}`}
-            placeholder="seu@email.com"
+            className={`ns-float-input ${errors.email ? "ns-input-error" : ""}`}
+            placeholder=" "
             autoComplete="email"
           />
-          {errors.email && <div className="ns-error-text">{errors.email}</div>}
+          <label htmlFor="signin-email" className="ns-float-label">Email</label>
+          {errors.email && <div className="ns-error-text" style={{ paddingLeft: 16 }}>{errors.email}</div>}
         </div>
 
-        <div style={{ marginBottom: 28 }}>
-          <label htmlFor="signin-password" className="ns-label-field">Senha</label>
+        <div className="ns-float-group" style={{ marginBottom: 28 }}>
           <input
             id="signin-password"
             type="password"
             value={formData.password}
             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            className={`ns-input ${errors.password ? "ns-input-error" : ""}`}
-            placeholder="••••••••"
+            className={`ns-float-input ${errors.password ? "ns-input-error" : ""}`}
+            placeholder=" "
             autoComplete="current-password"
           />
-          {errors.password && <div className="ns-error-text">{errors.password}</div>}
+          <label htmlFor="signin-password" className="ns-float-label">Senha</label>
+          {errors.password && <div className="ns-error-text" style={{ paddingLeft: 16 }}>{errors.password}</div>}
         </div>
 
-        <button type="submit" disabled={loading} className="ns-btn ns-btn-primary">
+        <button type="submit" disabled={loading} className="ns-btn-gradient">
           {loading ? (
             <>
-              <div className="ns-spinner" />
+              <div className="ns-spinner" style={{ borderColor: 'rgba(255,255,255,0.3)', borderTopColor: '#FFF' }} />
               Entrando...
             </>
           ) : "Entrar"}
@@ -221,6 +222,7 @@ export default function SignInPage() {
           type="button"
           onClick={() => handleOAuthSignIn("google")}
           disabled={oauthLoading !== null || loading}
+          className="ns-card-interactive"
           style={{
             display: "flex",
             alignItems: "center",
@@ -229,14 +231,14 @@ export default function SignInPage() {
             width: "100%",
             padding: "13px 20px",
             border: "1.5px solid var(--ns-border-strong)",
-            borderRadius: "var(--ns-radius)",
+            borderRadius: "14px",
             background: "#FFFFFF",
             color: "#1A2E23",
             fontSize: 15,
             fontWeight: 600,
             cursor: oauthLoading !== null || loading ? "not-allowed" : "pointer",
             opacity: oauthLoading !== null || loading ? 0.6 : 1,
-            transition: "opacity 0.15s, background 0.15s",
+            transition: "all 0.2s",
             fontFamily: "var(--ns-font-base)",
           }}
           aria-label="Continuar com Google"
@@ -254,6 +256,7 @@ export default function SignInPage() {
           type="button"
           onClick={() => handleOAuthSignIn("apple")}
           disabled={oauthLoading !== null || loading}
+          className="ns-card-interactive"
           style={{
             display: "flex",
             alignItems: "center",
@@ -262,14 +265,14 @@ export default function SignInPage() {
             width: "100%",
             padding: "13px 20px",
             border: "1.5px solid #000000",
-            borderRadius: "var(--ns-radius)",
+            borderRadius: "14px",
             background: "#000000",
             color: "#FFFFFF",
             fontSize: 15,
             fontWeight: 600,
             cursor: oauthLoading !== null || loading ? "not-allowed" : "pointer",
             opacity: oauthLoading !== null || loading ? 0.6 : 1,
-            transition: "opacity 0.15s",
+            transition: "all 0.2s",
             fontFamily: "var(--ns-font-base)",
           }}
           aria-label="Continuar com Apple"
@@ -288,6 +291,7 @@ export default function SignInPage() {
         <Link to="/signup" style={{ color: "var(--ns-accent)", textDecoration: "none", fontWeight: 600 }}>
           Criar conta
         </Link>
+      </div>
       </div>
     </div>
   );

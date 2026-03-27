@@ -380,7 +380,7 @@ export default function ProfilePage() {
   // ── Render ─────────────────────────────────────────────────
 
   return (
-    <div style={{ background: 'var(--ns-bg-primary)', minHeight: '100dvh', paddingBottom: 100 }}>
+    <div className="ns-aurora-bg" style={{ background: 'transparent', minHeight: '100dvh', paddingBottom: 100 }}>
       <StatusBar />
 
       {/* ── Topo: avatar + nome + stats ── */}
@@ -462,7 +462,7 @@ export default function ProfilePage() {
 
       {/* ── Biometrics ── */}
       <div style={{ margin: '16px 20px 0' }}>
-        <div style={{ ...cardStyle, padding: 16 }}>
+        <div className="ns-card-interactive" style={{ ...cardStyle, padding: 16 }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 0 }}>
             {[
               { l: 'Idade',  v: age    ?? '—', u: age    ? 'anos'        : 'anos', Icon: IconCake  },
@@ -497,7 +497,7 @@ export default function ProfilePage() {
 
       {/* ── Hidratação ── */}
       <div style={{ margin: '16px 20px 0' }}>
-        <div style={{ ...cardStyle, padding: 16 }}>
+        <div className="ns-card-interactive" style={{ ...cardStyle, padding: 16 }}>
           <div style={{
             display: 'flex', alignItems: 'center',
             justifyContent: 'space-between', marginBottom: 12,
@@ -520,10 +520,9 @@ export default function ProfilePage() {
             </div>
           ) : (
             <>
-              <div style={{ height: 6, background: 'var(--ns-ring-track)', borderRadius: 4, overflow: 'hidden' }}>
-                <div style={{
+              <div style={{ height: 22, background: 'var(--ns-ring-track)', borderRadius: 20, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.05)', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.05)' }}>
+                <div className="ns-water-bar" style={{
                   height: '100%', width: `${waterPct}%`,
-                  background: 'var(--ns-blue)', borderRadius: 4,
                   transition: 'width 0.8s cubic-bezier(0.4,0,0.2,1)',
                 }} />
               </div>
@@ -588,7 +587,7 @@ export default function ProfilePage() {
       {/* ── Conta ── */}
       <div style={{ margin: '16px 20px 0' }}>
         <div style={sectionTitle}>Conta</div>
-        <div style={cardStyle}>
+        <div className="ns-card-interactive" style={cardStyle}>
 
           {/* Dados pessoais */}
           <div>

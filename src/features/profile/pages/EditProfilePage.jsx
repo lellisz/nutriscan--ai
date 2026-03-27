@@ -183,7 +183,7 @@ export default function EditProfilePage() {
   // ── Loading ──
   if (loadingData) {
     return (
-      <div style={{ background: 'var(--ns-bg-primary)', minHeight: '100dvh' }}>
+      <div className="ns-aurora-bg" style={{ background: 'transparent', minHeight: '100dvh' }}>
         {/* Header */}
         <div style={{
           position: 'sticky', top: 0, zIndex: 100,
@@ -217,7 +217,7 @@ export default function EditProfilePage() {
 
   // ── Render ──
   return (
-    <div style={{ background: 'var(--ns-bg-primary)', minHeight: '100dvh', paddingBottom: 100 }}>
+    <div className="ns-aurora-bg" style={{ background: 'transparent', minHeight: '100dvh', paddingBottom: 100 }}>
 
       {/* Header fixo */}
       <div style={{

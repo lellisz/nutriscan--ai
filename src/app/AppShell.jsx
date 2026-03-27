@@ -126,9 +126,9 @@ export function BottomNav({ onScanPress }) {
               className="ns-nav-item"
               onClick={onScanPress}
               aria-label="Escanear refeição"
-              style={{ WebkitTapHighlightColor: 'transparent', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
             >
-              <div className="ns-fab scan-btn-glow">
+              <div className="ns-fab scan-btn-glow" style={{ position: 'relative' }}>
+                <div className="ns-fab-aura" />
                 <IconScan />
               </div>
             </button>
@@ -185,10 +185,12 @@ export function BottomNav({ onScanPress }) {
 // ── AppShell ───────────────────────────────────────────────
 export default function AppShell({ children, onScanPress }) {
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--ns-bg-primary)' }}>
-      <OfflineIndicator />
-      {children}
-      <BottomNav onScanPress={onScanPress} />
+    <div className="ns-aurora-bg" style={{ minHeight: '100dvh', background: 'transparent', display: 'flex', justifyContent: 'center' }}>
+      <div style={{ width: '100%', maxWidth: '500px', position: 'relative', background: 'transparent', minHeight: '100dvh', boxShadow: '0 0 40px rgba(0,0,0,0.03)' }}>
+        <OfflineIndicator />
+        {children}
+        <BottomNav onScanPress={onScanPress} />
+      </div>
     </div>
   );
 }

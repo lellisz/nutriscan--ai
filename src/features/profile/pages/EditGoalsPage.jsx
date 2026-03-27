@@ -188,7 +188,7 @@ export default function EditGoalsPage() {
   // ── Loading ──
   if (loadingData) {
     return (
-      <div style={{ background: 'var(--ns-bg-primary)', minHeight: '100dvh' }}>
+      <div className="ns-aurora-bg" style={{ background: 'transparent', minHeight: '100dvh' }}>
         <div style={headerStyle}>
           <button onClick={() => navigate('/profile')} style={backBtnStyle}>
             <IconBack />
@@ -206,7 +206,7 @@ export default function EditGoalsPage() {
 
   // ── Render ──
   return (
-    <div style={{ background: 'var(--ns-bg-primary)', minHeight: '100dvh', paddingBottom: 100 }}>
+    <div className="ns-aurora-bg" style={{ background: 'transparent', minHeight: '100dvh', paddingBottom: 100 }}>
 
       {/* Header fixo */}
       <div style={headerStyle}>

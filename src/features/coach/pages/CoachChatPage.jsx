@@ -341,30 +341,34 @@ export default function CoachChatPage() {
         : undefined;
 
       const supabase = getSupabaseClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      const accessToken = session?.access_token;
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000);
 
-      let data;
-      try {
-        const { data: fnData, error: fnError } = await supabase.functions.invoke("chat", {
-          body: {
-            conversationId: convId,
-            message: userMessage,
-            userId: user.id,
-          },
-        });
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        },
+        body: JSON.stringify({
+          conversationId: convId,
+          message: userMessage,
+          userId: user.id,
+        }),
+        signal: controller.signal,
+      });
 
-        clearTimeout(timeoutId);
+      clearTimeout(timeoutId);
 
-        if (fnError) {
-          throw new Error(fnError.message || "Erro na Edge Function");
-        }
-        data = fnData;
-      } catch (invokeErr) {
-        clearTimeout(timeoutId);
-        throw invokeErr;
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.message || errData.error || `Erro ${response.status}`);
       }
+
+      const data = await response.json();
 
       const aiMsg = {
         id: `ai-${Date.now()}`,
@@ -466,8 +470,8 @@ export default function CoachChatPage() {
   if (authLoading || loading) {
     return (
       <div
-        className="flex-center"
-        style={{ minHeight: "60vh", background: "var(--ns-bg-primary)" }}
+        className="flex-center ns-aurora-bg"
+        style={{ minHeight: "60vh", background: "transparent" }}
       >
         <div className="ns-spinner ns-spinner-lg" />
       </div>
@@ -487,7 +491,7 @@ export default function CoachChatPage() {
           gap: 12,
           padding: "0 24px",
           textAlign: "center",
-          background: "var(--ns-bg-primary)",
+          background: "transparent",
         }}
       >
         <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
@@ -504,13 +508,14 @@ export default function CoachChatPage() {
   const canSend = inputMessage.trim().length > 0 && !sending;
 
   return (
-    <div style={{
+    <div className="ns-aurora-bg" style={{
       display: "flex",
       flexDirection: "column",
       height: "calc(100dvh - var(--ns-nav-height, 72px))",
-      background: "var(--ns-bg-primary)",
-      maxWidth: 480,
+      background: "transparent",
+      maxWidth: 500,
       margin: "0 auto",
+      position: "relative",
     }}>
 
       {/* ── Header ─────────────────────────────────────────────────────────── */}
@@ -808,13 +813,14 @@ export default function CoachChatPage() {
                 justifyContent: msg.role === "user" ? "flex-end" : "flex-start",
               }}
             >
-              <div style={{
+              <div 
+                className={msg.role === "user" ? "ns-chat-bubble-user" : "ns-card-glass"}
+                style={{
                 maxWidth: "78%",
                 padding: "11px 15px",
                 borderRadius: msg.role === "user"
                   ? "18px 18px 4px 18px"
                   : "18px 18px 18px 4px",
-                background: msg.role === "user" ? "var(--ns-accent)" : "var(--ns-bg-elevated)",
                 color: msg.role === "user" ? "#FFFFFF" : "var(--ns-text-primary)",
                 fontSize: 15,
                 lineHeight: 1.55,
@@ -902,12 +908,10 @@ export default function CoachChatPage() {
       {/* ── Input bar ───────────────────────────────────────────────────────── */}
       <form
         onSubmit={handleSendMessage}
+        className="ns-chat-input-pill animate-fade-up"
         style={{
-          padding: "10px 16px 12px",
-          borderTop: "1px solid var(--ns-border)",
-          background: "rgba(244,245,240,0.94)",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
+          margin: "0 16px 16px",
+          padding: "6px 8px",
           display: "flex",
           gap: 10,
           alignItems: "center",
@@ -934,9 +938,8 @@ export default function CoachChatPage() {
           rows={1}
           style={{
             flex: 1,
-            background: "var(--ns-bg-elevated)",
-            border: "0.5px solid var(--ns-border)",
-            borderRadius: 22,
+            background: "transparent",
+            border: "none",
             padding: "11px 18px",
             fontSize: 16,
             color: "var(--ns-text-primary)",
