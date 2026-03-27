@@ -14,6 +14,7 @@ import {
   saveScanHistory,
 } from '../../../lib/db';
 import { useTrack } from '../../../lib/hooks/useTrack';
+import ProactiveNudgeBanner from '../../coach/components/ProactiveNudgeBanner';
 
 // ── Praxi: estado reativo baseado nos dados do dia ────────────────────────────
 function getPraxiState({ caloriesPercent, proteinPercent, waterPercent, streak, hour }) {
@@ -33,6 +34,16 @@ const PRAXI_STATE_LABELS = {
   celebrating: 'Meta de calorias quase atingida!',
   happy:       'Praxi pronto',
 };
+
+function getPraxiBannerLabel(state, hour) {
+  if (state === 'happy') {
+    if (hour >= 6 && hour < 10)  return 'Café da manhã registrado?';
+    if (hour >= 12 && hour < 15) return 'Hora do almoço — vamos registrar?';
+    if (hour >= 19 && hour < 22) return 'Hora do jantar. Vamos lá?';
+    return 'Praxi pronto';
+  }
+  return PRAXI_STATE_LABELS[state] ?? 'Praxi pronto';
+}
 
 // ── Quick Actions dinâmicas do Coach ─────────────────────────────────────────
 function getQuickActions({ caloriesPercent, hour, hasLogs }) {
@@ -134,7 +145,7 @@ function MacroCard({ label, value, goal, unit = 'g' }) {
       background: 'var(--ns-bg-card)',
       border: '0.5px solid var(--ns-border)',
       borderRadius: 14,
-      padding: '14px 12px',
+      padding: '16px',
       flex: 1,
       minWidth: 0,
       boxShadow: 'var(--ns-shadow-sm)',
@@ -151,7 +162,7 @@ function MacroCard({ label, value, goal, unit = 'g' }) {
       }}>
         {value}<span style={{ fontSize: 11, fontWeight: 500, color: 'var(--ns-text-muted)' }}>{unit}</span>
       </div>
-      <div style={{ fontSize: 11, color: 'var(--ns-text-muted)', marginTop: 2 }}>de {goal}{unit}</div>
+      <div style={{ fontSize: 11, color: 'var(--ns-text-secondary)', marginTop: 2 }}>de {goal}{unit}</div>
       <div style={{ height: 7, background: 'var(--ns-ring-track)', borderRadius: 4, marginTop: 8, overflow: 'hidden' }}>
         <div style={{
           height: '100%', background: color, borderRadius: 4,
@@ -200,6 +211,15 @@ function SkeletonBlock({ width = '100%', height = 16, radius = 6, style = {} }) 
       ...style,
     }} />
   );
+}
+
+// ── Coach Banner: copy contextual por hora ────────────────
+function getCoachBannerCopy(hour) {
+  if (hour >= 6 && hour < 10) return 'Bom dia! Que tal registrar o café da manhã?';
+  if (hour >= 10 && hour < 14) return 'Hora do almoço se aproximando — pronto para registrar?';
+  if (hour >= 14 && hour < 18) return 'Tarde produtiva! Registrou o almoço?';
+  if (hour >= 18 && hour < 23) return 'Noite chegando — como foi sua alimentação hoje?';
+  return 'Praxi pronto para te ajudar';
 }
 
 // ── Dashboard Page ────────────────────────────────────────
@@ -482,7 +502,7 @@ export default function DashboardPage() {
               {greeting()}, {firstName}
             </h1>
             <p style={{
-              fontSize: 14, color: 'var(--ns-text-muted)',
+              fontSize: 14, color: 'var(--ns-text-secondary)',
               margin: '6px 0 0', lineHeight: 1.4,
             }}>
               {loading
@@ -536,7 +556,7 @@ export default function DashboardPage() {
                 <CalorieRing calories={todayData.calories} goal={goalCal} />
 
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 12, color: 'var(--ns-text-muted)', marginBottom: 4, fontWeight: 500 }}>
+                  <div style={{ fontSize: 11, color: 'var(--ns-text-secondary)', marginBottom: 4, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                     Restam hoje
                   </div>
                   <div style={{
@@ -545,7 +565,7 @@ export default function DashboardPage() {
                   }}>
                     {remaining.toLocaleString('pt-BR')}
                   </div>
-                  <div style={{ fontSize: 12, color: 'var(--ns-text-muted)', marginTop: 4 }}>
+                  <div style={{ fontSize: 11, fontWeight: 400, color: 'var(--ns-text-muted)', marginTop: 4 }}>
                     de {goalCal.toLocaleString('pt-BR')} kcal
                   </div>
 
@@ -556,15 +576,16 @@ export default function DashboardPage() {
                       padding: '4px 10px',
                     }}>
                       <div style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--ns-accent)', marginRight: 6 }} />
-                      <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--ns-accent)' }}>{calPct}% consumido</span>
+                      <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--ns-text-primary)' }}>{calPct}% consumido</span>
                     </div>
                     <div style={{
                       display: 'inline-flex', alignItems: 'center', gap: 4,
                       padding: '4px 10px', borderRadius: 20,
-                      background: 'rgba(26,127,86,0.08)',
-                      fontSize: 12, fontWeight: 600, color: 'var(--ns-accent)',
+                      background: chronoScore === null ? '#FEF2F2' : 'rgba(26,127,86,0.08)',
+                      fontSize: 12, fontWeight: 600,
+                      color: chronoScore === null ? '#991B1B' : 'var(--ns-text-primary)',
                     }}>
-                      ⏰ Chrono {chronoScore ?? '--'}
+                      {chronoScore === null ? '⏰ Chrono --' : `⏰ Chrono ${chronoScore}`}
                     </div>
                   </div>
                 </div>
@@ -607,7 +628,7 @@ export default function DashboardPage() {
                           ? '#FFFFFF'
                           : done
                           ? 'var(--ns-accent)'
-                          : 'var(--ns-text-disabled)',
+                          : '#6B7280',
                         border: isToday
                           ? 'none'
                           : done
@@ -628,11 +649,14 @@ export default function DashboardPage() {
           )}
         </div>
 
+        {/* ── Nudge proativo do Coach ── */}
+        {!loading && <ProactiveNudgeBanner streakDays={streakCount} />}
+
         {/* ── Refeições frequentes ── */}
         {!loading && frequentFoods.length > 0 && (
           <div style={{ marginBottom: 12 }}>
             <div style={{
-              fontSize: 13, fontWeight: 600, color: 'var(--ns-text-muted)',
+              fontSize: 13, fontWeight: 600, color: 'var(--ns-text-secondary)',
               letterSpacing: '0.02em', textTransform: 'uppercase',
               marginBottom: 8, paddingLeft: 2,
             }}>
@@ -696,6 +720,18 @@ export default function DashboardPage() {
             <div style={{ fontSize: 13, color: 'var(--ns-text-muted)', lineHeight: 1.5 }}>
               Faça seu primeiro scan para começar a acompanhar sua nutrição de hoje.
             </div>
+            <button
+              onClick={() => navigate('/scan')}
+              style={{
+                marginTop: 12, background: 'none', border: 'none',
+                cursor: 'pointer', fontSize: 13, fontWeight: 500,
+                color: 'var(--ns-accent)', textDecoration: 'underline',
+                padding: 0,
+                WebkitTapHighlightColor: 'transparent',
+              }}
+            >
+              ou registrar manualmente
+            </button>
           </div>
         )}
 
@@ -714,7 +750,7 @@ export default function DashboardPage() {
               <SkeletonBlock height={88} style={{ flex: 1, borderRadius: 14 }} />
             </div>
           ) : (
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div style={{ display: 'flex', gap: 12 }}>
               <MacroCard label="Proteína"    value={todayData.protein} goal={goals.protein} />
               <MacroCard label="Carboidrato" value={todayData.carbs}   goal={goals.carbs}   />
               <MacroCard label="Gordura"     value={todayData.fat}     goal={goals.fat}     />
@@ -730,7 +766,7 @@ export default function DashboardPage() {
           transition={{ type: 'spring', stiffness: 400, damping: 17 }}
           style={{
             marginBottom: 12,
-            background: 'var(--ns-bg-card)',
+            background: '#F0FDF4',
             border: '0.5px solid var(--ns-border)',
             borderRadius: 16, padding: '14px 16px',
             display: 'flex', alignItems: 'center', gap: 14,
@@ -743,7 +779,7 @@ export default function DashboardPage() {
           </div>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 11, color: 'var(--ns-accent)', fontWeight: 600, letterSpacing: '-0.01em', marginBottom: 2 }}>
-              {loading ? 'Praxi pronto' : PRAXI_STATE_LABELS[praxiState]}
+              {loading ? 'Praxi pronto' : getPraxiBannerLabel(praxiState, currentHour)}
             </div>
             <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--ns-text-primary)', letterSpacing: '-0.02em' }}>
               Escanear refeição
@@ -764,7 +800,7 @@ export default function DashboardPage() {
         {!loading && (
           <div style={{ marginBottom: 12 }}>
             <div style={{
-              fontSize: 13, fontWeight: 600, color: 'var(--ns-text-muted)',
+              fontSize: 13, fontWeight: 600, color: 'var(--ns-text-secondary)',
               letterSpacing: '0.02em', textTransform: 'uppercase',
               marginBottom: 8, paddingLeft: 2,
             }}>

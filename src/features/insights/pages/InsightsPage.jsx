@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../auth/hooks/useAuth";
 import * as db from "../../../lib/db";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
@@ -33,6 +34,7 @@ const INTENSITY_OPTIONS = [
 
 export default function InsightsPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [goals, setGoals] = useState(null);
   const [profile, setProfile] = useState(null);
   const [scans, setScans] = useState([]);
@@ -335,8 +337,30 @@ export default function InsightsPage() {
         </div>
       )}
 
+      {/* Botão tendências */}
+      <button
+        onClick={() => navigate('/trends')}
+        className="animate-fade-up stagger-1"
+        style={{
+          display: 'flex', alignItems: 'center', gap: 8,
+          background: 'var(--ns-accent-bg)',
+          border: '0.5px solid rgba(45,143,94,0.20)',
+          borderRadius: 12, padding: '10px 14px',
+          cursor: 'pointer', width: '100%', marginBottom: 12,
+          WebkitTapHighlightColor: 'transparent',
+        }}
+      >
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <polyline points="1,13 5,8 9,10 13,5 17,7" stroke="var(--ns-accent)" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+        <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--ns-accent)' }}>Ver tendências nutricionais</span>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{ marginLeft: 'auto' }}>
+          <path d="M4 2.5l4 3.5-4 3.5" stroke="var(--ns-accent)" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </button>
+
       {/* Tab bar */}
-      <div className="animate-fade-up stagger-1" style={{
+      <div className="animate-fade-up stagger-2" style={{
         display: "flex", gap: 0, marginBottom: 24,
         background: "var(--ns-bg-elevated)", borderRadius: 100,
         padding: 4,

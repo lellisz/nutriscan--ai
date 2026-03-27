@@ -10,6 +10,8 @@ import ScanCorrectionModal from "../../../components/ScanCorrectionModal";
 import { useVoiceInput } from "../../../lib/hooks/useVoiceInput";
 import VoicePreviewModal from "../components/VoicePreviewModal";
 import { haptic } from "../../../lib/haptics";
+import MealTemplatesSelector from "../components/MealTemplatesSelector";
+import PortionAdjustModal from "../components/PortionAdjustModal";
 
 function compressImage(dataUrl, maxSize = 800, quality = 0.82) {
   return new Promise((resolve) => {
@@ -76,6 +78,8 @@ export default function ScanPage() {
   const [savingCorrection, setSavingCorrection] = useState(false);
   const [retryCount, setRetryCount]     = useState(0);
   const [mealType, setMealType]         = useState(detectMealType);
+  const [showTemplates, setShowTemplates]     = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
   const maxRetries = 3;
   const voice = useVoiceInput();
 
@@ -435,6 +439,73 @@ export default function ScanPage() {
               voice.reset();
             }}
             onCancel={voice.reset}
+          />
+        )}
+
+        {/* Separador "ou use um template" */}
+        <div style={{ padding: "0 20px 8px", display: "flex", alignItems: "center", gap: 8 }}>
+          <div style={{ flex: 1, height: 1, background: "var(--ns-border)" }} />
+          <span style={{ fontSize: 12, color: "var(--ns-text-disabled)", whiteSpace: "nowrap" }}>
+            ou use um template
+          </span>
+          <div style={{ flex: 1, height: 1, background: "var(--ns-border)" }} />
+        </div>
+
+        {/* Botão "Usar template rápido" */}
+        <div style={{ padding: "0 20px 20px", display: "flex", justifyContent: "center" }}>
+          <button
+            onClick={() => setShowTemplates(true)}
+            style={{
+              display: "flex", alignItems: "center", gap: 8,
+              padding: "10px 20px", borderRadius: 12,
+              background: "transparent",
+              border: "1.5px solid var(--ns-accent)",
+              color: "var(--ns-accent)",
+              fontSize: 14, fontWeight: 600, cursor: "pointer",
+              WebkitTapHighlightColor: "transparent",
+            }}
+          >
+            🍽️ Usar template rápido
+          </button>
+        </div>
+
+        {/* Seletor de templates */}
+        {showTemplates && (
+          <MealTemplatesSelector
+            onClose={() => setShowTemplates(false)}
+            onSelect={(tmpl) => {
+              setShowTemplates(false);
+              setSelectedTemplate(tmpl);
+            }}
+          />
+        )}
+
+        {/* Modal de ajuste de porção */}
+        {selectedTemplate && (
+          <PortionAdjustModal
+            template={selectedTemplate}
+            onClose={() => setSelectedTemplate(null)}
+            onConfirm={async ({ template, scaledMacros }) => {
+              try {
+                await db.saveScanHistory({
+                  userId: user?.id,
+                  analysis: {
+                    food_name: template.name,
+                    calories:  scaledMacros.calories,
+                    protein:   scaledMacros.protein,
+                    carbs:     scaledMacros.carbs,
+                    fat:       scaledMacros.fat,
+                    confidence: "alta",
+                    ai_tip:    "Adicionado via template",
+                    meal_type: mealType,
+                  },
+                });
+                setSelectedTemplate(null);
+                haptic("success");
+              } catch (err) {
+                console.error("Erro ao salvar template:", err);
+              }
+            }}
           />
         )}
       </div>

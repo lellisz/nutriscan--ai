@@ -541,6 +541,93 @@ export async function listChatMessages(conversationId, limit = 100) {
 /**
  * Adiciona uma mensagem à conversa e atualiza contadores
  */
+/**
+ * Retorna soma diária de macros dos últimos N dias
+ * @param {string} userId
+ * @param {number} days - 7 ou 30
+ * @returns {Promise<Array>}
+ */
+export async function getDailyMacros(userId, days = 7) {
+  const client = supabase();
+  const since = new Date();
+  since.setDate(since.getDate() - days);
+
+  const { data, error } = await client
+    .from('scan_history')
+    .select('calories, protein, carbs, fat, scanned_at')
+    .eq('user_id', userId)
+    .gte('scanned_at', since.toISOString())
+    .order('scanned_at', { ascending: true });
+
+  if (error) throw error;
+
+  // Agrupar por data local (YYYY-MM-DD)
+  const byDate = {};
+  (data || []).forEach(row => {
+    const dateStr = new Date(row.scanned_at).toLocaleDateString('fr-CA');
+    if (!byDate[dateStr]) {
+      byDate[dateStr] = { date: dateStr, calories: 0, protein: 0, carbs: 0, fat: 0, mealsCount: 0 };
+    }
+    byDate[dateStr].calories   += (row.calories || 0);
+    byDate[dateStr].protein    += (row.protein  || 0);
+    byDate[dateStr].carbs      += (row.carbs    || 0);
+    byDate[dateStr].fat        += (row.fat      || 0);
+    byDate[dateStr].mealsCount += 1;
+  });
+
+  // Preencher dias sem dados
+  const result = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const dateStr = d.toLocaleDateString('fr-CA');
+    result.push(byDate[dateStr] || {
+      date: dateStr, calories: 0, protein: 0, carbs: 0, fat: 0, mealsCount: 0
+    });
+  }
+
+  return result;
+}
+
+/**
+ * Resumo do período (médias + melhor dia + dias na meta)
+ * @param {string} userId
+ * @param {number} days
+ * @param {number} caloriesGoal
+ * @returns {Promise<Object>}
+ */
+export async function getPeriodSummary(userId, days = 7, caloriesGoal = 2000) {
+  const data = await getDailyMacros(userId, days);
+  const daysWithData = data.filter(d => d.calories > 0);
+
+  if (daysWithData.length === 0) {
+    return { avgCalories: 0, avgProtein: 0, avgCarbs: 0, avgFat: 0, daysOnGoal: 0, totalDays: days, bestDay: null };
+  }
+
+  const total = daysWithData.reduce((acc, d) => ({
+    calories: acc.calories + d.calories,
+    protein:  acc.protein  + d.protein,
+    carbs:    acc.carbs    + d.carbs,
+    fat:      acc.fat      + d.fat,
+  }), { calories: 0, protein: 0, carbs: 0, fat: 0 });
+
+  const count = daysWithData.length;
+  const bestDay = daysWithData.reduce((best, d) => d.calories > (best?.calories ?? 0) ? d : best, null);
+  const daysOnGoal = daysWithData.filter(d => d.calories >= caloriesGoal * 0.9 && d.calories <= caloriesGoal * 1.1).length;
+
+  return {
+    avgCalories: Math.round(total.calories / count),
+    avgProtein:  Math.round(total.protein  / count),
+    avgCarbs:    Math.round(total.carbs    / count),
+    avgFat:      Math.round(total.fat      / count),
+    daysOnGoal,
+    totalDays:   days,
+    bestDay,
+  };
+}
+
+// ==================== COACH IA - CHAT ====================
+
 export async function addChatMessage(conversationId, userId, { role, content, model = null, tokensUsed = null, contextUsed = null }) {
   const client = supabase();
 

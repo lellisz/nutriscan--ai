@@ -135,7 +135,7 @@ function HistItem({ item, onDelete }) {
           style={{
             marginTop: 6, background: 'none', border: 'none', cursor: 'pointer',
             fontSize: 10, fontWeight: 600, padding: '2px 0',
-            color: confirming ? 'var(--ns-danger)' : 'var(--ns-text-disabled)',
+            color: confirming ? 'var(--ns-danger)' : 'var(--ns-text-muted)',
             WebkitTapHighlightColor: 'transparent',
           }}
         >

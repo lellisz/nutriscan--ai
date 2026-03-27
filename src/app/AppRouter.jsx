@@ -18,6 +18,8 @@ const SubscriptionPage = React.lazy(() => import('../features/subscription/pages
 const PaywallWelcomePage = React.lazy(() => import('../features/subscription/pages/PaywallWelcomePage'));
 const SignInPage        = React.lazy(() => import('../features/auth/pages/SignInPage'));
 const SignUpPage        = React.lazy(() => import('../features/auth/pages/SignUpPage'));
+const TrendsPage        = React.lazy(() => import('../features/trends/pages/TrendsPage'));
+const TemplatesPage     = React.lazy(() => import('../features/templates/pages/TemplatesPage'));
 
 function PageLoader() {
   return (
@@ -60,6 +62,8 @@ function AppWithNav() {
           <Route path="/onboarding"  element={<SuspenseWrapper><OnboardingPage /></SuspenseWrapper>} />
           <Route path="/subscription" element={<SuspenseWrapper><SubscriptionPage /></SuspenseWrapper>} />
           <Route path="/paywall-welcome" element={<SuspenseWrapper><PaywallWelcomePage /></SuspenseWrapper>} />
+          <Route path="/trends"      element={<SuspenseWrapper><TrendsPage /></SuspenseWrapper>} />
+          <Route path="/templates"   element={<SuspenseWrapper><TemplatesPage /></SuspenseWrapper>} />
           <Route path="*"            element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </AppShell>
