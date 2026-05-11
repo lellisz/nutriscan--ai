@@ -1,0 +1,129 @@
+- generic [ref=e5]:
+  - generic [ref=e6]:
+    - generic [ref=e10]:
+      - generic [ref=e12]: Felipe
+      - generic [ref=e13]: quarta-feira, 6 de mai.
+      - generic [ref=e16]:
+        - generic [ref=e18] [cursor=pointer]: Normal
+        - generic [ref=e20] [cursor=pointer]: Estressado
+        - generic [ref=e22] [cursor=pointer]: Viagem
+        - generic [ref=e24] [cursor=pointer]: Comemorando
+        - generic [ref=e26] [cursor=pointer]: Dia difícil
+      - generic [ref=e29]:
+        - generic [ref=e30]:
+          - generic [ref=e32]:
+            - generic [ref=e33]:
+              - generic [ref=e34]: "12"
+              - generic [ref=e35]: atenção
+            - generic [ref=e36]: Bom progresso hoje
+          - generic [ref=e38]:
+            - generic [ref=e40]:
+              - generic [ref=e41]: Calorias
+              - generic [ref=e42]:
+                - generic [ref=e43]: "0"
+                - generic [ref=e44]: / 2.100 kcal
+            - generic [ref=e47]:
+              - generic [ref=e48]: Proteína
+              - generic [ref=e49]:
+                - generic [ref=e50]: "0"
+                - generic [ref=e51]: / 150 g
+            - generic [ref=e54]:
+              - generic [ref=e55]: Hidratação
+              - generic [ref=e56]:
+                - generic [ref=e57]: "0"
+                - generic [ref=e58]: / 2.000 ml
+        - generic [ref=e60]:
+          - generic [ref=e62]:
+            - generic [ref=e63]:
+              - generic [ref=e64]: "0"
+              - generic [ref=e65]: kcal
+            - generic [ref=e66]: 2.100 restam
+          - generic [ref=e68]:
+            - generic [ref=e69]:
+              - generic [ref=e70]: PROT
+              - generic [ref=e71]:
+                - generic [ref=e72]: "0"
+                - generic [ref=e73]: g
+            - generic [ref=e76]:
+              - generic [ref=e77]: CARBS
+              - generic [ref=e78]:
+                - generic [ref=e79]: "0"
+                - generic [ref=e80]: g
+            - generic [ref=e83]:
+              - generic [ref=e84]: GORD
+              - generic [ref=e85]:
+                - generic [ref=e86]: "0"
+                - generic [ref=e87]: g
+        - generic [ref=e89]:
+          - generic [ref=e91]:
+            - generic [ref=e92]: Hidratação
+            - generic [ref=e93]: 0 / 2000 ml
+          - generic [ref=e94]:
+            - img [ref=e95]
+            - img [ref=e97]
+            - img [ref=e99]
+            - img [ref=e101]
+            - img [ref=e103]
+            - img [ref=e105]
+            - img [ref=e107]
+            - img [ref=e109]
+          - generic [ref=e112]: Sugestão do Coach
+          - generic [ref=e113]: Frango grelhado + salada verde
+          - generic [ref=e114]: +48g prot · 280 kcal · fecha suas metas
+        - generic [ref=e115]: Hoje
+        - generic [ref=e118]: Seu primeiro registro define o ponto de partida. Sem pressa.
+        - button [ref=e151] [cursor=pointer]:
+          - generic [ref=e122]: + REGISTRAR REFEIÇÃO
+    - generic [ref=e157]:
+      - generic [ref=e159]: Jejum
+      - generic [ref=e160]: Protocolo de jejum intermitente
+      - generic [ref=e162]:
+        - generic [ref=e164] [cursor=pointer]: 12:12
+        - generic [ref=e166] [cursor=pointer]: 16:8
+        - generic [ref=e168] [cursor=pointer]: 18:6
+        - generic [ref=e170] [cursor=pointer]: 24h
+      - generic [ref=e172]:
+        - img [ref=e173]
+        - generic [ref=e232]:
+          - generic [ref=e233]: "--:--:--"
+          - generic [ref=e234]: restante de 16h
+      - generic [ref=e237]:
+        - generic [ref=e238]:
+          - generic [ref=e239]: 22:00 → 14:00
+          - generic [ref=e240]: Jejum
+        - generic [ref=e242]:
+          - generic [ref=e243]: 14:00 → 22:00
+          - generic [ref=e244]: Comer
+      - generic [ref=e245]:
+        - generic [ref=e247]: Benefícios Ativos
+        - generic [ref=e248]: → Queima de gordura ativa desde 04:00
+        - generic [ref=e249]: · Autofagia celular — início em 2h
+        - generic [ref=e250]: · Cetose leve — gradual
+      - generic [ref=e251]: Histórico 7 dias
+      - button [ref=e282] [cursor=pointer]:
+        - generic [ref=e280]: Iniciar Jejum
+    - generic [ref=e288]:
+      - generic [ref=e290]: Insights
+      - generic [ref=e291]:
+        - generic [ref=e293] [cursor=pointer]: Vitaminas
+        - generic [ref=e295] [cursor=pointer]: Relatório
+        - generic [ref=e297] [cursor=pointer]: Sono
+        - generic [ref=e299] [cursor=pointer]: Calorias
+        - generic [ref=e301] [cursor=pointer]: Peso
+      - generic [ref=e303]:
+        - generic [ref=e305]: Registre suas refeições para ver sua cobertura vitamínica.
+        - generic [ref=e306]: Praxi estima vitaminas com base nos alimentos que você registra — sem julgamentos.
+  - generic [ref=e124]:
+    - generic [ref=e125] [cursor=pointer]:
+      - img [ref=e126]
+      - generic [ref=e128]: INÍCIO
+    - generic [ref=e130] [cursor=pointer]:
+      - img [ref=e131]
+      - generic [ref=e134]: JEJUM
+    - img [ref=e137] [cursor=pointer]
+    - generic [active] [ref=e139] [cursor=pointer]:
+      - img [ref=e140]
+      - generic [ref=e144]: INSIGHTS
+    - generic [ref=e145] [cursor=pointer]:
+      - img [ref=e146]
+      - generic [ref=e150]: COMIDA

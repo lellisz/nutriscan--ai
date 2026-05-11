@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DogStilo® — Coleiras, Guias & Peitorais Premium</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#080808;
+  --s1:#111111;
+  --s2:#1c1c1c;
+  --s3:#2a2a2a;
+  --white:#FAFAF8;
+  --off:#D8D4CC;
+  --muted:#666;
+  --muted2:#444;
+  --accent:#E8E0D0;
+}
+html{scroll-behavior:smooth;font-size:16px;}
+body{background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:0 56px;height:68px;display:flex;align-items:center;justify-content:space-between;transition:background .4s,border-color .4s;border-bottom:1px solid transparent;}
+nav.solid{background:rgba(8,8,8,.95);backdrop-filter:blur(16px);border-color:var(--s3);}
+.logo-img{height:36px;width:auto;filter:invert(1);opacity:.95;}
+.nav-links{display:flex;gap:40px;list-style:none;}
+.nav-links a{color:var(--muted);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;transition:color .2s;}
+.nav-links a:hover{color:var(--white);}
+.nav-right{display:flex;align-items:center;gap:20px;}
+.nav-whats{display:flex;align-items:center;gap:8px;color:var(--white);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;border:1px solid var(--s3);padding:9px 20px;border-radius:999px;transition:border-color .2s;}
+.nav-whats:hover{border-color:var(--muted);}
+
+/* ── HERO ── */
+.hero{min-height:100svh;display:grid;grid-template-columns:1fr 1fr;padding:68px 56px 0;gap:0;}
+.hero-left{display:flex;flex-direction:column;justify-content:center;padding-right:64px;padding-top:40px;animation:up .9s cubic-bezier(.22,1,.36,1) both;}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:32px;}
+.eyebrow-dot{width:5px;height:5px;background:var(--white);border-radius:50%;flex-shrink:0;}
+h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(52px,5.5vw,90px);font-weight:700;line-height:.97;letter-spacing:-.03em;text-transform:uppercase;margin-bottom:28px;}
+h1 .thin{font-weight:300;color:var(--muted);}
+.hero-line{width:40px;height:1px;background:var(--s3);margin-bottom:28px;}
+.hero-p{font-size:15px;color:var(--muted);line-height:1.75;max-width:400px;margin-bottom:48px;}
+.hero-actions{display:flex;gap:12px;align-items:center;}
+.btn-dark{background:var(--white);color:var(--bg);padding:15px 32px;border-radius:999px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;transition:opacity .2s,transform .2s;}
+.btn-dark:hover{opacity:.88;transform:translateY(-1px);}
+.btn-ghost{color:var(--muted);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;display:flex;align-items:center;gap:8px;transition:color .2s;}
+.btn-ghost:hover{color:var(--white);}
+.btn-ghost .arr{transition:transform .2s;}
+.btn-ghost:hover .arr{transform:translateX(4px);}
+.hero-nums{display:flex;gap:40px;margin-top:64px;padding-top:40px;border-top:1px solid var(--s2);}
+.num span{display:block;font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em;}
+.num p{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+
+/* HERO RIGHT */
+.hero-right{display:flex;align-items:center;justify-content:center;position:relative;animation:up .9s .15s cubic-bezier(.22,1,.36,1) both;}
+.hero-visual{position:relative;width:440px;height:440px;}
+.visual-ring{position:absolute;inset:0;border-radius:50%;border:1px solid var(--s2);animation:spin 30s linear infinite;}
+.visual-ring::after{content:'';position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:6px;height:6px;background:var(--white);border-radius:50%;}
+.visual-inner{position:absolute;inset:48px;border-radius:50%;background:var(--s1);border:1px solid var(--s2);display:flex;align-items:center;justify-content:center;animation:float 5s ease-in-out infinite;}
+.hero-logo-big{width:220px;height:220px;object-fit:contain;filter:invert(1);opacity:.92;}
+.badge-float{position:absolute;background:var(--s1);border:1px solid var(--s2);border-radius:14px;padding:10px 16px;font-size:11px;font-family:'Space Grotesk',sans-serif;letter-spacing:.04em;white-space:nowrap;}
+.bf1{top:56px;right:-16px;animation:float 4s 1s ease-in-out infinite;}
+.bf2{bottom:72px;left:-24px;animation:float 4s ease-in-out infinite;}
+.bf-dot{display:inline-block;width:5px;height:5px;background:var(--white);border-radius:50%;margin-right:8px;vertical-align:middle;}
+
+/* ── TICKER ── */
+.ticker{overflow:hidden;border-top:1px solid var(--s2);border-bottom:1px solid var(--s2);padding:16px 0;margin-top:0;}
+.ticker-track{display:flex;gap:56px;width:max-content;animation:ticker 22s linear infinite;}
+.tick{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
+.tick strong{color:var(--white);font-weight:500;}
+
+/* ── PRODUCTS ── */
+.section{padding:100px 56px;}
+.sh{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:48px;}
+.sh-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(28px,3vw,44px);font-weight:700;text-transform:uppercase;letter-spacing:-.01em;line-height:1.1;}
+.sh-link{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s;}
+.sh-link:hover{color:var(--white);}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--s2);}
+.card{background:var(--bg);cursor:pointer;transition:background .3s;}
+.card:hover{background:var(--s1);}
+.card-thumb{aspect-ratio:1;background:var(--s1);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.card-thumb .emoji{font-size:80px;transition:transform .5s cubic-bezier(.22,1,.36,1);}
+.card:hover .card-thumb .emoji{transform:scale(1.08) translateY(-4px);}
+.card-tag-pill{position:absolute;top:16px;left:16px;background:var(--bg);border:1px solid var(--s3);border-radius:999px;padding:5px 12px;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);}
+.card-body{padding:20px 24px 24px;}
+.c-cat{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.c-name{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;margin-bottom:16px;}
+.c-foot{display:flex;align-items:center;justify-content:space-between;}
+.c-price{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;}
+.c-btn{width:30px;height:30px;background:var(--white);color:var(--bg);border-radius:50%;border:none;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:transform .2s;}
+.c-btn:hover{transform:scale(1.12);}
+
+/* ── ABOUT ── */
+.about{padding:100px 56px;background:var(--s1);display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
+.abt-label{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+.abt-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(34px,4vw,56px);font-weight:700;text-transform:uppercase;line-height:1;letter-spacing:-.02em;margin-bottom:24px;}
+.abt-p{color:var(--muted);line-height:1.8;margin-bottom:36px;max-width:420px;}
+.abt-stats{display:flex;gap:40px;}
+.stat-n{font-family:'Space Grotesk',sans-serif;font-size:34px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em;}
+.stat-l{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:3px;}
+.abt-right{display:flex;align-items:center;justify-content:center;}
+.abt-logo-frame{width:100%;aspect-ratio:1;background:var(--s2);border-radius:32px;border:1px solid var(--s3);display:flex;align-items:center;justify-content:center;max-width:360px;}
+.abt-logo-frame img{width:72%;filter:invert(1);opacity:.85;}
+
+/* ── CUSTOM SECTION ── */
+.custom{padding:120px 56px;text-align:center;background:var(--bg);position:relative;overflow:hidden;}
+.custom::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(255,255,255,.03) 0%,transparent 70%);}
+.custom-tag{display:inline-block;border:1px solid var(--s3);border-radius:999px;padding:7px 18px;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:28px;}
+.custom-title{font-family:'Space Grotesk',sans-serif;font-size:clamp(40px,6.5vw,88px);font-weight:700;text-transform:uppercase;line-height:.95;letter-spacing:-.03em;margin-bottom:20px;}
+.custom-title .block{display:block;}
+.custom-title .muted{color:var(--muted);}
+.custom-sub{color:var(--muted);max-width:440px;margin:0 auto 52px;line-height:1.75;}
+.custom-cta{display:inline-flex;align-items:center;gap:12px;background:var(--white);color:var(--bg);padding:18px 40px;border-radius:999px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;transition:transform .2s,opacity .2s;}
+.custom-cta:hover{transform:translateY(-3px);opacity:.9;}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid var(--s2);padding:56px 56px 32px;}
+.foot-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:48px;}
+.foot-logo{height:32px;filter:invert(1);opacity:.7;}
+.foot-links{display:flex;gap:28px;list-style:none;}
+.foot-links a{color:var(--muted);font-size:11px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;transition:color .2s;}
+.foot-links a:hover{color:var(--white);}
+.foot-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:28px;border-top:1px solid var(--s2);}
+.foot-copy{font-size:11px;color:var(--muted2);}
+.foot-ig{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:11px;letter-spacing:.08em;text-decoration:none;transition:color .2s;}
+.foot-ig:hover{color:var(--white);}
+
+/* ── REVEAL ── */
+.r{opacity:0;transform:translateY(28px);transition:opacity .8s,transform .8s;}
+.r.v{opacity:1;transform:none;}
+.r2{opacity:0;transform:translateY(28px);transition:opacity .8s .1s,transform .8s .1s;}
+.r2.v{opacity:1;transform:none;}
+.r3{opacity:0;transform:translateY(28px);transition:opacity .8s .2s,transform .8s .2s;}
+.r3.v{opacity:1;transform:none;}
+
+/* ── KEYFRAMES ── */
+@keyframes up{from{opacity:0;transform:translateY(36px);}to{opacity:1;transform:none;}}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes ticker{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <img src="logo.png" class="logo-img" alt="DogStilo">
+  <ul class="nav-links">
+    <li><a href="#produtos">Produtos</a></li>
+    <li><a href="#personalizado">Personalizado</a></li>
+    <li><a href="#sobre">Sobre</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="https://wa.me/5500000000000" class="nav-whats">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.555 4.116 1.528 5.845L.057 23.428a.5.5 0 0 0 .609.63l5.737-1.5A11.94 11.94 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.9 0-3.68-.52-5.2-1.426l-.373-.222-3.862 1.01 1.03-3.765-.245-.389A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+      WhatsApp
+    </a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="eyebrow"><span class="eyebrow-dot"></span>17 Anos Fabricando — Feito no Brasil</div>
+    <h1>
+      Acessórios<br>
+      <span class="thin">para seu</span><br>
+      Pet
+    </h1>
+    <div class="hero-line"></div>
+    <p class="hero-p">Coleiras, guias e peitorais de alta performance. Cada peça é fabricada com materiais selecionados e personalizada com o nome do seu melhor amigo.</p>
+    <div class="hero-actions">
+      <a href="#produtos" class="btn-dark">Ver Coleção</a>
+      <a href="#personalizado" class="btn-ghost">Personalizar <span class="arr">→</span></a>
+    </div>
+    <div class="hero-nums">
+      <div class="num"><span>+5k</span><p>Clientes</p></div>
+      <div class="num"><span>17</span><p>Anos</p></div>
+      <div class="num"><span>4.9★</span><p>Avaliação</p></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-visual">
+      <div class="visual-ring"></div>
+      <div class="visual-inner">
+        <img src="logo.png" class="hero-logo-big" alt="DogStilo">
+      </div>
+      <div class="badge-float bf1"><span class="bf-dot"></span>Personalizado com nome</div>
+      <div class="badge-float bf2"><span class="bf-dot"></span>Alta resistência</div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="tick"><strong>Coleiras</strong> Premium</span>
+    <span class="tick">·</span>
+    <span class="tick"><strong>Guias</strong> Retráteis</span>
+    <span class="tick">·</span>
+    <span class="tick"><strong>Peitorais</strong> Ergonômicos</span>
+    <span class="tick">·</span>
+    <span class="tick"><strong>Personalizado</strong> com Nome</span>
+    <span class="tick">·</span>
+    <span class="tick"><strong>Feito</strong> no Brasil</span>
+    <span class="tick">·</span>
+    <span class="tick"><strong>17 Anos</strong> de Experiência</span>
+    <span class="tick">·</span>
+    <span class="tick"><strong>Coleiras</strong> Premium</span>
+    <span class="tick">·</span>
+    <span class="tick"><strong>Guias</strong> Retráteis</span>
+    <span class="tick">·</span>
+    <span class="tick"><strong>Peitorais</strong> Ergonômicos</span>
+    <span class="tick">·</span>
+    <span class="tick"><strong>Personalizado</strong> com Nome</span>
+    <span class="tick">·</span>
+    <span class="tick"><strong>Feito</strong> no Brasil</span>
+    <span class="tick">·</span>
+    <span class="tick"><strong>17 Anos</strong> de Experiência</span>
+    <span class="tick">·</span>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<section class="section" id="produtos">
+  <div class="sh r">
+    <h2 class="sh-title">Coleção<br>2025</h2>
+    <a href="#" class="sh-link">Ver todos →</a>
+  </div>
+  <div class="grid3 r2">
+    <div class="card">
+      <div class="card-thumb">
+        <div class="card-tag-pill">Mais vendido</div>
+        <span class="emoji">🦺</span>
+      </div>
+      <div class="card-body">
+        <div class="c-cat">Peitorais</div>
+        <div class="c-name">Peitoral H — Premium</div>
+        <div class="c-foot">
+          <span class="c-price">R$ 129,90</span>
+          <button class="c-btn">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-thumb">
+        <span class="emoji">📿</span>
+      </div>
+      <div class="card-body">
+        <div class="c-cat">Coleiras</div>
+        <div class="c-name">Coleira Tática Reforçada</div>
+        <div class="c-foot">
+          <span class="c-price">R$ 89,90</span>
+          <button class="c-btn">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-thumb">
+        <span class="emoji">🔗</span>
+      </div>
+      <div class="card-body">
+        <div class="c-cat">Guias</div>
+        <div class="c-name">Guia Dupla Função 1,5m</div>
+        <div class="c-foot">
+          <span class="c-price">R$ 74,90</span>
+          <button class="c-btn">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="sobre">
+  <div class="r">
+    <div class="abt-label">Nossa História</div>
+    <h2 class="abt-title">17 Anos<br>Fabricando<br>com Amor</h2>
+    <p class="abt-p">Somos uma empresa familiar brasileira especializada em acessórios pet de alta qualidade. Cada coleira, guia e peitoral é fabricado com materiais selecionados e atenção artesanal a cada detalhe.</p>
+    <div class="abt-stats">
+      <div><div class="stat-n">+5k</div><div class="stat-l">Clientes</div></div>
+      <div><div class="stat-n">17</div><div class="stat-l">Anos</div></div>
+      <div><div class="stat-n">100%</div><div class="stat-l">Nacional</div></div>
+    </div>
+  </div>
+  <div class="abt-right r2">
+    <div class="abt-logo-frame">
+      <img src="logo.png" alt="DogStilo">
+    </div>
+  </div>
+</section>
+
+<!-- CUSTOM -->
+<section class="custom" id="personalizado">
+  <div class="custom-tag r">Personalização</div>
+  <h2 class="custom-title">
+    <span class="block r">Grave o Nome</span>
+    <span class="block r2 muted">do Seu Pet</span>
+  </h2>
+  <p class="custom-sub r3">Personalize sua coleira ou peitoral com o nome do seu melhor amigo. Acabamento premium, fecho exclusivo com gravação ou bordado.</p>
+  <a href="https://wa.me/5500000000000" class="custom-cta r3">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.555 4.116 1.528 5.845L.057 23.428a.5.5 0 0 0 .609.63l5.737-1.5A11.94 11.94 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.9 0-3.68-.52-5.2-1.426l-.373-.222-3.862 1.01 1.03-3.765-.245-.389A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+    Pedir pelo WhatsApp
+  </a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-top">
+    <img src="logo.png" class="foot-logo" alt="DogStilo">
+    <ul class="foot-links">
+      <li><a href="#produtos">Produtos</a></li>
+      <li><a href="#personalizado">Personalizados</a></li>
+      <li><a href="#sobre">Sobre</a></li>
+      <li><a href="https://instagram.com/dogstilo">Instagram</a></li>
+      <li><a href="https://wa.me/5500000000000">WhatsApp</a></li>
+    </ul>
+  </div>
+  <div class="foot-bottom">
+    <span class="foot-copy">© 2025 DogStilo® — Todos os direitos reservados.</span>
+    <a href="https://instagram.com/dogstilo" class="foot-ig">
+      @dogstilo →
+    </a>
+  </div>
+</footer>
+
+<script>
+// Sticky nav
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('solid',scrollY>40);
+});
+// Reveal
+const io=new IntersectionObserver(e=>{
+  e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('v');}});
+},{threshold:.12});
+document.querySelectorAll('.r,.r2,.r3').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>

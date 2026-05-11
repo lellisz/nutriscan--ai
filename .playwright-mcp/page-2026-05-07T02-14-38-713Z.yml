@@ -1,0 +1,14 @@
+- generic [ref=e26]:
+  - generic [ref=e28] [cursor=pointer]: ← VOLTAR
+  - generic [ref=e29]: Acessar conta
+  - generic [ref=e30]: Entre com seu e-mail e senha para continuar.
+  - generic [ref=e31]:
+    - generic [ref=e32]:
+      - generic [ref=e33]: E-MAIL
+      - textbox "seu@email.com" [ref=e34]: felipelelis.business@gmail.com
+    - generic [ref=e35]:
+      - generic [ref=e36]: SENHA
+      - textbox "••••••••" [ref=e37]: felipe04
+  - progressbar [ref=e42]:
+    - img [ref=e44]
+  - generic [ref=e41] [cursor=pointer]: Não tem conta? Criar agora

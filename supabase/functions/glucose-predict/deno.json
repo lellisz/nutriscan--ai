@@ -1,0 +1,10 @@
+{
+  "imports": {
+    "std/http/server": "https://deno.land/std@0.168.0/http/server.ts",
+    "@supabase/supabase-js": "npm:@supabase/supabase-js"
+  },
+  "compilerOptions": {
+    "strict": true,
+    "lib": ["deno.window", "dom"]
+  }
+}

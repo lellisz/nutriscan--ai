@@ -1,0 +1,64 @@
+{
+  "expo": {
+    "name": "PRAXIS Nutrition",
+    "slug": "praxis-nutrition",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "scheme": "praxis",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#090909"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.praxis.nutrition",
+      "infoPlist": {
+        "NSHealthShareUsageDescription": "O PRAXIS precisa acessar seus dados de saúde para calcular gasto calórico diário.",
+        "NSHealthUpdateUsageDescription": "O PRAXIS precisa gravar dados de nutrição no Apple Health."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#090909"
+      },
+      "package": "com.praxis.nutrition",
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.health.READ_ACTIVE_CALORIES_BURNED",
+        "android.permission.health.READ_STEPS",
+        "android.permission.health.WRITE_NUTRITION"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Precisamos da câmera para escanear seus alimentos."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Precisamos de acesso à galeria para selecionar fotos de alimentos."
+        }
+      ],
+      "expo-font",
+      "expo-secure-store",
+      "react-native-health-connect"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

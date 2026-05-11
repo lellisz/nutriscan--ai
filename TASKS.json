@@ -1,0 +1,130 @@
+[
+  {
+    "id": "T001",
+    "status": "done",
+    "priority": 1,
+    "agent": "director",
+    "spec": "migration food_logs",
+    "completed_at": "2026-04-27T16:54:08Z"
+  },
+  {
+    "id": "T002",
+    "status": "done",
+    "priority": 1,
+    "agent": "director",
+    "spec": "coach Edge Function (migrado para Groq sessão 3)",
+    "completed_at": "2026-04-27T16:54:10Z"
+  },
+  {
+    "id": "T003",
+    "status": "done",
+    "priority": 2,
+    "agent": "director",
+    "spec": "LogModal v3",
+    "completed_at": "2026-04-27T17:13:14Z"
+  },
+  {
+    "id": "T004",
+    "status": "done",
+    "priority": 2,
+    "agent": "director",
+    "spec": "CoachScreen",
+    "completed_at": "2026-04-27T17:00:26Z"
+  },
+  {
+    "id": "T005",
+    "status": "done",
+    "priority": 3,
+    "agent": "director",
+    "spec": "useFrequentMeals hook",
+    "completed_at": "2026-04-27T17:13:26Z"
+  },
+  {
+    "id": "T006",
+    "status": "done",
+    "priority": 4,
+    "agent": "director",
+    "spec": "docs/FEATURES.md",
+    "completed_at": "2026-04-27T17:13:39Z"
+  },
+  {
+    "id": "T007",
+    "status": "done",
+    "agent": "director",
+    "priority": 1,
+    "depends_on": [],
+    "spec": "WeightTab — botão registrar peso",
+    "completed_at": "2026-04-28T00:00:00.000000+00:00"
+  },
+  {
+    "id": "T008",
+    "status": "done",
+    "agent": "codex",
+    "priority": 2,
+    "depends_on": [],
+    "spec": "api/voice.js — transcrição Whisper + estimativa Groq",
+    "completed_at": "2026-04-27T18:29:23.248960"
+  },
+  {
+    "id": "T009",
+    "status": "done",
+    "agent": "cursor",
+    "priority": 2,
+    "depends_on": [],
+    "spec": "Onboarding flow — verificar e corrigir",
+    "completed_at": "2026-04-27T18:32:42.751255"
+  },
+  {
+    "id": "T010",
+    "status": "done",
+    "agent": "cursor",
+    "priority": 3,
+    "depends_on": [],
+    "spec": "Score screen — verificar ScoreRing + card explicativo anti-shame",
+    "completed_at": "2026-04-27T18:34:41.691362"
+  },
+  {
+    "id": "T011",
+    "status": "done",
+    "agent": "director",
+    "priority": 1,
+    "depends_on": [],
+    "spec": "Profile screen — conectar ao Supabase. Arquivo: app/(tabs)/profile.tsx. Os toggles compassionOn/quietOn/adaptiveOn/memoryOn estão em useState local hardcoded. Corrigir: (1) importar useAuthStore e ler profile.compassion_mode, profile.quiet_intelligence, profile.adaptive_goals, profile.nutrition_memory como estado inicial. (2) Importar supabase de @/services/supabase. (3) Quando toggle muda: await supabase.from('profiles').update({ [field]: value }).eq('id', user.id). (4) Mostrar nome real do usuário (profile.name ?? 'Usuário') no header. (5) Mostrar peso atual (profile.weight_kg) e meta (profile.target_weight_kg) nos campos de stat. Não alterar layout ou estilos. Stack: RN 0.81.5 / Supabase / TypeScript strict.",
+    "acceptance": "Toggles leem profile do Supabase ao montar, escrevem ao mudar. Nome e peso real aparecem no header.",
+    "completed_at": "2026-04-27T23:04:00.865196"
+  },
+  {
+    "id": "T012",
+    "status": "done",
+    "agent": "director",
+    "priority": 2,
+    "depends_on": [
+      "T011"
+    ],
+    "spec": "Push notifications — lembretes de registro de refeições. Instalar expo-notifications via: npx expo install expo-notifications expo-device. Criar services/notifications.ts com: (1) requestPermission() — pede permissão e retorna token, (2) scheduleMealReminder(hour: number, minute: number) — agenda notificação diária recorrente com título 'PRAXIS' e body anti-shame (ex: 'Hora de registrar sua refeição — 30s e está feito'), (3) cancelAllReminders(). Em app/settings.tsx, adicionar seção 'LEMBRETES' com Toggle para ativar/desativar e dois campos de hora (almoço e jantar) com TextInput numérico. Persistir preferências em profiles via Supabase (campos: reminder_lunch_hour int, reminder_dinner_hour int, reminders_enabled bool). ATENÇÃO: NÃO modificar app/_layout.tsx nem app.json — registrar listener de notificação apenas dentro do settings.tsx.",
+    "acceptance": "Toggle ativa notificação, notificação aparece no horário configurado, preferências salvas no Supabase.",
+    "completed_at": "2026-04-27T23:06:09.602061"
+  },
+  {
+    "id": "T013",
+    "status": "done",
+    "agent": "director",
+    "priority": 2,
+    "depends_on": [],
+    "spec": "app/log/add.tsx — verificar e corrigir log manual de refeição. Ler arquivo atual. Verificar: (1) busca refeições frequentes via useFrequentMeals hook, (2) ao selecionar refeição frequente, preenche campos de nome/calorias/proteína, (3) botão SALVAR faz insert em scan_history com { user_id, food_name, calories, protein, carbs, fat, logged_at, meal_type }, (4) após salvar: queryClient.invalidateQueries(['nutrition', 'daily']) + router.replace('/(tabs)'). Corrigir qualquer problema. Não alterar estilos. TypeScript strict.",
+    "acceptance": "Refeição manual salva no Supabase e aparece na MealTimeline da home após salvar.",
+    "completed_at": "2026-04-27T23:09:49.605557"
+  },
+  {
+    "id": "T014",
+    "status": "done",
+    "agent": "director",
+    "priority": 3,
+    "depends_on": [
+      "T013"
+    ],
+    "spec": "HANDOFF final da sessão 4 — gerar HANDOFF.md em C:/projetos/praxis/HANDOFF.md com estado completo do projeto para retomada autônoma. Incluir: (1) lista de todas as telas e seus status (implementado/pendente/broken), (2) tasks T011-T013 com specs completas, (3) regras arquiteturais (Director-Only files, NativeWind v4, Reanimated v4, TanStack Query v5, anti-shame), (4) próxima ação recomendada. Depois: git add -A && git commit -m 'chore: handoff sessão 4'.",
+    "acceptance": "HANDOFF.md existe, tem seções Estado/Feito/Pendente/Regras/ProximaAcao, commit realizado.",
+    "completed_at": "2026-04-27T23:12:47.138828"
+  }
+]
